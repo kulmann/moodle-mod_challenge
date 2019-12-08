@@ -24,8 +24,8 @@
                        COMMENT="The number of seconds the solution is displayed before the user is returned to the level selection."/>
                 <FIELD NAME="question_shuffle_answers" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1"
                        SEQUENCE="false"/>
-                <FIELD NAME="completionrounds" TYPE="int" LENGTH="9" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-                <FIELD NAME="completionpoints" TYPE="int" LENGTH="9" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="level_tile_height" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="2" SEQUENCE="false"/>
+                <FIELD NAME="level_tile_alpha" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="50" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -74,8 +74,8 @@
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0"
                        SEQUENCE="false"/>
                 <FIELD NAME="game" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="state" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" DEFAULT="progress"
-                       COMMENT="The state of the tournament, out of [progress, finished, dumped]."/>
+                <FIELD NAME="state" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" DEFAULT="unpublished"
+                       COMMENT="The state of the tournament, out of [unpublished, progress, finished, dumped]."/>
                 <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" DEFAULT=""/>
                 <FIELD NAME="winner_mdl_user" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="winner_score" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>

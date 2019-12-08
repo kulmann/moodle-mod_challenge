@@ -9,6 +9,7 @@ export default {
         finishedTournaments: [],
         activeTournaments: [],
         editableTournaments: [],
+        mdl_categories: null,
     },
     mutations: {
         setAdminInitialized(state, initialized) {
@@ -33,7 +34,10 @@ export default {
                     break;
                 default: // change nothing
             }
-        }
+        },
+        setMdlCategories(state, mdl_categories) {
+            state.mdl_categories = mdl_categories;
+        },
     },
     actions: {
         /**
@@ -155,6 +159,17 @@ export default {
             const result = await ajax('mod_challenge_save_tournament', payload);
             context.dispatch('fetchTournaments');
             return result.result;
+        },
+        /**
+         * Fetches all moodle question categories which are applicable for this game.
+         *
+         * @param context
+         *
+         * @returns {Promise<void>}
+         */
+        async fetchMdlCategories(context) {
+            const categories = await ajax('mod_challenge_get_mdl_categories');
+            context.commit('setMdlCategories', categories);
         }
     }
 }

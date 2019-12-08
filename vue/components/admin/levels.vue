@@ -27,14 +27,10 @@
                                         v-icon(name="trash")
                             tr(v-if="deleteConfirmationLevelId === level.id")
                                 td(colspan="3")
-                                    .uk-alert.uk-alert-danger(uk-alert)
-                                        vk-grid
-                                            .uk-width-expand
-                                                v-icon(name="exclamation-circle").uk-margin-small-right
-                                                span {{ strings.admin_level_delete_confirm | stringParams(level.title) }}
-                                            .uk-width-auto
-                                                button.btn.btn-danger.uk-margin-small-left(@click="deleteLevelConfirm(level)")
-                                                    span {{ strings.admin_btn_confirm_delete }}
+                                    confirmationPanel(:message="stringParams(strings.admin_level_delete_confirm, level.name)",
+                                        :labelSubmit="strings.admin_btn_confirm_delete",
+                                        @onSubmit="deleteLevelConfirm(level)",
+                                        @onCancel="deleteLevelCancel()")
                 btnAdd(@click="createLevel")
 </template>
 
@@ -45,6 +41,7 @@
     import infoAlert from '../helper/info-alert';
     import btnAdd from './btn-add';
     import VkGrid from "vuikit/src/library/grid/components/grid";
+    import ConfirmationPanel from "../helper/confirmation-panel";
 
     export default {
         mixins: [mixins],
@@ -66,10 +63,10 @@
             }
         },
         methods: {
-            ...mapActions([
-                'changeLevelPosition',
-                'deleteLevel'
-            ]),
+            ...mapActions({
+                changeLevelPosition: 'admin/changeLevelPosition',
+                deleteLevel: 'admin/deleteLevel',
+            }),
             isSafeSpot(level) {
                 return level.safe_spot;
             },
@@ -89,13 +86,17 @@
                 this.deleteConfirmationLevelId = level.id;
             },
             deleteLevelConfirm(level) {
-                this.deleteConfirmationLevelId = null;
+                this.deleteLevelCancel();
                 this.deleteLevel({
                     levelid: level.id
                 });
+            },
+            deleteLevelCancel() {
+                this.deleteConfirmationLevelId = null;
             }
         },
         components: {
+            ConfirmationPanel,
             VkGrid,
             infoAlert,
             btnAdd,

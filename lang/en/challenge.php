@@ -50,6 +50,13 @@ $string['review_duration'] = 'Time to display solution (seconds)';
 $string['review_duration_help'] = 'The duration how long the solution of a question is being displayed (in seconds) before continuing to the next question automatically.';
 $string['question_shuffle_answers'] = 'Shuffle answers';
 $string['question_shuffle_answers_help'] = 'If enabled, the answers of questions will be shuffled.';
+$string['level_tile_height'] = 'Level tile height';
+$string['level_tile_height_help'] = 'Please select the height for level tile representation.';
+$string['level_tile_height_0'] = 'Flat';
+$string['level_tile_height_1'] = 'Regular';
+$string['level_tile_height_2'] = 'Tall';
+$string['level_tile_alpha'] = 'Level overlay alpha';
+$string['level_tile_alpha_help'] = 'For improved readability there will be an overlay on the level tiles. Please select the how dark (0%) or light (100%) this overlay should be.';
 
 /* activity edit page: control */
 $string['control_edit'] = 'Control';

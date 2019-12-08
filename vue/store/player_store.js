@@ -20,7 +20,6 @@ export default {
         },
         mdl_question: null,
         mdl_answers: [],
-        mdl_categories: null,
     },
     mutations: {
         setPlayerInitialized(state, initialized) {
@@ -43,9 +42,6 @@ export default {
         },
         setMdlAnswers(state, mdl_answers) {
             state.mdl_answers = mdl_answers;
-        },
-        setMdlCategories(state, mdl_categories) {
-            state.mdl_categories = mdl_categories;
         },
         setGameMode(state, gameMode) {
             if (_.includes(VALID_MODES, gameMode)) {
@@ -319,16 +315,5 @@ export default {
                 context.commit('setMdlAnswers', []);
             }
         },
-        /**
-         * Fetches all moodle question categories which are applicable for this game.
-         *
-         * @param context
-         *
-         * @returns {Promise<void>}
-         */
-        async fetchMdlCategories(context) {
-            const categories = await ajax('mod_challenge_get_mdl_categories');
-            context.commit('setMdlCategories', categories);
-        }
     }
 }

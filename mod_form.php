@@ -35,8 +35,6 @@ require_once($CFG->dirroot . '/lib/questionlib.php');
  */
 class mod_challenge_mod_form extends moodleform_mod {
 
-    private $completionModes = ['completionrounds', 'completionpoints'];
-
     /**
      * Defines forms elements
      */
@@ -84,6 +82,23 @@ class mod_challenge_mod_form extends moodleform_mod {
         $mform->setDefault('question_shuffle_answers', 1);
         $mform->addHelpButton('question_shuffle_answers', 'question_shuffle_answers', 'challenge');
 
+        // ... tile height for level cards
+        $level_tile_heights = [];
+        foreach (MOD_CHALLENGE_LEVEL_TILE_HEIGHTS as $height) {
+            $level_tile_heights[$height] = get_string('level_tile_height_' . $height, 'challenge');
+        }
+        $mform->addElement('select', 'level_tile_height', get_string('level_tile_height', 'challenge'), $level_tile_heights);
+        $mform->setDefault('level_tile_height', MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE);
+        $mform->addHelpButton('level_tile_height', 'level_tile_height', 'challenge');
+        // ... tile overlay alpha
+        $level_tile_alphas = [];
+        for($i=0; $i<=10; $i++) {
+            $level_tile_alphas[$i * 10] = ($i * 10) . "%";
+        }
+        $mform->addElement('select', 'level_tile_alpha', get_string('level_tile_alpha', 'challenge'), $level_tile_alphas);
+        $mform->setDefault('level_tile_alpha', 50);
+        $mform->addHelpButton('level_tile_alpha', 'level_tile_alpha', 'challenge');
+
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();
 
@@ -93,59 +108,4 @@ class mod_challenge_mod_form extends moodleform_mod {
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
-
-    function data_preprocessing(&$default_values) {
-        parent::data_preprocessing($default_values);
-        foreach ($this->completionModes as $mode) {
-            $default_values[$mode . 'enabled'] = !empty($default_values[$mode]) ? 1 : 0;
-            if (empty($default_values[$mode])) {
-                $default_values[$mode] = 1;
-            }
-        }
-    }
-
-    function add_completion_rules() {
-        $mform = $this->_form;
-        $result = [];
-        foreach ($this->completionModes as $mode) {
-            $group = array();
-            $group[] = $mform->createElement('checkbox', $mode . 'enabled', '', get_string($mode, 'challenge'));
-            $group[] = $mform->createElement('text', $mode, '', array('size' => 3));
-            $mform->setType($mode, PARAM_INT);
-            $mform->addGroup($group, $mode . 'group', get_string($mode . 'label', 'challenge'), array(' '), false);
-            $mform->disabledIf($mode, $mode . 'enabled', 'notchecked');
-            $result[] = $mode . 'group';
-        }
-        return $result;
-    }
-
-    function completion_rule_enabled($data) {
-        foreach ($this->completionModes as $mode) {
-            if (!empty($data[$mode . 'enabled']) && $data[$mode] !== 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function get_data() {
-        $data = parent::get_data();
-        if (!$data) {
-            return false;
-        }
-        // Turn off completion settings if the checkboxes aren't ticked
-        if (!empty($data->completionunlocked)) {
-            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completionroundsenabled) || !$autocompletion) {
-                $data->completionrounds = 0;
-            }
-            if (empty($data->completionpointsenabled) || !$autocompletion) {
-                $data->completionpoints = 0;
-            }
-
-        }
-        return $data;
-    }
-
-
 }

@@ -114,6 +114,14 @@ class level_dto extends exporter {
                 'type' => PARAM_BOOL,
                 'description' => 'whether or not this level has been seen by the user (i.e. if a question was shown)',
             ],
+            'tile_alpha' => [
+                'type' => PARAM_INT,
+                'description' => 'the alpha value of the level tile overlay',
+            ],
+            'tile_height_px' => [
+                'type' => PARAM_INT,
+                'description' => 'the height of the level tiles in pixels',
+            ],
         ];
     }
 
@@ -132,6 +140,8 @@ class level_dto extends exporter {
                 'correct' => $this->question ? $this->question->is_correct() : false,
                 'score' => $this->question ? $this->question->get_score() : 0,
                 'seen' => $this->question !== null,
+                'tile_alpha' => $this->game->get_level_tile_alpha(),
+                'tile_height_px' => $this->game->get_level_tile_height_px(),
             ]
         );
         return $result;

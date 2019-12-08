@@ -91,6 +91,8 @@
             ...mapState([
                 'strings',
                 'game',
+            ]),
+            ...mapState('admin', [
                 'levels',
                 'levelCategories',
                 'mdl_categories'
@@ -112,11 +114,11 @@
             },
         },
         methods: {
-            ...mapActions([
-                'fetchLevelCategories',
-                'fetchMdlCategories',
-                'saveLevel'
-            ]),
+            ...mapActions({
+                fetchMdlCategories: 'admin/fetchMdlCategories',
+                fetchLevelCategories: 'admin/fetchLevelCategories',
+                saveLevel: 'admin/saveLevel',
+            }),
             initLevelData(level) {
                 if (level === null) {
                     this.data = {

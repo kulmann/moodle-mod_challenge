@@ -62,6 +62,14 @@ class game extends abstract_model {
      * @var bool Whether or not answers should be shuffled when displaying a question.
      */
     protected $question_shuffle_answers;
+    /**
+     * @var int One of the tile height categories (see lib.php).
+     */
+    protected $level_tile_height;
+    /**
+     * @var int The alpha value of the level tile overlay (out of [0,100]).
+     */
+    protected $level_tile_alpha;
 
     /**
      * game constructor.
@@ -76,6 +84,8 @@ class game extends abstract_model {
         $this->question_duration = 30;
         $this->review_duration = 2;
         $this->question_shuffle_answers = true;
+        $this->level_tile_height = MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE;
+        $this->level_tile_alpha = 50;
     }
 
     /**
@@ -98,6 +108,8 @@ class game extends abstract_model {
         $this->question_duration = isset($data['question_duration']) ? $data['question_duration'] : 30;
         $this->review_duration = isset($data['review_duration']) ? $data['review_duration'] : 2;
         $this->question_shuffle_answers = isset($data['question_shuffle_answers']) ? ($data['question_shuffle_answers'] == 1) : true;
+        $this->level_tile_height = isset($data['level_tile_height']) ? $data['level_tile_height'] : MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE;
+        $this->level_tile_alpha = isset($data['level_tile_alpha']) ? $data['level_tile_alpha'] : 50;
     }
 
     /**
@@ -339,5 +351,34 @@ class game extends abstract_model {
      */
     public function is_question_shuffle_answers(): bool {
         return $this->question_shuffle_answers;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_level_tile_height(): int {
+        return $this->level_tile_height;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_level_tile_height_px() {
+        switch ($this->get_level_tile_height()) {
+            case MOD_CHALLENGE_LEVEL_TILE_HEIGHT_SMALL:
+                return 60;
+            case MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE:
+                return 200;
+            case MOD_CHALLENGE_LEVEL_TILE_HEIGHT_MEDIUM:
+            default:
+                return 120;
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function get_level_tile_alpha() {
+        return $this->level_tile_alpha;
     }
 }

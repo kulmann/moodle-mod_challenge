@@ -50,6 +50,13 @@ $string['review_duration'] = 'Anzeigedauer Lösung (Sekunden)';
 $string['review_duration_help'] = 'Anzeigezeit der Lösung (in Sekunden), bevor automatisch zur nächsten Frage weitergeleitet wird.';
 $string['question_shuffle_answers'] = 'Antworten mischen';
 $string['question_shuffle_answers_help'] = 'Wenn diese Option aktiviert ist, werden die Antworten der Fragen gemischt bevor sie angezeigt werden.';
+$string['level_tile_height'] = 'Kachel-Höhe Levels';
+$string['level_tile_height_help'] = 'Wählen Sie für die Darstellung von Levels eine Kachel-Höhe.';
+$string['level_tile_height_0'] = 'Flach';
+$string['level_tile_height_1'] = 'Normal';
+$string['level_tile_height_2'] = 'Hoch';
+$string['level_tile_alpha'] = 'Alpha Level-Overlay';
+$string['level_tile_alpha_help'] = 'Zur besseren Lesbarkeit von Text wird ein Overlay über die Level-Kacheln gelegt. Mit diesem Wert bestimmen Sie die Durchlässigkeit dieses Overlays.';
 
 /* activity edit page: control */
 $string['control_edit'] = 'Steuerung';

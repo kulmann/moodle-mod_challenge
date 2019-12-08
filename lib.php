@@ -62,7 +62,6 @@ function challenge_supports($feature) {
     switch ($feature) {
         case FEATURE_SHOW_DESCRIPTION:
         case FEATURE_BACKUP_MOODLE2:
-        case FEATURE_COMPLETION_HAS_RULES:
         case FEATURE_MOD_INTRO:
             return true;
         default:
@@ -177,52 +176,6 @@ function challenge_delete_instance($id) {
     $result &= $DB->delete_records('challenge_levels', ['game' => $challenge->id]);
     $result &= $DB->delete_records('challenge', ['id' => $challenge->id]);
     return $result;
-}
-
-/**
- * Obtains the automatic completion state for this forum based on any conditions
- * in forum settings.
- *
- * @param object $course Course
- * @param object $cm Course-module
- * @param int $userid User ID
- * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
- * @return bool True if completed, false if not, $type if conditions not set.
- * @throws dml_exception
- */
-function challenge_get_completion_state($course, $cm, $userid, $type) {
-    global $DB;
-
-    if (!($challenge = $DB->get_record('challenge', ['id' => $cm->instance]))) {
-        throw new Exception("Can't find challenge {$cm->instance}");
-    }
-    $result = $type;
-    if ($challenge->completionrounds) {
-        $sqlParams = ['game' => $challenge->id, 'mdl_user' => $userid, 'state' => tournament_gamesession::STATE_FINISHED];
-        $value = $challenge->completionrounds <= $DB->count_records('challenge_gamesessions', $sqlParams);
-        if ($type == COMPLETION_AND) {
-            $result &= $value;
-        } else {
-            $result |= $value;
-        }
-    }
-    if ($challenge->completionpoints) {
-        $value = $challenge->completionpoints <= highscore_utils::calculate_score($challenge, $userid);
-        if ($type == COMPLETION_AND) {
-            $result &= $value;
-        } else {
-            $result |= $value;
-        }
-    }
-    return $result;
-}
-
-function challenge_perform_completion($course, $cm, $challenge) {
-    global $USER;
-    $completion = new completion_info($course);
-    if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && ($challenge->completionrounds || $challenge->completionpoints)) {
-        $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
