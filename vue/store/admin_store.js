@@ -128,6 +128,33 @@ export default {
                     state,
                 });
             });
+        },
+        /**
+         * Sets a state for the given tournament.
+         *
+         * @param context
+         * @param payload
+         *
+         * @returns {Promise<void>}
+         */
+        async setTournamentState(context, payload) {
+            const result = await ajax('mod_challenge_set_tournament_state', payload);
+            if (result.result === true) {
+                context.dispatch('fetchTournaments');
+            }
+        },
+        /**
+         * Updates the data of the given tournament.
+         *
+         * @param context
+         * @param payload
+         *
+         * @returns {Promise<*>}
+         */
+        async saveTournament(context, payload) {
+            const result = await ajax('mod_challenge_save_tournament', payload);
+            context.dispatch('fetchTournaments');
+            return result.result;
         }
     }
 }

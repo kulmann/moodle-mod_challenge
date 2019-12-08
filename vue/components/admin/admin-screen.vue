@@ -2,27 +2,42 @@
     #challenge-admin_screen
         .uk-clearfix
         loadingAlert(v-if="!isInitialized", message="Loading Settings").uk-text-center
-        failureAlert(v-else-if="!isAdminUser", :message="strings.admin_not_allowed", icon="exclamation-circle").uk-text-center
+        failureAlert(v-else-if="!isAdminUser", :message="strings.admin_not_allowed").uk-text-center
         template(v-else)
-            levelEdit(v-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing")
-            levels(v-else-if="viewMode === VIEW_MODE_LEVELS", :levels="levels")
+            template(v-if="viewModeList")
+                ul.uk-tab.uk-margin-small-bottom
+                    li(:class="{'uk-active': viewMode === VIEW_MODE_TOURNAMENTS}")
+                        a(@click="setViewMode(VIEW_MODE_TOURNAMENTS)") {{  strings.admin_nav_tournaments }}
+                    li(:class="{'uk-active': viewMode === VIEW_MODE_LEVELS}")
+                        a(@click="setViewMode(VIEW_MODE_LEVELS)") {{  strings.admin_nav_levels }}
+                tournaments(v-if="viewMode === VIEW_MODE_TOURNAMENTS",
+                    :editableTournaments="editableTournaments",
+                    :activeTournaments="activeTournaments",
+                    :finishedTournaments="finishedTournaments"
+                )
+                levels(v-else-if="viewMode === VIEW_MODE_LEVELS", :levels="levels")
+            template(v-else)
+                tournamentEdit(v-if="viewMode === VIEW_MODE_TOURNAMENT_EDIT", :tournament="tournamentForEditing")
+                levelEdit(v-else-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing")
 </template>
 
 <script>
     import mixins from '../../mixins';
     import {mapState, mapGetters} from 'vuex';
-    import levels from './levels';
-    import loadingAlert from '../helper/loading-alert';
-    import VkGrid from "vuikit/src/library/grid/components/grid";
-    import FailureAlert from "../helper/failure-alert";
-    import levelEdit from "./level-edit";
     import _ from 'lodash';
+    import VkGrid from "vuikit/src/library/grid/components/grid";
+    import loadingAlert from '../helper/loading-alert';
+    import failureAlert from "../helper/failure-alert";
+    import levels from './levels';
+    import levelEdit from "./level-edit";
+    import tournamentEdit from "./tournament-edit";
+    import Tournaments from "./tournaments";
 
     export default {
         mixins: [mixins],
-        data () {
+        data() {
             return {
-                VIEW_MODE_NAV: 'navigation',
+                VIEW_MODE_NONE: 'none',
                 VIEW_MODE_LEVELS: 'levels',
                 VIEW_MODE_LEVEL_EDIT: 'levelEdit',
                 VIEW_MODE_TOURNAMENTS: 'tournaments',
@@ -37,7 +52,15 @@
                 'isAdminUser',
                 'isInitialized'
             ]),
-            ...mapState('admin', ['levels']),
+            ...mapState('admin', [
+                'levels',
+                'editableTournaments',
+                'activeTournaments',
+                'finishedTournaments',
+            ]),
+            viewModeList() {
+                return _.endsWith(this.$route.name, '-list');
+            },
             viewMode() {
                 if (this.$route.name === 'admin-level-list') {
                     return this.VIEW_MODE_LEVELS;
@@ -48,27 +71,56 @@
                 } else if (this.$route.name === 'admin-tournament-edit') {
                     return this.VIEW_MODE_TOURNAMENT_EDIT;
                 } else {
-                    return this.VIEW_MODE_NAV;
+                    return this.VIEW_MODE_NONE;
                 }
             },
             levelForEditing() {
                 // try to find the given levelId in our loaded levels.
                 if (this.$route.params.hasOwnProperty('levelId') && !_.isNil(this.$route.params.levelId)) {
                     let levelId = parseInt(this.$route.params.levelId);
-                    return _.find(this.levels, function (level) {
-                        return level.id === levelId;
-                    });
+                    return _.find(this.levels, level => level.id === levelId);
                 }
                 // None found. Returning null will (correctly) result in creating a new level.
                 return null;
             },
+            tournamentForEditing() {
+                // try to find the given tournamentId in our loaded tournaments.
+                if (this.$route.params.hasOwnProperty('tournamentId') && !_.isNil(this.$route.params.tournamentId)) {
+                    let tournamentId = parseInt(this.$route.params.tournamentId);
+                    return _.find(this.tournaments, tournament => tournament.id === tournamentId);
+                }
+                // None found. Returning null will (correctly) result in creating a new tournament.
+                return null;
+            },
+        },
+        methods: {
+            setViewMode(viewMode) {
+                if (viewMode !== this.viewMode) {
+                    switch (viewMode) {
+                        case this.VIEW_MODE_TOURNAMENTS:
+                            this.$router.push({name: 'admin-tournament-list'});
+                            break;
+                        case this.VIEW_MODE_LEVELS:
+                            this.$router.push({name: 'admin-level-list'});
+                            break;
+                        default: // do nothing
+                    }
+                }
+            }
+        },
+        mounted() {
+            if (this.viewMode === this.VIEW_MODE_NONE) {
+                this.setViewMode(this.VIEW_MODE_TOURNAMENTS);
+            }
         },
         components: {
-            levelEdit,
-            FailureAlert,
-            levels,
+            Tournaments,
+            VkGrid,
+            failureAlert,
             loadingAlert,
-            VkGrid
+            levels,
+            levelEdit,
+            tournamentEdit
         },
     }
 </script>

@@ -69,13 +69,15 @@ $string['loading_screen_title'] = 'Loading Quiz Challenge...';
 /* admin screen in vue app */
 $string['admin_screen_title'] = 'Edit game content';
 $string['admin_not_allowed'] = 'You have insufficient permissions to view this page.';
-$string['admin_levels_title'] = 'Edit levels';
-$string['admin_levels_none'] = 'You didn\'t add any levels, yet.';
-$string['admin_levels_intro'] = 'You have already created the following levels for this game. You may edit their data and order, or even delete them. Please note, that editing levels which already has had participants might render existing highscores worthless.';
 $string['admin_btn_save'] = 'Save';
 $string['admin_btn_cancel'] = 'Cancel';
 $string['admin_btn_add'] = 'Add';
 $string['admin_btn_confirm_delete'] = 'Confirm Delete';
+/* admin: levels */
+$string['admin_nav_levels'] = 'Levels';
+$string['admin_levels_title'] = 'Edit levels';
+$string['admin_levels_none'] = 'You didn\'t add any levels, yet.';
+$string['admin_levels_intro'] = 'You have already created the following levels for this game. You may edit their data and order, or even delete them. Please note, that editing levels which already has had participants might render existing highscores worthless.';
 $string['admin_level_delete_confirm'] = 'Do you really want to delete the level »{$a}«?';
 $string['admin_level_title_add'] = 'Create level {$a}';
 $string['admin_level_title_edit'] = 'Edit level {$a}';
@@ -91,6 +93,23 @@ $string['admin_level_lbl_categories'] = 'Question assignments';
 $string['admin_level_lbl_category'] = 'Category {$a}';
 $string['admin_level_lbl_category_please_select'] = 'Select category';
 $string['admin_level_msg_saving'] = 'Saving the level, please wait';
+/* admin: tournaments */
+$string['admin_nav_tournaments'] = 'Tournaments';
+$string['admin_tournaments_title'] = 'Edit tournaments';
+$string['admin_tournaments_title_unpublished'] = 'Planned tournaments';
+$string['admin_tournaments_none_unpublished'] = 'There are no planned tournaments.';
+$string['admin_tournaments_intro_unpublished'] = 'Planned tournaments can be edited until they are published.';
+$string['admin_tournaments_title_progress'] = 'Active tournaments';
+$string['admin_tournaments_none_progress'] = 'There are no active tournaments.';
+$string['admin_tournaments_intro_progress'] = 'Here you can observe active tournaments.';
+$string['admin_tournaments_title_finished'] = 'Finished tournaments';
+$string['admin_tournaments_none_finished'] = 'There are no finished tournaments.';
+$string['admin_tournaments_intro_finished'] = 'Here you can evaluate finished tournaments.';
+$string['admin_tournament_delete_confirm'] = 'Do you really want to delete the tournament »{$a}«?';
+$string['admin_tournament_title_add'] = 'Create tournament';
+$string['admin_tournament_title_edit'] = 'Edit tournament';
+$string['admin_tournament_loading'] = 'Loading tournament data';
+$string['admin_tournament_lbl_name'] = 'Name';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';

@@ -72,6 +72,20 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_set_tournament_state' => [
+        'classname' => 'mod_challenge\external\tournaments',
+        'methodname' => 'set_tournament_state',
+        'description' => 'Set the state of a certain tournament',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'mod_challenge_save_tournament' => [
+        'classname' => 'mod_challenge\external\tournaments',
+        'methodname' => 'save_tournament',
+        'description' => 'Save a certain tournament',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'mod_challenge_get_question' => [
         'classname' => 'mod_challenge\external\tournament_gamesessions',
         'methodname' => 'get_question',

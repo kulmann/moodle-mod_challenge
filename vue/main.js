@@ -50,18 +50,22 @@ function init(coursemoduleid, contextid) {
             meta: {title: 'game_screen_title'}
         }, {
             path: '/admin',
+            component: adminScreen,
             name: 'admin-screen',
-            redirect: {name: 'admin-level-list'}
-        }, {
-            path: '/admin/levels',
-            component: adminScreen,
-            name: 'admin-level-list',
-            meta: {title: 'admin_screen_title'}
-        }, {
-            path: '/admin/level/:levelId?',
-            component: adminScreen,
-            name: 'admin-level-edit',
-            meta: {title: 'admin_screen_title'}
+            meta: {title: 'admin_screen_title'},
+            children: [{
+                path: 'levels',
+                name: 'admin-level-list',
+            }, {
+                path: 'level/:levelId?',
+                name: 'admin-level-edit',
+            }, {
+                path: 'tournaments',
+                name: 'admin-tournament-list',
+            }, {
+                path: 'tournament/:tournamentId?',
+                name: 'admin-tournament-edit',
+            }]
         }, {
             path: '*',
             component: notFound,

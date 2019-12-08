@@ -8,7 +8,10 @@
 <script>
     export default {
         props: {
-            icon: String,
+            icon: {
+                type: String,
+                default: 'exclamation-circle',
+            },
             message: String
         }
     }

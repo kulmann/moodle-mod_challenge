@@ -69,13 +69,15 @@ $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';
 /* admin screen in vue app */
 $string['admin_screen_title'] = 'Spiel-Inhalte bearbeiten';
 $string['admin_not_allowed'] = 'Sie haben nicht die nötigen Zugriffsrechte, um diese Seite zu betrachten.';
-$string['admin_levels_title'] = 'Levels bearbeiten';
-$string['admin_levels_none'] = 'Sie haben noch keine Levels angelegt.';
-$string['admin_levels_intro'] = 'Sie haben die folgenden Levels für dieses Spiel angelegt. Sie können hier die Daten und Reihenfolge der Levels verändern, oder Levels löschen. Bitte beachten Sie, dass Sie damit bei einem Spiel, das bereits Teilnehmer hat, die Rangliste wertlos machen könnten.';
 $string['admin_btn_save'] = 'Speichern';
 $string['admin_btn_cancel'] = 'Abbrechen';
 $string['admin_btn_add'] = 'Hinzufügen';
 $string['admin_btn_confirm_delete'] = 'Wirklich Löschen';
+/* admin: levels */
+$string['admin_nav_levels'] = 'Levels';
+$string['admin_levels_title'] = 'Levels bearbeiten';
+$string['admin_levels_none'] = 'Sie haben noch keine Levels angelegt.';
+$string['admin_levels_intro'] = 'Sie haben die folgenden Levels für dieses Spiel angelegt. Sie können hier die Daten und Reihenfolge der Levels verändern, oder Levels löschen. Bitte beachten Sie, dass Sie damit bei einem Spiel, das bereits Teilnehmer hat, die Rangliste wertlos machen könnten.';
 $string['admin_level_delete_confirm'] = 'Möchten Sie das Level »{$a}« wirklich löschen?';
 $string['admin_level_title_add'] = 'Level {$a} erstellen';
 $string['admin_level_title_edit'] = 'Level {$a} bearbeiten';
@@ -91,6 +93,23 @@ $string['admin_level_lbl_categories'] = 'Fragen-Zuweisungen';
 $string['admin_level_lbl_category'] = 'Kategorie {$a}';
 $string['admin_level_lbl_category_please_select'] = 'Kategorie auswählen';
 $string['admin_level_msg_saving'] = 'Das Level wird gespeichert, bitte warten';
+/* admin: tournaments */
+$string['admin_nav_tournaments'] = 'Turniere';
+$string['admin_tournaments_title'] = 'Turniere bearbeiten';
+$string['admin_tournaments_title_unpublished'] = 'Geplante Turniere';
+$string['admin_tournaments_none_unpublished'] = 'Es gibt keine geplanten Turniere.';
+$string['admin_tournaments_intro_unpublished'] = 'Geplante Turniere können bis zu ihrer Veröffentlichung bearbeitet werden.';
+$string['admin_tournaments_title_progress'] = 'Laufende Turniere';
+$string['admin_tournaments_none_progress'] = 'Es gibt keine laufenden Turniere.';
+$string['admin_tournaments_intro_progress'] = 'Laufende Turniere können hier beobachtet werden.';
+$string['admin_tournaments_title_finished'] = 'Abgeschlossene Turniere';
+$string['admin_tournaments_none_finished'] = 'Es gibt keine abgeschlossenen Turniere.';
+$string['admin_tournaments_intro_finished'] = 'Abgeschlossene Turniere können hier ausgewertet werden.';
+$string['admin_tournament_delete_confirm'] = 'Möchten Sie das Turnier »{$a}« wirklich löschen?';
+$string['admin_tournament_title_add'] = 'Turnier erstellen';
+$string['admin_tournament_title_edit'] = 'Turnier bearbeiten';
+$string['admin_tournament_loading'] = 'Lade Turnier-Daten';
+$string['admin_tournament_lbl_name'] = 'Name';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';
