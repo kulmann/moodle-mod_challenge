@@ -18,7 +18,7 @@
                                 td.actions.uk-table-shrink.uk-preserve-width
                                     button.btn.btn-default(@click="editTournament(tournament)")
                                         v-icon(name="regular/edit")
-                                    button.btn.btn-default(@click="deleteTournamentAsk(level)")
+                                    button.btn.btn-default(@click="deleteTournamentAsk(tournament)")
                                         v-icon(name="trash")
                             tr(v-if="deleteConfirmationTournamentId === tournament.id")
                                 td(colspan="3")
@@ -83,9 +83,9 @@
             ]),
         },
         methods: {
-            ...mapActions('admin', [
-                'setTournamentState',
-            ]),
+            ...mapActions({
+                setTournamentState: 'admin/setTournamentState',
+            }),
             createTournament() {
                 this.$router.push({name: 'admin-tournament-edit'});
             },

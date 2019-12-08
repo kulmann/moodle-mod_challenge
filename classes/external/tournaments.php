@@ -113,7 +113,8 @@ class tournaments extends external_api {
     public static function set_tournament_state_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'levelid' => new external_value(PARAM_INT, 'the id of the level which is to be deleted'),
+            'tournamentid' => new external_value(PARAM_INT, 'the id of the tournament which is about to get a new state'),
+            'state' => new external_value(PARAM_ALPHA, 'the new state of the tournament'),
         ]);
     }
 
@@ -178,7 +179,7 @@ class tournaments extends external_api {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
             'tournamentid' => new external_value(PARAM_INT, 'the id of the tournament'),
-            'name' => new external_value(PARAM_TEXT, 'name of the level'),
+            'name' => new external_value(PARAM_TEXT, 'name of the tournament'),
         ]);
     }
 
@@ -192,7 +193,7 @@ class tournaments extends external_api {
     }
 
     /**
-     * Updates or inserts the given data as a level and saves the associated categories.
+     * Updates or inserts the given data as a tournament.
      *
      * @param int $coursemoduleid
      * @param int $tournamentid

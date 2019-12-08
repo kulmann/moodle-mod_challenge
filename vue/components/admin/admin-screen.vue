@@ -76,7 +76,7 @@
             },
             levelForEditing() {
                 // try to find the given levelId in our loaded levels.
-                if (this.$route.params.hasOwnProperty('levelId') && !_.isNil(this.$route.params.levelId)) {
+                if (this.$route.params.hasOwnProperty('levelId') && !_.isUndefined(this.$route.params.levelId)) {
                     let levelId = parseInt(this.$route.params.levelId);
                     return _.find(this.levels, level => level.id === levelId);
                 }
@@ -85,9 +85,9 @@
             },
             tournamentForEditing() {
                 // try to find the given tournamentId in our loaded tournaments.
-                if (this.$route.params.hasOwnProperty('tournamentId') && !_.isNil(this.$route.params.tournamentId)) {
+                if (this.$route.params.hasOwnProperty('tournamentId') && !_.isUndefined(this.$route.params.tournamentId)) {
                     let tournamentId = parseInt(this.$route.params.tournamentId);
-                    return _.find(this.tournaments, tournament => tournament.id === tournamentId);
+                    return _.find(this.editableTournaments, tournament => tournament.id === tournamentId);
                 }
                 // None found. Returning null will (correctly) result in creating a new tournament.
                 return null;

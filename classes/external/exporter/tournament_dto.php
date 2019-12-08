@@ -45,14 +45,14 @@ class tournament_dto extends exporter {
     /**
      * tournament_dto constructor.
      *
-     * @param tournament $round
+     * @param tournament $tournament
      * @param game $game
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(tournament $round, game $game, context $context) {
-        $this->tournament = $round;
+    public function __construct(tournament $tournament, game $game, context $context) {
+        $this->tournament = $tournament;
         $this->game = $game;
         parent::__construct([], ['context' => $context]);
     }
@@ -74,6 +74,14 @@ class tournament_dto extends exporter {
             'game' => [
                 'type' => PARAM_INT,
                 'description' => 'challenge instance id',
+            ],
+            'state' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'current state of the tournament',
+            ],
+            'name' => [
+                'type' => PARAM_TEXT,
+                'description' => 'the name of the tournament',
             ],
             'winner_mdl_user' => [
                 'type' => PARAM_INT,

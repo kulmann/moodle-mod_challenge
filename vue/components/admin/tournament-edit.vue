@@ -4,7 +4,7 @@
             loadingAlert(:message="strings.admin_tournament_loading")
         template(v-else)
             .uk-card-body
-                form.uk-form-stacked
+                form.uk-form-stacked(@submit.prevent="save()")
                     h3(v-if="editing") {{ strings.admin_tournament_title_edit }}
                     h3(v-else) {{ strings.admin_tournament_title_add }}
 
@@ -58,9 +58,9 @@
             },
         },
         methods: {
-            ...mapActions('admin', [
-                'saveTournament'
-            ]),
+            ...mapActions({
+                saveTournament: 'admin/saveTournament',
+            }),
             initTournamentData(tournament) {
                 if (tournament === null) {
                     this.data = {
