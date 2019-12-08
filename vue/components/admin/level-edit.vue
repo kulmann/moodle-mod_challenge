@@ -57,10 +57,7 @@
                 .uk-alert.uk-alert-primary.uk-text-center(uk-alert, v-if="saving")
                     p
                         span {{ strings.admin_level_msg_saving }}
-                        span._loader
-                            span
-                            span
-                            span
+                        loadingIcon
 
 </template>
 
@@ -73,6 +70,7 @@
     import VkNotification from "vuikit/src/library/notification/components/notification";
     import Level from "../helper/level";
     import PictureInput from 'vue-picture-input';
+    import loadingIcon from "../helper/loading-icon";
 
     export default {
         mixins: [mixins],
@@ -209,6 +207,7 @@
         },
         components: {
             Level,
+            loadingIcon,
             loadingAlert,
             btnAdd,
             VkNotification,

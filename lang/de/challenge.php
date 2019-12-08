@@ -72,6 +72,7 @@ $string['admin_not_allowed'] = 'Sie haben nicht die nötigen Zugriffsrechte, um 
 $string['admin_btn_save'] = 'Speichern';
 $string['admin_btn_cancel'] = 'Abbrechen';
 $string['admin_btn_add'] = 'Hinzufügen';
+$string['admin_btn_confirm_publish'] = 'Wirklich Veröffentlichen';
 $string['admin_btn_confirm_delete'] = 'Wirklich Löschen';
 /* admin: levels */
 $string['admin_nav_levels'] = 'Levels';
@@ -105,6 +106,7 @@ $string['admin_tournaments_intro_progress'] = 'Laufende Turniere können hier be
 $string['admin_tournaments_title_finished'] = 'Abgeschlossene Turniere';
 $string['admin_tournaments_none_finished'] = 'Es gibt keine abgeschlossenen Turniere.';
 $string['admin_tournaments_intro_finished'] = 'Abgeschlossene Turniere können hier ausgewertet werden.';
+$string['admin_tournament_publish_confirm'] = 'Möchten Sie das Turnier »{$a}« wirklich veröffentlichen? Die Teilnehmer werden unverzüglich zu ihrer ersten Teilnahme eingeladen.';
 $string['admin_tournament_delete_confirm'] = 'Möchten Sie das Turnier »{$a}« wirklich löschen?';
 $string['admin_tournament_title_add'] = 'Turnier erstellen';
 $string['admin_tournament_title_edit'] = 'Turnier bearbeiten';

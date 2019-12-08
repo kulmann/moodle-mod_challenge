@@ -3,6 +3,7 @@
         p
             v-icon(v-if="icon", :name="icon").uk-margin-small-right
             span {{ message }}
+                loadingIcon
                 span._loader
                     span
                     span
@@ -10,10 +11,12 @@
 </template>
 
 <script>
+    import loadingIcon from "./loading-icon";
     export default {
         props: {
             icon: String,
             message: String
-        }
+        },
+        components: {loadingIcon}
     }
 </script>

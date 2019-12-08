@@ -72,6 +72,7 @@ $string['admin_not_allowed'] = 'You have insufficient permissions to view this p
 $string['admin_btn_save'] = 'Save';
 $string['admin_btn_cancel'] = 'Cancel';
 $string['admin_btn_add'] = 'Add';
+$string['admin_btn_confirm_publish'] = 'Confirm Publishing';
 $string['admin_btn_confirm_delete'] = 'Confirm Delete';
 /* admin: levels */
 $string['admin_nav_levels'] = 'Levels';
@@ -105,6 +106,7 @@ $string['admin_tournaments_intro_progress'] = 'Here you can observe active tourn
 $string['admin_tournaments_title_finished'] = 'Finished tournaments';
 $string['admin_tournaments_none_finished'] = 'There are no finished tournaments.';
 $string['admin_tournaments_intro_finished'] = 'Here you can evaluate finished tournaments.';
+$string['admin_tournament_publish_confirm'] = 'Do you really want to publish the tournament »{$a}«? Participants will be invited to their first match immediately.';
 $string['admin_tournament_delete_confirm'] = 'Do you really want to delete the tournament »{$a}«?';
 $string['admin_tournament_title_add'] = 'Create tournament';
 $string['admin_tournament_title_edit'] = 'Edit tournament';

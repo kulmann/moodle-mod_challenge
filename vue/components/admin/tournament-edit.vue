@@ -24,10 +24,7 @@
                 .uk-alert.uk-alert-primary.uk-text-center(uk-alert, v-if="saving")
                     p
                         span {{ strings.admin_tournament_msg_saving }}
-                        span._loader
-                            span
-                            span
-                            span
+                        loadingIcon
 
 </template>
 
@@ -36,6 +33,7 @@
     import mixins from '../../mixins';
     import loadingAlert from "../helper/loading-alert";
     import btnAdd from './btn-add';
+    import loadingIcon from "../helper/loading-icon";
 
     export default {
         mixins: [mixins],
@@ -99,6 +97,7 @@
             },
         },
         components: {
+            loadingIcon,
             loadingAlert,
             btnAdd,
         },
