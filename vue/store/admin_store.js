@@ -4,9 +4,11 @@ export default {
     namespaced: true,
     state: {
         initialized: false,
-        levels: null,
-        levelCategories: null,
-        tournaments: null,
+        levels: [],
+        levelCategories: [],
+        finishedTournaments: [],
+        activeTournaments: [],
+        editableTournaments: [],
     },
     mutations: {
         setAdminInitialized(state, initialized) {
@@ -18,8 +20,19 @@ export default {
         setLevelCategories(state, levelCategories) {
             state.levelCategories = levelCategories;
         },
-        setTournaments(state, tournaments) {
-            state.tournaments = tournaments;
+        setTournaments(state, payload) {
+            switch(payload.state) {
+                case 'finished':
+                    state.finishedTournaments = payload.tournaments;
+                    break;
+                case 'progress':
+                    state.activeTournaments = payload.tournaments;
+                    break;
+                case 'unpublished':
+                    state.editableTournaments = payload.tournaments;
+                    break;
+                default: // change nothing
+            }
         }
     },
     actions: {
@@ -31,6 +44,7 @@ export default {
         async initAdmin(context) {
             return Promise.all([
                 context.dispatch('fetchLevels'),
+                context.dispatch('fetchTournaments'),
             ]).then(() => {
                 context.commit('setAdminInitialized', true);
             });
@@ -100,5 +114,20 @@ export default {
             const categories = await ajax('mod_challenge_get_level_categories', payload);
             context.commit('setLevelCategories', categories);
         },
+        /**
+         * Fetches all tournaments and sorts them into the three different tournament categories.
+         *
+         * @param context
+         * @returns {Promise<void>}
+         */
+        async fetchTournaments(context) {
+            const tournaments = await ajax('mod_challenge_get_tournaments');
+            _.forEach(['finished', 'progress', 'unpublished'], state => {
+                context.commit('setTournaments', {
+                    tournaments: _.filter(tournaments, t => t.state === state),
+                    state,
+                });
+            });
+        }
     }
 }

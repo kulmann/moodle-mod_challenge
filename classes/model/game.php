@@ -131,6 +131,16 @@ class game extends abstract_model {
     }
 
     /**
+     * Loads all tournaments of this game.
+     *
+     * @return tournament[]
+     * @throws \dml_exception
+     */
+    public function get_tournaments() {
+        return $this->get_tournaments_by_state_internal(null);
+    }
+
+    /**
      * Loads all tournaments of this game that match the given $state.
      *
      * @param string $state
@@ -138,10 +148,25 @@ class game extends abstract_model {
      * @return tournament[]
      * @throws \dml_exception
      */
-    public function get_tournaments_by_state($state) {
+    public function get_tournaments_by_state(string $state) {
+        return $this->get_tournaments_by_state_internal($state);
+    }
+
+    /**
+     * Loads all tournaments of this game that match the given $state.
+     *
+     * @param string | null $state If null, all tournaments of this game will be returned.
+     *
+     * @return tournament[]
+     * @throws \dml_exception
+     */
+    private function get_tournaments_by_state_internal($state) {
         global $DB;
-        $sql_params = ['game' => $this->get_id(), 'state' => $state];
-        $records = $DB->get_records('challenge_tournaments', $sql_params, 'timecreated ASC');
+        $sql_params = ['game' => $this->get_id()];
+        if ($state) {
+            $sql_params['state'] = $state;
+        }
+        $records = $DB->get_records('challenge_tournaments', $sql_params, 'timecreated DESC');
         $result = [];
         foreach ($records as $tournament_data) {
             $tournament = new tournament();

@@ -51,7 +51,7 @@ class tournaments extends external_api {
     public static function get_tournaments_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'state' => new external_value(PARAM_ALPHA, 'tournament state'),
+            'state' => new external_value(PARAM_ALPHA, 'tournament state', false),
         ]);
     }
 
@@ -82,7 +82,9 @@ class tournaments extends external_api {
     public static function get_tournaments($coursemoduleid, $state) {
         $params = ['coursemoduleid' => $coursemoduleid, 'state' => $state];
         self::validate_parameters(self::get_tournaments_parameters(), $params);
-        util::validate_tournament_state($state);
+        if ($state) {
+            util::validate_tournament_state($state);
+        }
 
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
@@ -95,7 +97,7 @@ class tournaments extends external_api {
 
         // collect export data
         $result = [];
-        $tournaments = $game->get_tournaments_by_state($state);
+        $tournaments = $state ? $game->get_tournaments_by_state($state) : $game->get_tournaments();
         foreach ($tournaments as $tournament) {
             $exporter = new tournament_dto($tournament, $game, $ctx);
             $result[] = $exporter->export($renderer);

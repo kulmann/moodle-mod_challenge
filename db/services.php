@@ -68,7 +68,7 @@ $functions = [
     'mod_challenge_get_tournaments' => [
         'classname' => 'mod_challenge\external\tournaments',
         'methodname' => 'get_tournaments',
-        'description' => 'Get tournaments of a game having a specified state.',
+        'description' => 'Get tournaments of a game having a specified state (or all of them).',
         'type' => 'read',
         'ajax' => true,
     ],
