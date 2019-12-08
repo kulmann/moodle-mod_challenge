@@ -119,6 +119,8 @@ $string['admin_tournament_title_add'] = 'Turnier erstellen';
 $string['admin_tournament_title_edit'] = 'Turnier bearbeiten';
 $string['admin_tournament_loading'] = 'Lade Turnier-Daten';
 $string['admin_tournament_lbl_name'] = 'Name';
+$string['admin_tournament_title_pairings'] = 'Turnier-Teilnehmer bearbeiten';
+$string['admin_tournament_participants_loading'] = 'Lade Turnier-Teilnehmer';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';

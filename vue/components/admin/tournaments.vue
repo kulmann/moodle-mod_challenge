@@ -18,7 +18,9 @@
                                 td.actions.uk-table-shrink.uk-preserve-width
                                     button.btn.btn-default(@click="editTournament(tournament)", :disabled="stateChangeInProgress")
                                         v-icon(name="regular/edit")
-                                    button.btn.btn-default(@click="publishTournamentAsk(tournament)", :disabled="stateChangeInProgress")
+                                    button.btn.btn-default(@click="createPairings(tournament)", :disabled="stateChangeInProgress")
+                                        v-icon(name="users")
+                                    button.btn.btn-default(@click="publishTournamentAsk(tournament)", :disabled="stateChangeInProgress || !hasPairings(tournament)")
                                         v-icon(name="rocket")
                                     button.btn.btn-default(@click="deleteTournamentAsk(tournament)", :disabled="stateChangeInProgress")
                                         v-icon(name="trash")
@@ -88,17 +90,23 @@
             ]),
             stateChangeInProgress() {
                 return this.publishConfirmationTournamentId !== null || this.deleteConfirmationTournamentId !== null;
-            }
+            },
         },
         methods: {
             ...mapActions({
                 setTournamentState: 'admin/setTournamentState',
             }),
+            hasPairings(tournament) {
+                return tournament.has_pairings;
+            },
             createTournament() {
                 this.$router.push({name: 'admin-tournament-edit'});
             },
             editTournament(tournament) {
                 this.$router.push({name: 'admin-tournament-edit', params: {tournamentId: tournament.id}});
+            },
+            createPairings(tournament) {
+                this.$router.push({name: 'admin-tournament-pairings', params: {tournamentId: tournament.id}});
             },
             publishTournamentAsk(tournament) {
                 this.publishConfirmationTournamentId = tournament.id;

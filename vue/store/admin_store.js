@@ -161,6 +161,29 @@ export default {
             return result.result;
         },
         /**
+         * Fetches the pairings of a tournament.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<void>}
+         */
+        async fetchPairings(context, payload) {
+            return await ajax('mod_challenge_get_tournament_pairings', payload);
+        },
+        /**
+         * Updates the participant pairings of the given tournament.
+         *
+         * @param context
+         * @param payload
+         *
+         * @returns {Promise<*>}
+         */
+        async savePairings(context, payload) {
+            const result = await ajax('mod_challenge_save_tournament_pairings', payload);
+            context.dispatch('fetchTournaments');
+            return result.result;
+        },
+        /**
          * Fetches all moodle question categories which are applicable for this game.
          *
          * @param context

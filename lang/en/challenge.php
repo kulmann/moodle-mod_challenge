@@ -119,6 +119,8 @@ $string['admin_tournament_title_add'] = 'Create tournament';
 $string['admin_tournament_title_edit'] = 'Edit tournament';
 $string['admin_tournament_loading'] = 'Loading tournament data';
 $string['admin_tournament_lbl_name'] = 'Name';
+$string['admin_tournament_title_pairings'] = 'Edit tournament participants';
+$string['admin_tournament_participants_loading'] = 'Loading tournament participants';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';

@@ -86,6 +86,20 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
+    'mod_challenge_save_tournament_pairings' => [
+        'classname' => 'mod_challenge\external\tournaments',
+        'methodname' => 'save_tournament_pairings',
+        'description' => 'Save the pairings for a tournament',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'mod_challenge_get_tournament_pairings' => [
+        'classname' => 'mod_challenge\external\tournaments',
+        'methodname' => 'get_tournament_pairings',
+        'description' => 'Get the pairings of a tournament',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     'mod_challenge_get_question' => [
         'classname' => 'mod_challenge\external\tournament_gamesessions',
         'methodname' => 'get_question',

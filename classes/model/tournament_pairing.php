@@ -51,10 +51,6 @@ class tournament_pairing extends abstract_model {
      */
     protected $timemodified;
     /**
-     * @var int The id of the game instance this pairing belongs to.
-     */
-    protected $game;
-    /**
      * @var int The id of the tournament instance this pairing belongs to.
      */
     protected $tournament;
@@ -82,7 +78,6 @@ class tournament_pairing extends abstract_model {
         parent::__construct('challenge_tnmt_questions', 0);
         $this->timecreated = \time();
         $this->timemodified = \time();
-        $this->game = 0;
         $this->tournament = 0;
         $this->step = 0;
         $this->mdl_user_1 = 0;
@@ -104,7 +99,6 @@ class tournament_pairing extends abstract_model {
         $this->id = isset($data['id']) ? $data['id'] : 0;
         $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
-        $this->game = $data['game'];
         $this->tournament = $data['tournament'];
         $this->step = $data['step'];
         $this->mdl_user_1 = $data['mdl_user_1'];
@@ -120,13 +114,6 @@ class tournament_pairing extends abstract_model {
     }
 
     /**
-     * @param int $timecreated
-     */
-    public function set_timecreated(int $timecreated) {
-        $this->timecreated = $timecreated;
-    }
-
-    /**
      * @return int
      */
     public function get_timemodified(): int {
@@ -138,20 +125,6 @@ class tournament_pairing extends abstract_model {
      */
     public function set_timemodified(int $timemodified) {
         $this->timemodified = $timemodified;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_game(): int {
-        return $this->game;
-    }
-
-    /**
-     * @param int $game
-     */
-    public function set_game(int $game) {
-        $this->game = $game;
     }
 
     /**
@@ -215,6 +188,27 @@ class tournament_pairing extends abstract_model {
      */
     public function get_winner(): string {
         return $this->winner;
+    }
+
+    /**
+     * Marks that none of the players won.
+     */
+    public function set_winner_tie() {
+        $this->set_winner(self::WINNER_TIE);
+    }
+
+    /**
+     * Marks the first player as winner.
+     */
+    public function set_winner_player1() {
+        $this->set_winner(self::WINNER_P1);
+    }
+
+    /**
+     * Marks the second player as winner.
+     */
+    public function set_winner_player2() {
+        $this->set_winner(self::WINNER_P2);
     }
 
     /**

@@ -18,6 +18,7 @@
                 levels(v-else-if="viewMode === VIEW_MODE_LEVELS", :levels="levels")
             template(v-else)
                 tournamentEdit(v-if="viewMode === VIEW_MODE_TOURNAMENT_EDIT", :tournament="tournamentForEditing")
+                tournamentPairings(v-else-if="viewMode === VIEW_MODE_TOURNAMENT_PAIRINGS", :tournament="tournamentForEditing")
                 levelEdit(v-else-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing")
 </template>
 
@@ -31,7 +32,8 @@
     import levels from './levels';
     import levelEdit from "./level-edit";
     import tournamentEdit from "./tournament-edit";
-    import Tournaments from "./tournaments";
+    import tournaments from "./tournaments";
+    import tournamentPairings from "./tournament-pairings";
 
     export default {
         mixins: [mixins],
@@ -42,6 +44,7 @@
                 VIEW_MODE_LEVEL_EDIT: 'levelEdit',
                 VIEW_MODE_TOURNAMENTS: 'tournaments',
                 VIEW_MODE_TOURNAMENT_EDIT: 'tournamentEdit',
+                VIEW_MODE_TOURNAMENT_PAIRINGS: 'tournamentPairings',
             }
         },
         computed: {
@@ -70,6 +73,8 @@
                     return this.VIEW_MODE_TOURNAMENTS;
                 } else if (this.$route.name === 'admin-tournament-edit') {
                     return this.VIEW_MODE_TOURNAMENT_EDIT;
+                } else if (this.$route.name === 'admin-tournament-pairings') {
+                    return this.VIEW_MODE_TOURNAMENT_PAIRINGS;
                 } else {
                     return this.VIEW_MODE_NONE;
                 }
@@ -114,13 +119,14 @@
             }
         },
         components: {
-            Tournaments,
             VkGrid,
             failureAlert,
             loadingAlert,
             levels,
             levelEdit,
-            tournamentEdit
+            tournamentEdit,
+            tournamentPairings,
+            tournaments
         },
     }
 </script>

@@ -73,10 +73,6 @@ class tournament_pairing_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'timestamp of the last modification of the tournament',
             ],
-            'game' => [
-                'type' => PARAM_INT,
-                'description' => 'challenge instance id',
-            ],
             'tournament' => [
                 'type' => PARAM_INT,
                 'description' => 'id of the tournament',

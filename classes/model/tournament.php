@@ -103,6 +103,77 @@ class tournament extends abstract_model {
     }
 
     /**
+     * Clears the participant pairings of an unpublished tournament.
+     *
+     * @return bool Whether clearing the pairings was successful.
+     * @throws \dml_exception
+     * @throws \invalid_state_exception If the state is not 'unpublished' anymore.
+     */
+    public function clear_pairings() {
+        if ($this->get_state() !== self::STATE_UNPUBLISHED) {
+            throw new \invalid_state_exception("it's not allowed to clear the participant pairings of a published tournament.");
+        }
+        global $DB;
+        $conditions = ['tournament' => $this->get_id()];
+        return $DB->delete_records('challenge_tnmt_pairings', $conditions);
+    }
+
+    /**
+     * Creates new pairings for the given pairing data and saves them in the DB.
+     *
+     * @param array $pairings_data
+     *
+     * @throws \dml_exception
+     * @throws \invalid_state_exception
+     */
+    public function create_pairings($pairings_data) {
+        if ($this->get_state() !== self::STATE_UNPUBLISHED) {
+            throw new \invalid_state_exception("it's not allowed to create fresh participant pairings for a published tournament.");
+        }
+        foreach ($pairings_data as $pairing_data) {
+            $pairing = new tournament_pairing();
+            $pairing->set_tournament($this->get_id());
+            $pairing->set_step(0);
+            $pairing->set_mdl_user_1($pairing_data['mdl_user_1']);
+            $pairing->set_mdl_user_2($pairing_data['mdl_user_2']);
+            $pairing->save();
+        }
+    }
+
+    /**
+     * Checks if this tournament already has pairings.
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public function has_pairings() {
+        global $DB;
+        $count_pairings = $DB->count_records('challenge_tnmt_pairings', ['tournament' => $this->get_id()]);
+        return $count_pairings > 0;
+    }
+
+    /**
+     * Loads all pairings of this tournament for the given $step.
+     *
+     * @param int $step
+     *
+     * @return tournament_pairing[]
+     * @throws \dml_exception
+     */
+    public function get_pairings($step) {
+        global $DB;
+        $sql_conditions = ['tournament' => $this->get_id(), 'step' => $step];
+        $records = $DB->get_records('challenge_tnmt_pairings', $sql_conditions);
+        $result = [];
+        foreach($records as $pairing_data) {
+            $pairing = new tournament_pairing();
+            $pairing->apply($pairing_data);
+            $result[] = $pairing;
+        }
+        return $result;
+    }
+
+    /**
      * @return int
      */
     public function get_timecreated(): int {
