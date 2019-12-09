@@ -16,10 +16,6 @@
 
 namespace mod_challenge\model;
 
-use function array_map;
-use function explode;
-use function intval;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -72,10 +68,10 @@ class tournament_pairing extends abstract_model {
     protected $winner;
 
     /**
-     * tournament_question constructor.
+     * tournament_pairing constructor.
      */
     function __construct() {
-        parent::__construct('challenge_tnmt_questions', 0);
+        parent::__construct('challenge_tnmt_pairings', 0);
         $this->timecreated = \time();
         $this->timemodified = \time();
         $this->tournament = 0;

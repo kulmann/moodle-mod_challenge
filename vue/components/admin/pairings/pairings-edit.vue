@@ -11,8 +11,10 @@
                     li(:class="{'uk-active': activeTab === TAB_PAIRINGS}")
                         a(@click="setActiveTab(TAB_PAIRINGS)") {{  strings.admin_nav_pairings_pairs }}
                 usersSelect(v-if="activeTab === TAB_USERS", :tournament="tournament", v-model="participants")
+                pairingsSelect(v-else-if="activeTab === TAB_PAIRINGS", :tournament="tournament", :participants="participants", v-model="pairings")
+                pairingsInfo(:tournament="tournament", :participants="participants")
             .uk-card-footer.uk-text-right
-                button.btn.btn-primary(@click="save()", :disabled="saving")
+                button.btn.btn-primary(@click="save()", :disabled="saving || isDataInvalid")
                     v-icon(name="save").uk-margin-small-right
                     span {{ strings.admin_btn_save }}
                 button.btn.btn-default(@click="goToTournamentList()", :disabled="saving").uk-margin-small-left
@@ -32,6 +34,8 @@
     import btnAdd from '../btn-add';
     import loadingIcon from "../../helper/loading-icon";
     import UsersSelect from "./users-select";
+    import PairingsSelect from "./pairings-select";
+    import PairingsInfo from "./pairings-info";
 
     export default {
         mixins: [mixins],
@@ -54,6 +58,9 @@
                 'game',
                 'mdlUsers',
             ]),
+            isDataInvalid() {
+                return this.pairings === null || this.pairings.length === 0;
+            },
         },
         methods: {
             ...mapActions({
@@ -64,21 +71,33 @@
                 this.activeTab = tab;
             },
             initData(tournament) {
-                let pairings = this.fetchPairings({tournamentid: tournament.id});
-                this.pairings = _.map(pairings, pairing => {
-                    return {
-                        mdl_user_1: pairing.mdl_user_1,
-                        mdl_user_2: pairing.mdl_user_2,
-                    };
+                this.fetchPairings({tournamentid: tournament.id, step: 0}).then(pairings => {
+                    // collect pairings
+                    this.pairings = _.map(pairings, pairing => {
+                        return {
+                            mdl_user_1: pairing.mdl_user_1,
+                            mdl_user_2: pairing.mdl_user_2,
+                        };
+                    });
+                    // collect participants
+                    let participantIds = [];
+                    _.forEach(this.pairings, pair => {
+                        participantIds.push(pair.mdl_user_1);
+                        participantIds.push(pair.mdl_user_2);
+                    });
+                    this.participants = _.filter(this.mdlUsers, user => participantIds.includes(user.id));
                 });
-                this.participants = this.mdlUsers;
             },
             goToTournamentList() {
                 this.$router.push({name: 'admin-tournament-list'});
             },
             save() {
+                if (this.isDataInvalid) {
+                    return;
+                }
                 let payload = {
                     tournamentid: this.tournament.id,
+                    pairings: this.pairings,
                 };
                 this.saving = true;
                 this.savePairings(payload)
@@ -94,11 +113,13 @@
             this.initData(this.tournament);
         },
         watch: {
-            tournament (tournament) {
+            tournament(tournament) {
                 this.initData(tournament);
             },
         },
         components: {
+            PairingsInfo,
+            PairingsSelect,
             UsersSelect,
             loadingIcon,
             loadingAlert,

@@ -81,6 +81,7 @@ $string['admin_btn_cancel'] = 'Abbrechen';
 $string['admin_btn_add'] = 'Hinzufügen';
 $string['admin_btn_confirm_publish'] = 'Wirklich Veröffentlichen';
 $string['admin_btn_confirm_delete'] = 'Wirklich Löschen';
+$string['admin_btn_generate'] = 'Generieren';
 $string['admin_avatar_alt'] = 'Foto von {$a}';
 /* admin: levels */
 $string['admin_nav_levels'] = 'Levels';
@@ -124,6 +125,8 @@ $string['admin_tournament_title_pairings'] = 'Turnier-Teilnehmer bearbeiten';
 $string['admin_tournament_participants_loading'] = 'Lade Turnier-Teilnehmer';
 $string['admin_nav_pairings_users'] = 'Teilnehmer auswählen';
 $string['admin_nav_pairings_pairs'] = 'Paare generieren';
+$string['admin_tournament_pairing_invalid_users'] = 'Mit den ausgewählten Teilnehmern kann kein Turnier gestartet werden. Bitte beachten Sie, dass eine gerade Teilnehmer-Anzahl benötigt wird.';
+$string['admin_tournament_pairing_info_participants'] = '{$a} Teilnehmer ausgewählt';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';
