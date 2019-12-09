@@ -16,6 +16,9 @@
 
 namespace mod_challenge\external\exporter;
 
+global $CFG;
+require_once($CFG->libdir . '/outputcomponents.php');
+
 use context;
 use core\external\exporter;
 use renderer_base;
@@ -81,12 +84,39 @@ class mdl_user_dto extends exporter {
         ];
     }
 
+    /**
+     * @param renderer_base $output
+     *
+     * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     protected function get_other_values(renderer_base $output) {
         return [
             'id' => \intval($this->mdl_user->id),
             'firstname' => $this->mdl_user->firstname,
             'lastname' => $this->mdl_user->lastname,
-            'image' => $this->mdl_user->picture,
+            'image' => $this->get_user_picture_url(),
         ];
+    }
+
+    /**
+     * Generates the picture url of the user, including fallback url if there is none.
+     *
+     * @return string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    private function get_user_picture_url() {
+        // set up page
+        $page = new \moodle_page();
+        $page->set_url('/user/profile.php');
+        $page->set_context(\context_system::instance());
+        $renderer = $page->get_renderer('core');
+        $usercontext = \context_user::instance($this->mdl_user->id);
+
+        // Get the user's profile picture and make sure it is correct.
+        $userpicture = new \user_picture($this->mdl_user);
+        return $userpicture->get_url($page, $renderer)->out(false);
     }
 }

@@ -81,6 +81,7 @@ $string['admin_btn_cancel'] = 'Cancel';
 $string['admin_btn_add'] = 'Add';
 $string['admin_btn_confirm_publish'] = 'Confirm Publishing';
 $string['admin_btn_confirm_delete'] = 'Confirm Delete';
+$string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: levels */
 $string['admin_nav_levels'] = 'Levels';
 $string['admin_levels_title'] = 'Edit levels';
@@ -121,6 +122,8 @@ $string['admin_tournament_loading'] = 'Loading tournament data';
 $string['admin_tournament_lbl_name'] = 'Name';
 $string['admin_tournament_title_pairings'] = 'Edit tournament participants';
 $string['admin_tournament_participants_loading'] = 'Loading tournament participants';
+$string['admin_nav_pairings_users'] = 'Select Participants';
+$string['admin_nav_pairings_pairs'] = 'Generate Pairing';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';

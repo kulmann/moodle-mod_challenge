@@ -132,7 +132,8 @@ class game extends abstract_model {
         $sql = "SELECT DISTINCT $picture_fields
                 FROM {user} u
                 JOIN {role_assignments} a ON a.userid = u.id
-                JOIN {context} ctx ON (a.contextid = ctx.id AND instanceid = :courseid)";
+                JOIN {context} ctx ON (a.contextid = ctx.id AND instanceid = :courseid)
+                ORDER BY u.lastname, u.firstname ASC";
         $params = ['courseid' => $courseid];
         return $DB->get_records_sql($sql, $params);
     }

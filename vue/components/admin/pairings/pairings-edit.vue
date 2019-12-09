@@ -5,8 +5,12 @@
         template(v-else)
             .uk-card-body
                 h3 {{ strings.admin_tournament_title_pairings }}
-
-
+                ul.uk-tab.uk-margin-small-bottom
+                    li(:class="{'uk-active': activeTab === TAB_USERS}")
+                        a(@click="setActiveTab(TAB_USERS)") {{  strings.admin_nav_pairings_users }}
+                    li(:class="{'uk-active': activeTab === TAB_PAIRINGS}")
+                        a(@click="setActiveTab(TAB_PAIRINGS)") {{  strings.admin_nav_pairings_pairs }}
+                usersSelect(v-if="activeTab === TAB_USERS", :tournament="tournament", v-model="participants")
             .uk-card-footer.uk-text-right
                 button.btn.btn-primary(@click="save()", :disabled="saving")
                     v-icon(name="save").uk-margin-small-right
@@ -27,6 +31,7 @@
     import loadingAlert from "../../helper/loading-alert";
     import btnAdd from '../btn-add';
     import loadingIcon from "../../helper/loading-icon";
+    import UsersSelect from "./users-select";
 
     export default {
         mixins: [mixins],
@@ -35,6 +40,10 @@
         },
         data() {
             return {
+                TAB_USERS: 'users',
+                TAB_PAIRINGS: 'pairings',
+                activeTab: 'users',
+                participants: [],
                 pairings: null,
                 saving: false,
             }
@@ -43,6 +52,7 @@
             ...mapState([
                 'strings',
                 'game',
+                'mdlUsers',
             ]),
         },
         methods: {
@@ -50,6 +60,9 @@
                 fetchPairings: 'admin/fetchPairings',
                 savePairings: 'admin/savePairings',
             }),
+            setActiveTab(tab) {
+                this.activeTab = tab;
+            },
             initData(tournament) {
                 let pairings = this.fetchPairings({tournamentid: tournament.id});
                 this.pairings = _.map(pairings, pairing => {
@@ -58,6 +71,7 @@
                         mdl_user_2: pairing.mdl_user_2,
                     };
                 });
+                this.participants = this.mdlUsers;
             },
             goToTournamentList() {
                 this.$router.push({name: 'admin-tournament-list'});
@@ -80,11 +94,12 @@
             this.initData(this.tournament);
         },
         watch: {
-            tournament: function (tournament) {
+            tournament (tournament) {
                 this.initData(tournament);
             },
         },
         components: {
+            UsersSelect,
             loadingIcon,
             loadingAlert,
             btnAdd,
