@@ -10,9 +10,8 @@
                         a(@click="setActiveTab(TAB_USERS)") {{  strings.admin_nav_pairings_users }}
                     li(:class="{'uk-active': activeTab === TAB_PAIRINGS}")
                         a(@click="setActiveTab(TAB_PAIRINGS)") {{  strings.admin_nav_pairings_pairs }}
-                usersSelect(v-if="activeTab === TAB_USERS", :tournament="tournament", v-model="participants")
+                usersSelect(v-if="activeTab === TAB_USERS", :tournament="tournament", v-model="participants", @input="clearPairings")
                 pairingsSelect(v-else-if="activeTab === TAB_PAIRINGS", :tournament="tournament", :participants="participants", v-model="pairings")
-                pairingsInfo(:tournament="tournament", :participants="participants")
             .uk-card-footer.uk-text-right
                 button.btn.btn-primary(@click="save()", :disabled="saving || isDataInvalid")
                     v-icon(name="save").uk-margin-small-right
@@ -33,9 +32,8 @@
     import loadingAlert from "../../helper/loading-alert";
     import btnAdd from '../btn-add';
     import loadingIcon from "../../helper/loading-icon";
-    import UsersSelect from "./users-select";
-    import PairingsSelect from "./pairings-select";
-    import PairingsInfo from "./pairings-info";
+    import usersSelect from "./users-select";
+    import pairingsSelect from "./pairings-select";
 
     export default {
         mixins: [mixins],
@@ -88,6 +86,9 @@
                     this.participants = _.filter(this.mdlUsers, user => participantIds.includes(user.id));
                 });
             },
+            clearPairings() {
+                this.pairings = [];
+            },
             goToTournamentList() {
                 this.$router.push({name: 'admin-tournament-list'});
             },
@@ -118,9 +119,8 @@
             },
         },
         components: {
-            PairingsInfo,
-            PairingsSelect,
-            UsersSelect,
+            pairingsSelect,
+            usersSelect,
             loadingIcon,
             loadingAlert,
             btnAdd,

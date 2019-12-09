@@ -54,6 +54,9 @@ export default {
             } else {
                 return state.player && state.player.initialized;
             }
+        },
+        getMdlUser: state => (mdlUserId) => {
+            return _.first(_.filter(state.mdlUsers, user => user.id === mdlUserId));
         }
     },
     actions: {

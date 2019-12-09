@@ -127,6 +127,12 @@ $string['admin_nav_pairings_users'] = 'Teilnehmer auswählen';
 $string['admin_nav_pairings_pairs'] = 'Paare generieren';
 $string['admin_tournament_pairing_invalid_users'] = 'Mit den ausgewählten Teilnehmern kann kein Turnier gestartet werden. Bitte beachten Sie, dass eine gerade Teilnehmer-Anzahl benötigt wird.';
 $string['admin_tournament_pairing_info_participants'] = '{$a} Teilnehmer ausgewählt';
+$string['admin_tournament_pairing_none_title'] = 'Noch keine Paare';
+$string['admin_tournament_pairing_none_msg'] = 'Sie haben noch keine Teilnehmer-Paare generiert. Bitte klicken Sie auf den »Generieren« Button.';
+$string['admin_tournament_pairing_done_title'] = 'Paare generiert';
+$string['admin_tournament_pairing_done_msg'] = 'Sie haben die folgenden Teilnehmer-Paare generiert. Wenn Sie mit der Zusammenstellung einverstanden sind, können Sie auf »Speichern« klicken.';
+$string['admin_tournament_pairing_table_number'] = 'Nummer';
+$string['admin_tournament_pairing_table_participant'] = 'Teilnehmer';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';

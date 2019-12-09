@@ -6,6 +6,8 @@
                     input.uk-checkbox(type="checkbox", v-model="selectedUsers", :value="user", @change="onChange").uk-margin-small-right
                     userAvatar._pointer(:size="20", :user="user")
                     span._pointer {{ user.firstname + ' ' + user.lastname }}
+        div.uk-alert.uk-alert-primary
+            span {{ strings.admin_tournament_pairing_info_participants | stringParams(selectedUsers.length) }}
 </template>
 
 <script>

@@ -127,6 +127,12 @@ $string['admin_nav_pairings_users'] = 'Select Participants';
 $string['admin_nav_pairings_pairs'] = 'Generate Pairing';
 $string['admin_tournament_pairing_invalid_users'] = 'Starting a tournament with the selected participants is impossible. Please be aware that an even number of participants is required.';
 $string['admin_tournament_pairing_info_participants'] = '{$a} participants selected';
+$string['admin_tournament_pairing_none_title'] = 'No pairings';
+$string['admin_tournament_pairing_none_msg'] = 'You didn\'t generate any participant pairings so far. Please click on the »Generate« button.';
+$string['admin_tournament_pairing_done_title'] = 'Pairings generated';
+$string['admin_tournament_pairing_done_msg'] = 'You have generated the following participant pairings. If you agree with the current set, please click »Save«.';
+$string['admin_tournament_pairing_table_number'] = 'Number';
+$string['admin_tournament_pairing_table_participant'] = 'Participant';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
