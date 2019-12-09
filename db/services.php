@@ -65,6 +65,13 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_get_mdl_users' => [
+        'classname' => 'mod_challenge\external\game',
+        'methodname' => 'get_mdl_users',
+        'description' => 'Get moodle users which have access to the given game',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     'mod_challenge_get_tournaments' => [
         'classname' => 'mod_challenge\external\tournaments',
         'methodname' => 'get_tournaments',

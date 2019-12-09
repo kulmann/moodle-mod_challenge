@@ -13,6 +13,7 @@ export default {
         contextID: 0,
         strings: {},
         game: null,
+        mdlUsers: [],
     },
     mutations: {
         updateTime(state) {
@@ -35,6 +36,9 @@ export default {
         },
         setGame(state, game) {
             state.game = game;
+        },
+        setMdlUsers(state, mdlUsers) {
+            state.mdlUsers = mdlUsers;
         },
     },
     getters: {
@@ -65,6 +69,7 @@ export default {
                     return Promise.all([
                         context.dispatch('loadComponentStrings'),
                         context.dispatch('fetchGame'),
+                        context.dispatch('fetchMdlUsers'),
                     ]).then(() => {
                         context.commit('setInitialized', true);
                     });
@@ -132,6 +137,17 @@ export default {
             const game = await ajax('mod_challenge_get_game');
             context.commit('setGame', game);
         },
+        /**
+         * Fetches all non-teacher moodle users that have access to this course.
+         *
+         * @param context
+         *
+         * @returns {Promise<void>}
+         */
+        async fetchMdlUsers(context) {
+            const mdlUsers = await ajax('mod_challenge_get_mdl_users');
+            context.commit('setMdlUsers', mdlUsers);
+        }
     }
 };
 

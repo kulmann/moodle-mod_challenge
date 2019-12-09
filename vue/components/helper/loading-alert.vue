@@ -4,10 +4,6 @@
             v-icon(v-if="icon", :name="icon").uk-margin-small-right
             span {{ message }}
                 loadingIcon
-                span._loader
-                    span
-                    span
-                    span
 </template>
 
 <script>

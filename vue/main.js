@@ -67,7 +67,7 @@ function init(coursemoduleid, contextid) {
                 name: 'admin-tournament-edit',
             }, {
                 path: 'tournament/:tournamentId/pairings',
-                name: 'admin-tournament-pairings',
+                name: 'admin-pairings-edit',
             }]
         }, {
             path: '*',

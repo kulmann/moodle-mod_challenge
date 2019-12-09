@@ -106,7 +106,7 @@
                 this.$router.push({name: 'admin-tournament-edit', params: {tournamentId: tournament.id}});
             },
             createPairings(tournament) {
-                this.$router.push({name: 'admin-tournament-pairings', params: {tournamentId: tournament.id}});
+                this.$router.push({name: 'admin-pairings-edit', params: {tournamentId: tournament.id}});
             },
             publishTournamentAsk(tournament) {
                 this.publishConfirmationTournamentId = tournament.id;

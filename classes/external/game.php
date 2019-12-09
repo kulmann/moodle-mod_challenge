@@ -20,10 +20,12 @@ use coding_exception;
 use dml_exception;
 use external_api;
 use external_function_parameters;
+use external_multiple_structure;
 use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\game_dto;
+use mod_challenge\external\exporter\mdl_user_dto;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -86,5 +88,64 @@ class game extends external_api {
 
         $exporter = new game_dto($game, $USER, $ctx);
         return $exporter->export($renderer);
+    }
+
+    /**
+     * Definition of parameters for {@see get_mdl_users}.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_mdl_users_parameters() {
+        return new external_function_parameters([
+            'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
+        ]);
+    }
+
+    /**
+     * Definition of return type for {@see get_mdl_users}.
+     *
+     * @return external_multiple_structure
+     */
+    public static function get_mdl_users_returns() {
+        return new external_multiple_structure(mdl_user_dto::get_read_structure());
+    }
+
+    /**
+     * Gets the moodle users which are available for this game.
+     *
+     * @param int $coursemoduleid
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_mdl_users($coursemoduleid) {
+        $params = ['coursemoduleid' => $coursemoduleid];
+        self::validate_parameters(self::get_mdl_users_parameters(), $params);
+
+        // load context
+        list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
+        self::validate_context($coursemodule->context);
+
+        global $PAGE, $USER;
+        $renderer = $PAGE->get_renderer('core');
+        $ctx = $coursemodule->context;
+        $game = util::get_game($coursemodule);
+
+        // get the users and transform to output
+        $mdl_users = $game->get_mdl_users($course->id);
+        $result = [];
+        foreach($mdl_users as $mdl_user) {
+            if (util::user_has_capability('mod/challenge:manage', $ctx, $mdl_user->id)) {
+                // skip teachers
+                continue;
+            }
+            $exporter = new mdl_user_dto($mdl_user, $ctx);
+            $result[] = $exporter->export($renderer);
+        }
+        return $result;
     }
 }

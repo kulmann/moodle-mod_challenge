@@ -16,6 +16,12 @@
 
 namespace mod_challenge\model;
 
+global $CFG;
+require_once($CFG->libdir . '/outputcomponents.php');
+
+use dml_exception;
+use stdClass;
+use user_picture;
 use function assert;
 use function usort;
 
@@ -113,10 +119,29 @@ class game extends abstract_model {
     }
 
     /**
+     * Select all users within the given course.
+     *
+     * @param int $courseid
+     *
+     * @return stdClass[]
+     * @throws dml_exception
+     */
+    public function get_mdl_users($courseid) {
+        global $DB;
+        $picture_fields = user_picture::fields('u');
+        $sql = "SELECT DISTINCT $picture_fields
+                FROM {user} u
+                JOIN {role_assignments} a ON a.userid = u.id
+                JOIN {context} ctx ON (a.contextid = ctx.id AND instanceid = :courseid)";
+        $params = ['courseid' => $courseid];
+        return $DB->get_records_sql($sql, $params);
+    }
+
+    /**
      * Loads all unpublished tournaments of this game.
      *
      * @return tournament[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_unpublished_tournaments() {
         return $this->get_tournaments_by_state(tournament::STATE_UNPUBLISHED);
@@ -126,7 +151,7 @@ class game extends abstract_model {
      * Loads all active tournaments of this game.
      *
      * @return tournament[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_active_tournaments() {
         return $this->get_tournaments_by_state(tournament::STATE_PROGRESS);
@@ -136,7 +161,7 @@ class game extends abstract_model {
      * Loads all finished tournaments of this game.
      *
      * @return tournament[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_finished_tournaments() {
         return $this->get_tournaments_by_state(tournament::STATE_FINISHED);
@@ -146,7 +171,7 @@ class game extends abstract_model {
      * Loads all tournaments of this game.
      *
      * @return tournament[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_tournaments() {
         return $this->get_tournaments_by_state_internal(null);
@@ -158,7 +183,7 @@ class game extends abstract_model {
      * @param string $state
      *
      * @return tournament[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_tournaments_by_state(string $state) {
         return $this->get_tournaments_by_state_internal($state);
@@ -170,7 +195,7 @@ class game extends abstract_model {
      * @param string | null $state If null, all tournaments of this game will be returned.
      *
      * @return tournament[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     private function get_tournaments_by_state_internal($state) {
         global $DB;
@@ -192,7 +217,7 @@ class game extends abstract_model {
      * Counts the active levels of this game.
      *
      * @return int
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function count_active_levels(): int {
         global $DB;
@@ -212,7 +237,7 @@ class game extends abstract_model {
      * @param int $position
      *
      * @return level|null
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_active_level_by_position($position) {
         global $DB;
@@ -235,7 +260,7 @@ class game extends abstract_model {
      * Gets all active levels for this game from the DB.
      *
      * @return level[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_active_levels() {
         global $DB;
@@ -254,7 +279,7 @@ class game extends abstract_model {
      * Goes through all active levels, fixing their individual position.
      *
      * @return void
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function fix_level_positions() {
         $levels = $this->get_active_levels();
