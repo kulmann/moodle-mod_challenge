@@ -44,7 +44,7 @@ function init(coursemoduleid, contextid) {
             name: 'loading-screen',
             meta: {title: 'loading_screen_title'}
         }, {
-            path: '/game/play',
+            path: '/game',
             component: gameScreen,
             name: 'game-screen',
             meta: {title: 'game_screen_title'}

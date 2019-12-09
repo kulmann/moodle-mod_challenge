@@ -46,128 +46,13 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/bank.php');
 
 /**
- * Class tournaments
+ * Class gamesessions
  *
  * @package    mod_challenge\external
  * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tournament_gamesessions extends external_api {
-
-    /**
-     * Definition of parameters for {@see create_tournament}.
-     *
-     * @return external_function_parameters
-     */
-    public static function create_tournament_parameters() {
-        return new external_function_parameters([
-            'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-        ]);
-    }
-
-    /**
-     * Definition of return type for {@see create_tournament}.
-     *
-     * @return external_single_structure
-     */
-    public static function create_tournament_returns() {
-        return tournament_dto::get_read_structure();
-    }
-
-    /**
-     * Dumps all previous tournaments of the current user and returns a fresh one.
-     *
-     * @param int $coursemoduleid
-     *
-     * @return stdClass
-     * @throws dml_exception
-     * @throws invalid_parameter_exception
-     * @throws moodle_exception
-     * @throws restricted_context_exception
-     */
-    public static function create_tournament($coursemoduleid) {
-        $params = ['coursemoduleid' => $coursemoduleid];
-        self::validate_parameters(self::create_gamesession_parameters(), $params);
-
-        list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
-        self::validate_context($coursemodule->context);
-
-        global $PAGE;
-        $renderer = $PAGE->get_renderer('core');
-        $ctx = $coursemodule->context;
-        $game = util::get_game($coursemodule);
-
-        // dump existing game sessions
-        util::dump_running_gamesessions($game);
-
-        // create a new one
-        $gamesession = util::insert_gamesession($game);
-
-        // return it
-        $exporter = new tournament_dto($gamesession, $game, $ctx);
-        return $exporter->export($renderer);
-    }
-
-    /**
-     * Definition of parameters for {@see cancel_gamesession}.
-     *
-     * @return external_function_parameters
-     */
-    public static function cancel_gamesession_parameters() {
-        return new external_function_parameters([
-            'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'gamesessionid' => new external_value(PARAM_INT, 'game session id'),
-        ]);
-    }
-
-    /**
-     * Definition of return type for {@see cancel_gamesession}.
-     *
-     * @return external_single_structure
-     */
-    public static function cancel_gamesession_returns() {
-        return tournament_dto::get_read_structure();
-    }
-
-    /**
-     * Sets the state of the given game session to DUMPED.
-     *
-     * @param int $coursemoduleid
-     * @param int $gamesessionid
-     *
-     * @return stdClass
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws invalid_parameter_exception
-     * @throws moodle_exception
-     * @throws restricted_context_exception
-     */
-    public static function cancel_gamesession($coursemoduleid, $gamesessionid) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'gamesessionid' => $gamesessionid];
-        self::validate_parameters(self::cancel_gamesession_parameters(), $params);
-
-        list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
-        self::validate_context($coursemodule->context);
-
-        global $PAGE;
-        $renderer = $PAGE->get_renderer('core');
-        $ctx = $coursemodule->context;
-        $game = util::get_game($coursemodule);
-
-        // get gamesession by the provided id
-        $gamesession = util::get_gamesession($gamesessionid);
-        util::validate_gamesession($game, $gamesession);
-
-        // cancel the gamesession
-        if ($gamesession->is_in_progress()) {
-            $gamesession->set_state(tournament_gamesession::STATE_DUMPED);
-            $gamesession->save();
-        }
-
-        // return the changed game session
-        $exporter = new tournament_dto($gamesession, $game, $ctx);
-        return $exporter->export($renderer);
-    }
+class gamesessions extends external_api {
 
     /**
      * Definition of parameters for {@see get_current_gamesession}.

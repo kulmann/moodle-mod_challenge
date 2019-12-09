@@ -139,72 +139,52 @@ class game extends abstract_model {
     }
 
     /**
-     * Loads all unpublished tournaments of this game.
-     *
-     * @return tournament[]
-     * @throws dml_exception
-     */
-    public function get_unpublished_tournaments() {
-        return $this->get_tournaments_by_state(tournament::STATE_UNPUBLISHED);
-    }
-
-    /**
-     * Loads all active tournaments of this game.
-     *
-     * @return tournament[]
-     * @throws dml_exception
-     */
-    public function get_active_tournaments() {
-        return $this->get_tournaments_by_state(tournament::STATE_PROGRESS);
-    }
-
-    /**
-     * Loads all finished tournaments of this game.
-     *
-     * @return tournament[]
-     * @throws dml_exception
-     */
-    public function get_finished_tournaments() {
-        return $this->get_tournaments_by_state(tournament::STATE_FINISHED);
-    }
-
-    /**
      * Loads all tournaments of this game.
      *
      * @return tournament[]
      * @throws dml_exception
      */
     public function get_tournaments() {
-        return $this->get_tournaments_by_state_internal(null);
-    }
-
-    /**
-     * Loads all tournaments of this game that match the given $state.
-     *
-     * @param string $state
-     *
-     * @return tournament[]
-     * @throws dml_exception
-     */
-    public function get_tournaments_by_state(string $state) {
-        return $this->get_tournaments_by_state_internal($state);
-    }
-
-    /**
-     * Loads all tournaments of this game that match the given $state.
-     *
-     * @param string | null $state If null, all tournaments of this game will be returned.
-     *
-     * @return tournament[]
-     * @throws dml_exception
-     */
-    private function get_tournaments_by_state_internal($state) {
         global $DB;
-        $sql_params = ['game' => $this->get_id()];
-        if ($state) {
-            $sql_params['state'] = $state;
+        $sql_params = ['game' => $this->get_id(), 'state_dumped' => tournament::STATE_DUMPED];
+        $records = $DB->get_records_sql("SELECT * 
+                    FROM {challenge_tournaments}
+                    WHERE game = :game  
+                        AND state <> :state_dumped
+                    ORDER BY timecreated DESC", $sql_params);
+        $result = [];
+        foreach ($records as $tournament_data) {
+            $tournament = new tournament();
+            $tournament->apply($tournament_data);
+            $result[] = $tournament;
         }
-        $records = $DB->get_records('challenge_tournaments', $sql_params, 'timecreated DESC');
+        return $result;
+    }
+
+    /**
+     * Loads all tournaments of this game where the given user is involved in a pairing.
+     *
+     * @param int $mdl_user_id
+     *
+     * @return tournament[]
+     * @throws dml_exception
+     */
+    public function get_user_tournaments($mdl_user_id) {
+        global $DB;
+        $sql_params = [
+            'game' => $this->get_id(),
+            'user_1' => $mdl_user_id,
+            'user_2' => $mdl_user_id,
+            'state_unpublished' => tournament::STATE_UNPUBLISHED,
+            'state_dumped' => tournament::STATE_DUMPED
+        ];
+        $records = $DB->get_records_sql("SELECT t.* 
+                    FROM {challenge_tournaments} t
+                    INNER JOIN {challenge_tnmt_pairings} p ON t.id=p.tournament
+                    WHERE t.game = :game 
+                        AND (p.mdl_user_1 = :user_1 OR p.mdl_user_2 = :user_2) 
+                        AND t.state <> :state_unpublished AND t.state <> :state_dumped
+                    ORDER BY p.timecreated DESC", $sql_params);
         $result = [];
         foreach ($records as $tournament_data) {
             $tournament = new tournament();

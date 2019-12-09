@@ -136,6 +136,7 @@ $string['admin_tournament_pairing_table_participant'] = 'Participant';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
+$string['game_not_allowed'] = 'You are not allowed to participate in a »Quiz Challenge«.';
 $string['game_qtype_not_supported'] = 'The question type »{$a}« is not supported.';
 $string['game_loading_question'] = 'Loading question details';
 $string['game_loading_highscore'] = 'Loading leader board';

@@ -52,7 +52,6 @@ class tournaments extends external_api {
     public static function get_tournaments_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'state' => new external_value(PARAM_ALPHA, 'tournament state', false),
         ]);
     }
 
@@ -68,10 +67,9 @@ class tournaments extends external_api {
     }
 
     /**
-     * Get all tournaments of a game matching a specific state.
+     * Get all tournaments of a game.
      *
      * @param int $coursemoduleid
-     * @param string $state
      *
      * @return array
      * @throws coding_exception
@@ -80,25 +78,79 @@ class tournaments extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function get_tournaments($coursemoduleid, $state) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'state' => $state];
+    public static function get_tournaments($coursemoduleid) {
+        $params = ['coursemoduleid' => $coursemoduleid];
         self::validate_parameters(self::get_tournaments_parameters(), $params);
-        if ($state) {
-            util::validate_tournament_state($state);
+
+        // load context
+        list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
+        self::validate_context($coursemodule->context);
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core');
+        $ctx = $coursemodule->context;
+        $game = util::get_game($coursemodule);
+        util::require_user_has_capability('mod/challenge:manage', $ctx);
+
+        // collect export data
+        $result = [];
+        $tournaments = $game->get_tournaments();
+        foreach ($tournaments as $tournament) {
+            $exporter = new tournament_dto($tournament, $game, $ctx);
+            $result[] = $exporter->export($renderer);
         }
+        return $result;
+    }
+
+    /**
+     * Definition of parameters for {@see get_user_tournaments}.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_user_tournaments_parameters() {
+        return new external_function_parameters([
+            'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
+        ]);
+    }
+
+    /**
+     * Definition of return type for {@see get_user_tournaments}.
+     *
+     * @return external_multiple_structure
+     */
+    public static function get_user_tournaments_returns() {
+        return new external_multiple_structure(
+            tournament_dto::get_read_structure()
+        );
+    }
+
+    /**
+     * Get all tournaments of a game mat
+     *
+     * @param int $coursemoduleid
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_user_tournaments($coursemoduleid) {
+        $params = ['coursemoduleid' => $coursemoduleid];
+        self::validate_parameters(self::get_user_tournaments_parameters(), $params);
 
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
 
         // load context
-        global $PAGE;
+        global $PAGE, $USER;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
 
         // collect export data
         $result = [];
-        $tournaments = $state ? $game->get_tournaments_by_state($state) : $game->get_tournaments();
+        $tournaments = $game->get_user_tournaments($USER->id);
         foreach ($tournaments as $tournament) {
             $exporter = new tournament_dto($tournament, $game, $ctx);
             $result[] = $exporter->export($renderer);
@@ -148,10 +200,9 @@ class tournaments extends external_api {
         self::validate_parameters(self::set_tournament_state_parameters(), $params);
         util::validate_tournament_state($state);
 
+        // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
-
-        // load context
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
@@ -219,7 +270,6 @@ class tournaments extends external_api {
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
-
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
@@ -287,7 +337,6 @@ class tournaments extends external_api {
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
-
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
@@ -358,7 +407,6 @@ class tournaments extends external_api {
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
-
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;

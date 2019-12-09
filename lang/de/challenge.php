@@ -136,6 +136,7 @@ $string['admin_tournament_pairing_table_participant'] = 'Teilnehmer';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';
+$string['game_not_allowed'] = 'Sie können nicht an einer »Quiz Challenge« teilnehmen.';
 $string['game_qtype_not_supported'] = 'Der Fragentyp »{$a}« wird nicht unterstützt.';
 $string['game_loading_question'] = 'Frage wird geladen';
 $string['game_loading_highscore'] = 'Bestenliste wird geladen';
