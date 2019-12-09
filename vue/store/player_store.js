@@ -37,6 +37,19 @@ export default {
             state.mdl_answers = mdl_answers;
         },
     },
+    getters: {
+        getTournamentById: state => id => {
+            const active = _.filter(state.activeTournaments, t => t.id === id);
+            if (active.length > 0) {
+                return _.first(active);
+            }
+            const finished = _.filter(state.finishedTournaments, t => t.id === id);
+            if (finished.length > 0) {
+                return _.first(finished);
+            }
+            return null;
+        }
+    },
     actions: {
         /**
          * Initializes everything (gameSession, gameMode, current question, etc).

@@ -94,7 +94,7 @@ class tournament_dto extends exporter {
             'has_pairings' => [
                 'type' => PARAM_BOOL,
                 'description' => 'whether or not this tournament already has pairings',
-            ]
+            ],
         ];
     }
 

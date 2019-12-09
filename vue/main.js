@@ -47,7 +47,14 @@ function init(coursemoduleid, contextid) {
             path: '/game',
             component: gameScreen,
             name: 'game-screen',
-            meta: {title: 'game_screen_title'}
+            meta: {title: 'game_screen_title'},
+            children: [{
+                path: 'tournaments',
+                name: 'player-tournament-list',
+            }, {
+                path: 'tournament/:tournamentId',
+                name: 'player-tournament-show',
+            }]
         }, {
             path: '/admin',
             component: adminScreen,

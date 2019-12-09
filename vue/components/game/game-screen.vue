@@ -4,25 +4,28 @@
         loadingAlert(v-if="!isInitialized", message="Loading Game").uk-text-center
         failureAlert(v-else-if="isAdminUser", :message="strings.game_not_allowed").uk-text-center
         template(v-else)
-            .uk-margin-small-top.uk-margin-small-bottom
-                h3 {{ strings.game_tournaments_active_title }}
-                infoAlert(v-if="activeTournaments.length === 0", :message="strings.game_tournaments_active_none")
-                tournamentList(v-else, :tournaments="activeTournaments")
-                h3 {{ strings.game_tournaments_finished_title }}
-                infoAlert(v-if="finishedTournaments.length === 0", :message="strings.game_tournaments_finished_none")
-                tournamentList(v-else, :tournaments="finishedTournaments")
+            tournaments(v-if="viewMode === VIEW_MODE_TOURNAMENTS")
+            tournamentShow(v-else-if="viewMode === VIEW_MODE_TOURNAMENT_SHOW")
 </template>
 
 <script>
     import mixins from '../../mixins';
     import {mapGetters, mapState} from 'vuex';
-    import loadingAlert from '../helper/loading-alert';
     import VkGrid from "vuikit/src/library/grid/components/grid";
-    import tournamentList from "./tournament-list";
-    import InfoAlert from "../helper/info-alert";
+    import loadingAlert from '../helper/loading-alert';
+    import infoAlert from "../helper/info-alert";
+    import tournaments from "./tournaments/tournaments";
+    import TournamentShow from "./tournament/tournament-show";
 
     export default {
         mixins: [mixins],
+        data() {
+            return {
+                VIEW_MODE_NONE: 'none',
+                VIEW_MODE_TOURNAMENTS: 'player-tournament-list',
+                VIEW_MODE_TOURNAMENT_SHOW: 'player-tournament-show',
+            }
+        },
         computed: {
             ...mapState([
                 'strings',
@@ -31,14 +34,28 @@
                 'isAdminUser',
                 'isInitialized'
             ]),
-            ...mapState('player', [
-                'activeTournaments',
-                'finishedTournaments',
-            ])
+            viewMode() {
+                const viewModes = [
+                    this.VIEW_MODE_TOURNAMENTS,
+                    this.VIEW_MODE_TOURNAMENT_SHOW,
+                ];
+                const viewMode = this.$route.name;
+                if (viewModes.includes(viewMode)) {
+                    return viewMode;
+                } else {
+                    return this.VIEW_MODE_NONE;
+                }
+            },
+        },
+        mounted() {
+            if (this.viewMode === this.VIEW_MODE_NONE) {
+                this.$router.push({name: this.VIEW_MODE_TOURNAMENTS});
+            }
         },
         components: {
-            InfoAlert,
-            tournamentList,
+            TournamentShow,
+            tournaments,
+            infoAlert,
             loadingAlert,
             VkGrid
         }
