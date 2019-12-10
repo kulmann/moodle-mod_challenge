@@ -78,6 +78,9 @@ export default {
                 });
             });
         },
+        async fetchMatches(context, payload) {
+            return [];
+        },
         /**
          * Loads the question for the given level index. Doesn't matter if it's already answered.
          *
