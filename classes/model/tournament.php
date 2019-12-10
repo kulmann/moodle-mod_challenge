@@ -153,16 +153,14 @@ class tournament extends abstract_model {
     }
 
     /**
-     * Loads all matches of this tournament for the given $step.
-     *
-     * @param int $step
+     * Loads all matches of this tournament.
      *
      * @return tournament_match[]
      * @throws \dml_exception
      */
-    public function get_matches($step) {
+    public function get_matches() {
         global $DB;
-        $sql_conditions = ['tournament' => $this->get_id(), 'step' => $step];
+        $sql_conditions = ['tournament' => $this->get_id()];
         $records = $DB->get_records('challenge_tnmt_matches', $sql_conditions);
         $result = [];
         foreach($records as $match_data) {

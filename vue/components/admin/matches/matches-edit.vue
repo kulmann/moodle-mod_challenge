@@ -69,7 +69,7 @@
                 this.activeTab = tab;
             },
             initData(tournament) {
-                this.fetchMatches({tournamentid: tournament.id, step: 0}).then(matches => {
+                this.fetchMatches({tournamentid: tournament.id}).then(matches => {
                     // collect matches
                     this.matches = _.map(matches, match => {
                         return {

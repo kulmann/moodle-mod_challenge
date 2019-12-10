@@ -100,10 +100,17 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_get_tournament_matches' => [
+    'mod_challenge_get_admin_tournament_matches' => [
         'classname' => 'mod_challenge\external\tournaments',
-        'methodname' => 'get_tournament_matches',
+        'methodname' => 'get_admin_tournament_matches',
         'description' => 'Get the matches of a tournament',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+    'mod_challenge_get_user_tournament_matches' => [
+        'classname' => 'mod_challenge\external\tournaments',
+        'methodname' => 'get_user_tournament_matches',
+        'description' => 'Get the matches of a tournament the logged in user is involved in',
         'type' => 'read',
         'ajax' => true,
     ],

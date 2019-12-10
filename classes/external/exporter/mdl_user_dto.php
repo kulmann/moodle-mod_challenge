@@ -113,7 +113,6 @@ class mdl_user_dto extends exporter {
         $page->set_url('/user/profile.php');
         $page->set_context(\context_system::instance());
         $renderer = $page->get_renderer('core');
-        $usercontext = \context_user::instance($this->mdl_user->id);
 
         // Get the user's profile picture and make sure it is correct.
         $userpicture = new \user_picture($this->mdl_user);

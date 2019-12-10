@@ -95,8 +95,8 @@
                 <FIELD NAME="step" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="winner" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" DEFAULT="open"
-                       COMMENT="State of this match, out of [open, tie, p1, p2]."/>
+                <FIELD NAME="mdl_user_winner" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
+                       DEFAULT="0"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -145,7 +145,8 @@
                        COMMENT="Whether (1) or not (0) the selected answer was correct."/>
                 <FIELD NAME="finished" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0"
                        COMMENT="Whether (1) or not (0) the user has has answered this question."/>
-                <FIELD NAME="timeremaining" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="-1"/>
+                <FIELD NAME="timeremaining" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
+                       DEFAULT="-1"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

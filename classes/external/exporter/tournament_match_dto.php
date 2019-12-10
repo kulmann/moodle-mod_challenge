@@ -89,10 +89,14 @@ class tournament_match_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'second moodle user of the match',
             ],
-            'winner' => [
-                'type' => PARAM_ALPHA,
-                'description' => 'winner of this match, out of [open, tie, p1, p2]',
+            'mdl_user_winner' => [
+                'type' => PARAM_INT,
+                'description' => 'moodle user who won this match',
             ],
+            'open' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether this match is still open or ongoing',
+            ]
         ];
     }
 
@@ -103,6 +107,11 @@ class tournament_match_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        return $this->match->to_array();
+        return \array_merge(
+            $this->match->to_array(),
+            [
+                'open' => $this->match->get_mdl_user_winner() === 0,
+            ]
+        );
     }
 }

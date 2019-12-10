@@ -295,16 +295,51 @@ class tournaments extends external_api {
     }
 
     /**
+     * Definition of parameters for {@see get_admin_tournament_matches}.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_admin_tournament_matches_parameters() {
+        return self::get_tournament_matches_parameters();
+    }
+
+    /**
+     * Definition of parameters for {@see get_user_tournament_matches}.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_user_tournament_matches_parameters() {
+        return self::get_tournament_matches_parameters();
+    }
+
+    /**
      * Definition of parameters for {@see get_tournament_matches}.
      *
      * @return external_function_parameters
      */
-    public static function get_tournament_matches_parameters() {
+    private static function get_tournament_matches_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
             'tournamentid' => new external_value(PARAM_INT, 'the id of the tournament'),
-            'step' => new external_value(PARAM_INT, 'optional: step in the tournament progress', false),
         ]);
+    }
+
+    /**
+     * Definition of return type for {@see get_admin_tournament_matches}.
+     *
+     * @return external_multiple_structure
+     */
+    public static function get_admin_tournament_matches_returns() {
+        return self::get_tournament_matches_returns();
+    }
+
+    /**
+     * Definition of return type for {@see get_user_tournament_matches}.
+     *
+     * @return external_multiple_structure
+     */
+    public static function get_user_tournament_matches_returns() {
+        return self::get_tournament_matches_returns();
     }
 
     /**
@@ -312,7 +347,7 @@ class tournaments extends external_api {
      *
      * @return external_multiple_structure
      */
-    public static function get_tournament_matches_returns() {
+    private static function get_tournament_matches_returns() {
         return new external_multiple_structure(tournament_match_dto::get_read_structure());
     }
 
@@ -321,7 +356,6 @@ class tournaments extends external_api {
      *
      * @param int $coursemoduleid
      * @param int $tournamentid
-     * @param int $step
      *
      * @return array
      * @throws coding_exception
@@ -330,8 +364,44 @@ class tournaments extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function get_tournament_matches($coursemoduleid, $tournamentid, $step = 0) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'tournamentid' => $tournamentid, 'step' => $step];
+    public static function get_admin_tournament_matches($coursemoduleid, $tournamentid) {
+        return self::get_tournament_matches($coursemoduleid, $tournamentid, null);
+    }
+
+    /**
+     * Get all matches of the given tournament the logged in user is involved in.
+     *
+     * @param int $coursemoduleid
+     * @param int $tournamentid
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_user_tournament_matches($coursemoduleid, $tournamentid) {
+        global $USER;
+        return self::get_tournament_matches($coursemoduleid, $tournamentid, $USER->id);
+    }
+
+    /**
+     * Get all matches of the given tournament.
+     *
+     * @param int $coursemoduleid
+     * @param int $tournamentid
+     * @param int | null $mdluserid
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @throws restricted_context_exception
+     */
+    private static function get_tournament_matches($coursemoduleid, $tournamentid, $mdluserid) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'tournamentid' => $tournamentid];
         self::validate_parameters(self::get_tournament_matches_parameters(), $params);
 
         // load context
@@ -341,13 +411,16 @@ class tournaments extends external_api {
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
+        if ($mdluserid === null) {
+            util::require_user_has_capability('mod/challenge:manage', $ctx);
+        }
 
         // load tournament
         $tournament = util::get_tournament($tournamentid);
         util::validate_tournament($game, $tournament);
 
         // load matches
-        $matches = $tournament->get_matches($step);
+        $matches = $tournament->get_matches();
         $result = [];
         foreach($matches as $match) {
             $exporter = new tournament_match_dto($match, $game, $ctx);

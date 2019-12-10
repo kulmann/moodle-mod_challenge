@@ -27,17 +27,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tournament_match extends abstract_model {
 
-    const WINNER_OPEN = 'open';
-    const WINNER_TIE = 'tie';
-    const WINNER_P1 = 'p1';
-    const WINNER_P2 = 'p2';
-    const WINNERS = [
-        self::WINNER_OPEN,
-        self::WINNER_TIE,
-        self::WINNER_P1,
-        self::WINNER_P2,
-    ];
-
     /**
      * @var int The timestamp of the creation of this match.
      */
@@ -63,9 +52,9 @@ class tournament_match extends abstract_model {
      */
     protected $mdl_user_2;
     /**
-     * @var string The state of this match, out of [open, tie, p1, p2].
+     * @var int The user id of the winner of this match.
      */
-    protected $winner;
+    protected $mdl_user_winner;
 
     /**
      * tournament_match constructor.
@@ -78,7 +67,7 @@ class tournament_match extends abstract_model {
         $this->step = 0;
         $this->mdl_user_1 = 0;
         $this->mdl_user_2 = 0;
-        $this->winner = self::WINNER_OPEN;
+        $this->mdl_user_winner = 0;
     }
 
     /**
@@ -99,7 +88,7 @@ class tournament_match extends abstract_model {
         $this->step = $data['step'];
         $this->mdl_user_1 = $data['mdl_user_1'];
         $this->mdl_user_2 = $data['mdl_user_2'];
-        $this->winner = isset($data['winner']) ? $data['winner'] : self::WINNER_OPEN;
+        $this->mdl_user_winner = isset($data['mdl_user_winner']) ? $data['mdl_user_winner'] : 0;
     }
 
     /**
@@ -180,17 +169,10 @@ class tournament_match extends abstract_model {
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function get_winner(): string {
-        return $this->winner;
-    }
-
-    /**
-     * Marks that none of the players won.
-     */
-    public function set_winner_tie() {
-        $this->set_winner(self::WINNER_TIE);
+    public function get_mdl_user_winner(): int {
+        return $this->mdl_user_winner;
     }
 
     /**
@@ -208,12 +190,10 @@ class tournament_match extends abstract_model {
     }
 
     /**
-     * @param string $winner
+     * @param int $mdl_user_winner
      */
-    public function set_winner(string $winner) {
-        if (\in_array($winner, self::WINNERS)) {
-            $this->winner = $winner;
-        }
+    public function set_mdl_user_winner(int $mdl_user_winner) {
+        $this->mdl_user_winner = $mdl_user_winner;
     }
 
     /**
@@ -222,6 +202,6 @@ class tournament_match extends abstract_model {
      * @return bool
      */
     public function is_finished() {
-        return $this->winner !== self::WINNER_OPEN;
+        return $this->mdl_user_winner > 0;
     }
 }

@@ -78,8 +78,15 @@ export default {
                 });
             });
         },
+        /**
+         * Fetches the matches of a tournament.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<void>}
+         */
         async fetchMatches(context, payload) {
-            return [];
+            return await ajax('mod_challenge_get_user_tournament_matches', payload);
         },
         /**
          * Loads the question for the given level index. Doesn't matter if it's already answered.

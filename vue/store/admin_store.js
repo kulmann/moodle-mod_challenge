@@ -168,7 +168,7 @@ export default {
          * @returns {Promise<void>}
          */
         async fetchMatches(context, payload) {
-            return await ajax('mod_challenge_get_tournament_matches', payload);
+            return await ajax('mod_challenge_get_admin_tournament_matches', payload);
         },
         /**
          * Updates the participant matches of the given tournament.

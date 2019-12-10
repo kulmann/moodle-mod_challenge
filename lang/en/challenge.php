@@ -146,3 +146,5 @@ $string['game_tournaments_active_none'] = 'You are not participating in any tour
 $string['game_tournaments_finished_title'] = 'Finished tournaments';
 $string['game_tournaments_finished_none'] = 'You have not finished any tournaments, yet.';
 $string['game_tournaments_list_name'] = 'Name';
+$string['game_tournament_match_show_error'] = 'Something went wrong trying to show the selected match.';
+$string['game_tournament_match_step'] = 'Match {$a}';
