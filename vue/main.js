@@ -75,6 +75,9 @@ function init(coursemoduleid, contextid) {
             }, {
                 path: 'tournament/:tournamentId/matches',
                 name: 'admin-matches-edit',
+            }, {
+                path: 'tournament/:tournamentId/topics',
+                name: 'admin-topics-edit',
             }]
         }, {
             path: '*',

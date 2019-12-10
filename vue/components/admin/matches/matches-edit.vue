@@ -21,9 +21,8 @@
                     span {{ strings.admin_btn_cancel }}
                 .uk-alert.uk-alert-primary.uk-text-center(uk-alert, v-if="saving")
                     p
-                        span {{ strings.admin_tournament_msg_saving }}
+                        span {{ strings.admin_tournament_participants_saving }}
                         loadingIcon
-
 </template>
 
 <script>

@@ -20,9 +20,6 @@
                 matchHeader(:match="match").uk-margin-small-bottom
                 matchOpen(v-if="match.open", :match="match")
                 matchDone(v-else, :match="match")
-            p show most recent match (if active: let user play)
-            p let user navigate to older matches to see how he performed
-            p each in the same format, either match-done or match-open.
 </template>
 
 <script>

@@ -16,6 +16,8 @@
 
 namespace mod_challenge\model;
 
+use dml_exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -106,7 +108,7 @@ class tournament extends abstract_model {
      * Clears the participant matches of an unpublished tournament.
      *
      * @return bool Whether clearing the matches was successful.
-     * @throws \dml_exception
+     * @throws dml_exception
      * @throws \invalid_state_exception If the state is not 'unpublished' anymore.
      */
     public function clear_matches() {
@@ -123,7 +125,7 @@ class tournament extends abstract_model {
      *
      * @param array $matches_data
      *
-     * @throws \dml_exception
+     * @throws dml_exception
      * @throws \invalid_state_exception
      */
     public function create_matches($matches_data) {
@@ -144,7 +146,7 @@ class tournament extends abstract_model {
      * Checks if this tournament already has matches.
      *
      * @return bool
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function has_matches() {
         global $DB;
@@ -156,17 +158,48 @@ class tournament extends abstract_model {
      * Loads all matches of this tournament.
      *
      * @return tournament_match[]
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function get_matches() {
         global $DB;
         $sql_conditions = ['tournament' => $this->get_id()];
         $records = $DB->get_records('challenge_tnmt_matches', $sql_conditions);
         $result = [];
-        foreach($records as $match_data) {
+        foreach ($records as $match_data) {
             $match = new tournament_match();
             $match->apply($match_data);
             $result[] = $match;
+        }
+        return $result;
+    }
+
+    /**
+     * Checks if this tournament already has topics.
+     *
+     * @return bool
+     * @throws dml_exception
+     */
+    public function has_topics() {
+        global $DB;
+        $count_topics = $DB->count_records('challenge_tnmt_topics', ['tournament' => $this->get_id()]);
+        return $count_topics > 0;
+    }
+
+    /**
+     * Loads all topics of this tournament.
+     *
+     * @return tournament_topic[]
+     * @throws dml_exception
+     */
+    public function get_topics() {
+        global $DB;
+        $sql_conditions = ['tournament' => $this->get_id()];
+        $records = $DB->get_records('challenge_tnmt_topics', $sql_conditions);
+        $result = [];
+        foreach ($records as $topic_data) {
+            $topic = new tournament_topic();
+            $topic->apply($topic_data);
+            $result[] = $topic;
         }
         return $result;
     }

@@ -123,6 +123,7 @@ $string['admin_tournament_loading'] = 'Lade Turnier-Daten';
 $string['admin_tournament_lbl_name'] = 'Name';
 $string['admin_tournament_title_matches'] = 'Turnier-Teilnehmer bearbeiten';
 $string['admin_tournament_participants_loading'] = 'Lade Turnier-Teilnehmer';
+$string['admin_tournament_participants_saving'] = 'Die Matches werden gespeichert, bitte warten';
 $string['admin_nav_matches_users'] = 'Teilnehmer auswählen';
 $string['admin_nav_matches_pairs'] = 'Matches generieren';
 $string['admin_tournament_match_invalid_users'] = 'Mit den ausgewählten Teilnehmern kann kein Turnier gestartet werden. Bitte beachten Sie, dass eine gerade Teilnehmer-Anzahl benötigt wird.';
@@ -133,6 +134,9 @@ $string['admin_tournament_match_done_title'] = 'Matches generiert';
 $string['admin_tournament_match_done_msg'] = 'Sie haben die folgenden Teilnehmer-Matches generiert. Wenn Sie mit der Zusammenstellung einverstanden sind, können Sie auf »Speichern« klicken.';
 $string['admin_tournament_match_table_number'] = 'Nummer';
 $string['admin_tournament_match_table_participant'] = 'Teilnehmer';
+$string['admin_tournament_title_topics'] = 'Turnier-Themen bearbeiten';
+$string['admin_tournament_topics_loading'] = 'Lade Turnier-Themen';
+$string['admin_tournament_topics_saving'] = 'Die Themen werden gespeichert, bitte warten';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';

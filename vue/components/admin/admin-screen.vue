@@ -19,6 +19,7 @@
             template(v-else)
                 tournamentEdit(v-if="viewMode === VIEW_MODE_TOURNAMENT_EDIT", :tournament="tournamentForEditing")
                 matchesEdit(v-else-if="viewMode === VIEW_MODE_MATCHES_EDIT", :tournament="tournamentForEditing")
+                topicsEdit(v-else-if="viewMode === VIEW_MODE_TOPICS_EDIT", :tournament="tournamentForEditing")
                 levelEdit(v-else-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing")
 </template>
 
@@ -34,6 +35,7 @@
     import tournamentEdit from "./tournament-edit";
     import tournaments from "./tournaments";
     import matchesEdit from "./matches/matches-edit";
+    import topicsEdit from "./topics/topics-edit";
 
     export default {
         mixins: [mixins],
@@ -45,6 +47,7 @@
                 VIEW_MODE_TOURNAMENTS: 'admin-tournament-list',
                 VIEW_MODE_TOURNAMENT_EDIT: 'admin-tournament-edit',
                 VIEW_MODE_MATCHES_EDIT: 'admin-matches-edit',
+                VIEW_MODE_TOPICS_EDIT: 'admin-topics-edit',
             }
         },
         computed: {
@@ -71,6 +74,7 @@
                     this.VIEW_MODE_TOURNAMENTS,
                     this.VIEW_MODE_TOURNAMENT_EDIT,
                     this.VIEW_MODE_MATCHES_EDIT,
+                    this.VIEW_MODE_TOPICS_EDIT,
                 ];
                 if (routes.includes(this.$route.name)) {
                     return this.$route.name;
@@ -124,6 +128,7 @@
             levels,
             levelEdit,
             matchesEdit,
+            topicsEdit,
             tournamentEdit,
             tournaments
         },

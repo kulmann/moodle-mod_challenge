@@ -95,6 +95,10 @@ class tournament_dto extends exporter {
                 'type' => PARAM_BOOL,
                 'description' => 'whether or not this tournament already has matches',
             ],
+            'has_topics' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether or not this tournament already has topics for all the steps',
+            ]
         ];
     }
 
@@ -109,6 +113,7 @@ class tournament_dto extends exporter {
             $this->tournament->to_array(),
             [
                 'has_matches' => $this->tournament->has_matches(),
+                'has_topics' => $this->tournament->has_topics(),
             ]
         );
     }

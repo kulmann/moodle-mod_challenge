@@ -22,7 +22,7 @@ export default {
             state.levelCategories = levelCategories;
         },
         setTournaments(state, payload) {
-            switch(payload.state) {
+            switch (payload.state) {
                 case 'finished':
                     state.finishedTournaments = payload.tournaments;
                     break;
@@ -58,7 +58,6 @@ export default {
          * Should not be called directly. Will be called automatically in fetchGameSession.
          *
          * @param context
-         *
          * @returns {Promise<void>}
          */
         async fetchLevels(context) {
@@ -70,7 +69,6 @@ export default {
          *
          * @param context
          * @param payload
-         *
          * @returns {Promise<void>}
          */
         async changeLevelPosition(context, payload) {
@@ -84,7 +82,6 @@ export default {
          *
          * @param context
          * @param payload
-         *
          * @returns {Promise<void>}
          */
         async deleteLevel(context, payload) {
@@ -98,7 +95,6 @@ export default {
          *
          * @param context
          * @param payload
-         *
          * @returns {Promise<void>}
          */
         async saveLevel(context, payload) {
@@ -111,7 +107,6 @@ export default {
          *
          * @param context
          * @param payload
-         *
          * @returns {Promise<void>}
          */
         async fetchLevelCategories(context, payload) {
@@ -138,7 +133,6 @@ export default {
          *
          * @param context
          * @param payload
-         *
          * @returns {Promise<void>}
          */
         async setTournamentState(context, payload) {
@@ -152,7 +146,6 @@ export default {
          *
          * @param context
          * @param payload
-         *
          * @returns {Promise<*>}
          */
         async saveTournament(context, payload) {
@@ -175,7 +168,6 @@ export default {
          *
          * @param context
          * @param payload
-         *
          * @returns {Promise<*>}
          */
         async saveMatches(context, payload) {
@@ -184,10 +176,31 @@ export default {
             return result.result;
         },
         /**
+         * Fetches the topics of a tournament.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async fetchTopics(context, payload) {
+            return await ajax('mod_challenge_get_tournament_topics', payload);
+        },
+        /**
+         * Updates the topics of the given tournament.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async saveTopics(context, payload) {
+            const result = await ajax('mod_challenge_save_tournament_topics', payload);
+            context.dispatch('fetchTournaments');
+            return result.result;
+        },
+        /**
          * Fetches all moodle question categories which are applicable for this game.
          *
          * @param context
-         *
          * @returns {Promise<void>}
          */
         async fetchMdlCategories(context) {

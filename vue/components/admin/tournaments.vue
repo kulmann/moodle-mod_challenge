@@ -18,9 +18,11 @@
                                 td.actions.uk-table-shrink.uk-preserve-width
                                     button.btn.btn-default(@click="editTournament(tournament)", :disabled="stateChangeInProgress")
                                         v-icon(name="regular/edit")
-                                    button.btn.btn-default(@click="createMatches(tournament)", :disabled="stateChangeInProgress")
+                                    button.btn(@click="createMatches(tournament)", :disabled="stateChangeInProgress", :class="{'btn-success': hasMatches(tournament), 'btn-danger': !hasMatches(tournament)}")
                                         v-icon(name="users")
-                                    button.btn.btn-default(@click="publishTournamentAsk(tournament)", :disabled="stateChangeInProgress || !hasMatches(tournament)")
+                                    button.btn(@click="createTopics(tournament)", :disabled="stateChangeInProgress", :class="{'btn-success': hasTopics(tournament), 'btn-danger': !hasTopics(tournament)}")
+                                        v-icon(name="list-ol")
+                                    button.btn.btn-default(@click="publishTournamentAsk(tournament)", :disabled="stateChangeInProgress || !isReadyForPublishing(tournament)")
                                         v-icon(name="rocket")
                                     button.btn.btn-default(@click="deleteTournamentAsk(tournament)", :disabled="stateChangeInProgress")
                                         v-icon(name="trash")
@@ -99,6 +101,9 @@
             hasMatches(tournament) {
                 return tournament.has_matches;
             },
+            hasTopics(tournament) {
+                return tournament.has_topics;
+            },
             createTournament() {
                 this.$router.push({name: 'admin-tournament-edit'});
             },
@@ -107,6 +112,12 @@
             },
             createMatches(tournament) {
                 this.$router.push({name: 'admin-matches-edit', params: {tournamentId: tournament.id}});
+            },
+            createTopics(tournament) {
+                this.$router.push({name: 'admin-topics-edit', params: {tournamentId: tournament.id}});
+            },
+            isReadyForPublishing(tournament) {
+                return this.hasMatches(tournament) && this.hasTopics(tournament);
             },
             publishTournamentAsk(tournament) {
                 this.publishConfirmationTournamentId = tournament.id;

@@ -123,6 +123,7 @@ $string['admin_tournament_loading'] = 'Loading tournament data';
 $string['admin_tournament_lbl_name'] = 'Name';
 $string['admin_tournament_title_matches'] = 'Edit tournament participants';
 $string['admin_tournament_participants_loading'] = 'Loading tournament participants';
+$string['admin_tournament_participants_saving'] = 'Saving the matches, please wait';
 $string['admin_nav_matches_users'] = 'Select Participants';
 $string['admin_nav_matches_pairs'] = 'Generate Matches';
 $string['admin_tournament_match_invalid_users'] = 'Starting a tournament with the selected participants is impossible. Please be aware that an even number of participants is required.';
@@ -133,6 +134,9 @@ $string['admin_tournament_match_done_title'] = 'Matches generated';
 $string['admin_tournament_match_done_msg'] = 'You have generated the following participant matches. If you agree with the current set, please click »Save«.';
 $string['admin_tournament_match_table_number'] = 'Number';
 $string['admin_tournament_match_table_participant'] = 'Participant';
+$string['admin_tournament_title_topics'] = 'Edit tournament topics';
+$string['admin_tournament_topics_loading'] = 'Loading tournament topics';
+$string['admin_tournament_topics_saving'] = 'Saving the topics, please wait';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';

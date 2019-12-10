@@ -133,7 +133,6 @@ export default {
          * Fetches game options and active user info.
          *
          * @param context
-         *
          * @returns {Promise<void>}
          */
         async fetchGame(context) {

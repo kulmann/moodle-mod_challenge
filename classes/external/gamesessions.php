@@ -16,29 +16,27 @@
 
 namespace mod_challenge\external;
 
-use function array_filter;
-use function array_map;
-use function array_pop;
-use function assert;
 use coding_exception;
-use core\plugininfo\qtype;
 use dml_exception;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
-use function implode;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\tournament_dto;
-use mod_challenge\external\exporter\tournamentQuestion_dto;
 use mod_challenge\model\tournament_gamesession;
 use mod_challenge\model\tournament_question;
 use mod_challenge\util;
 use moodle_exception;
 use question_answer;
 use restricted_context_exception;
-use function shuffle;
 use stdClass;
+use function array_filter;
+use function array_map;
+use function array_pop;
+use function assert;
+use function implode;
+use function shuffle;
 
 defined('MOODLE_INTERNAL') || die();
 

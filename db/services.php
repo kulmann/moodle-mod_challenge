@@ -114,6 +114,13 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_get_tournament_topics' => [
+        'classname' => 'mod_challenge\external\get_tournament_topics',
+        'methodname' => 'get',
+        'description' => 'Get the topics of a tournament',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     'mod_challenge_get_user_tournaments' => [
         'classname' => 'mod_challenge\external\tournaments',
         'methodname' => 'get_user_tournaments',
@@ -145,21 +152,21 @@ $functions = [
     'mod_challenge_get_mdl_question' => [
         'classname' => 'mod_challenge\external\questionbank',
         'methodname' => 'get_mdl_question',
-        'description'  => 'Retrieves the data of the given moodle question.',
+        'description' => 'Retrieves the data of the given moodle question.',
         'type' => 'read',
         'ajax' => true,
     ],
     'mod_challenge_get_mdl_answers' => [
         'classname' => 'mod_challenge\external\questionbank',
         'methodname' => 'get_mdl_answers',
-        'description'  => 'Retrieves the moodle answers for a given moodle question.',
+        'description' => 'Retrieves the moodle answers for a given moodle question.',
         'type' => 'read',
         'ajax' => true,
     ],
     'mod_challenge_get_mdl_categories' => [
         'classname' => 'mod_challenge\external\questionbank',
         'methodname' => 'get_mdl_categories',
-        'description'  => 'Retrieves the moodle question categories which are applicable for this game.',
+        'description' => 'Retrieves the moodle question categories which are applicable for this game.',
         'type' => 'read',
         'ajax' => true,
     ],
