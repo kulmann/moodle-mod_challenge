@@ -18,7 +18,7 @@
                 getTournamentById: 'player/getTournamentById',
             }),
             tournamentId () {
-                return this.$route.params.tournamentId;
+                return parseInt(this.$route.params.tournamentId);
             },
             tournament () {
                 return this.getTournamentById(this.tournamentId);
