@@ -16,8 +16,10 @@
                 button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
                     v-icon(name="chevron-right")
             failureAlert(v-if="match === null", :message="strings.game_tournament_match_show_error")
-            matchOpen(v-else-if="match.open", :match="match")
-            matchDone(v-else, :match="match")
+            template(v-else)
+                matchHeader(:match="match").uk-margin-small-bottom
+                matchOpen(v-if="match.open", :match="match")
+                matchDone(v-else, :match="match")
             p show most recent match (if active: let user play)
             p let user navigate to older matches to see how he performed
             p each in the same format, either match-done or match-open.
@@ -27,6 +29,7 @@
     import Mixins from '../../../mixins';
     import {mapActions, mapGetters, mapState} from 'vuex';
     import failureAlert from "../../helper/failure-alert";
+    import matchHeader from "./match/match-header";
     import matchOpen from "./match/match-open";
     import matchDone from "./match/match-done";
 
@@ -100,6 +103,7 @@
             }
         },
         components: {
+            matchHeader,
             matchDone,
             matchOpen,
             failureAlert

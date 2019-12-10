@@ -1,11 +1,13 @@
 <template lang="pug">
-    vk-grid(matched).uk-grid-divider
-        div.uk-width-1-2
-            userAvatar(:size="200", :user="user1")
-            .match-user-name.uk-margin-small-top {{ user1.firstname }} {{ user1.lastname }}
-        div.uk-width-1-2
-            userAvatar(:size="200", :user="user2")
-            .match-user-name.uk-margin-small-top {{user2.firstname }} {{ user2.lastname }}
+    .uk-card.uk-card-default
+        .uk-card-body
+            vk-grid(matched).uk-grid-divider
+                div.uk-width-1-2
+                    userAvatar(:size="200", :user="user1")
+                    .match-user-name.uk-margin-small-top {{ user1.firstname }} {{ user1.lastname }}
+                div.uk-width-1-2
+                    userAvatar(:size="200", :user="user2")
+                    .match-user-name.uk-margin-small-top {{user2.firstname }} {{ user2.lastname }}
 </template>
 
 <script>
