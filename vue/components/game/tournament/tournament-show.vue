@@ -3,10 +3,16 @@
         .uk-card-header
             h3 {{ tournament.name }}
         .uk-card-body
-            .uk-text-center.uk-margin-small-bottom
+            .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom
                 button.btn.btn-default(:disabled="isFirstMatch", @click="goToPrevMatch")
                     v-icon(name="chevron-left")
-                b.uk-margin-small-left.uk-margin-small-right {{ strings.game_tournament_match_step | stringParams(matchIndex + 1) }}
+                div
+                    b.uk-margin-small-left.uk-margin-small-right {{ strings.game_tournament_match_step | stringParams(matchIndex + 1) }}
+                    template(v-if="match")
+                        br
+                        i(v-if="match.open") {{ strings.game_tournament_match_lbl_open }}
+                        span.uk-text-success(v-else-if="match.mdl_user_winner === ownUserId") {{ strings.game_tournament_match_lbl_won }}
+                        span.uk-text-danger(v-else) {{ strings.game_tournament_match_lbl_lost }}
                 button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
                     v-icon(name="chevron-right")
             failureAlert(v-if="match === null", :message="strings.game_tournament_match_show_error")
@@ -34,7 +40,8 @@
         },
         computed: {
             ...mapState([
-                'strings'
+                'strings',
+                'game',
             ]),
             ...mapGetters({
                 getTournamentById: 'player/getTournamentById',
@@ -56,6 +63,9 @@
             },
             isLastMatch() {
                 return this.matchIndex === this.matches.length - 1;
+            },
+            ownUserId() {
+                return this.game.mdl_user;
             }
         },
         methods: {
@@ -68,7 +78,6 @@
                 }).then(matches => {
                     this.matches = _.sortBy(matches, 'step');
                     this.matchIndex = this.matches.length - 1;
-                    console.log(this.matches.length + " count, " + this.matchIndex + " index");
                 });
             },
             goToPrevMatch() {

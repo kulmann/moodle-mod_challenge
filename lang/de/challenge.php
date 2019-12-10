@@ -148,3 +148,6 @@ $string['game_tournaments_finished_none'] = 'Sie haben noch kein Turnier beendet
 $string['game_tournaments_list_name'] = 'Name';
 $string['game_tournament_match_show_error'] = 'Bei der Anzeige des ausgewählten Matches ist etwas schiefgelaufen.';
 $string['game_tournament_match_step'] = 'Match {$a}';
+$string['game_tournament_match_lbl_open'] = 'offen';
+$string['game_tournament_match_lbl_won'] = 'gewonnen';
+$string['game_tournament_match_lbl_lost'] = 'verloren';
