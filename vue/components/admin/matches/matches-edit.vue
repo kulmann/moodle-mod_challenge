@@ -1,17 +1,17 @@
 <template lang="pug">
     .uk-card.uk-card-default
-        .uk-card-body(v-if="pairings === null")
+        .uk-card-body(v-if="matches === null")
             loadingAlert(:message="strings.admin_tournament_participants_loading")
         template(v-else)
             .uk-card-body
-                h3 {{ strings.admin_tournament_title_pairings }}
+                h3 {{ strings.admin_tournament_title_matches }}
                 ul.uk-tab.uk-margin-small-bottom
                     li(:class="{'uk-active': activeTab === TAB_USERS}")
-                        a(@click="setActiveTab(TAB_USERS)") {{  strings.admin_nav_pairings_users }}
-                    li(:class="{'uk-active': activeTab === TAB_PAIRINGS}")
-                        a(@click="setActiveTab(TAB_PAIRINGS)") {{  strings.admin_nav_pairings_pairs }}
-                usersSelect(v-if="activeTab === TAB_USERS", :tournament="tournament", v-model="participants", @input="clearPairings")
-                pairingsSelect(v-else-if="activeTab === TAB_PAIRINGS", :tournament="tournament", :participants="participants", v-model="pairings")
+                        a(@click="setActiveTab(TAB_USERS)") {{  strings.admin_nav_matches_users }}
+                    li(:class="{'uk-active': activeTab === TAB_MATCHES}")
+                        a(@click="setActiveTab(TAB_MATCHES)") {{  strings.admin_nav_matches_pairs }}
+                usersSelect(v-if="activeTab === TAB_USERS", :tournament="tournament", v-model="participants", @input="clearMatches")
+                matchesSelect(v-else-if="activeTab === TAB_MATCHES", :tournament="tournament", :participants="participants", v-model="matches")
             .uk-card-footer.uk-text-right
                 button.btn.btn-primary(@click="save()", :disabled="saving || isDataInvalid")
                     v-icon(name="save").uk-margin-small-right
@@ -33,7 +33,7 @@
     import btnAdd from '../btn-add';
     import loadingIcon from "../../helper/loading-icon";
     import usersSelect from "./users-select";
-    import pairingsSelect from "./pairings-select";
+    import matchesSelect from "./matches-select";
 
     export default {
         mixins: [mixins],
@@ -43,10 +43,10 @@
         data() {
             return {
                 TAB_USERS: 'users',
-                TAB_PAIRINGS: 'pairings',
+                TAB_MATCHES: 'matches',
                 activeTab: 'users',
                 participants: [],
-                pairings: null,
+                matches: null,
                 saving: false,
             }
         },
@@ -57,37 +57,37 @@
                 'mdlUsers',
             ]),
             isDataInvalid() {
-                return this.pairings === null || this.pairings.length === 0;
+                return this.matches === null || this.matches.length === 0;
             },
         },
         methods: {
             ...mapActions({
-                fetchPairings: 'admin/fetchPairings',
-                savePairings: 'admin/savePairings',
+                fetchMatches: 'admin/fetchMatches',
+                saveMatches: 'admin/saveMatches',
             }),
             setActiveTab(tab) {
                 this.activeTab = tab;
             },
             initData(tournament) {
-                this.fetchPairings({tournamentid: tournament.id, step: 0}).then(pairings => {
-                    // collect pairings
-                    this.pairings = _.map(pairings, pairing => {
+                this.fetchMatches({tournamentid: tournament.id, step: 0}).then(matches => {
+                    // collect matches
+                    this.matches = _.map(matches, match => {
                         return {
-                            mdl_user_1: pairing.mdl_user_1,
-                            mdl_user_2: pairing.mdl_user_2,
+                            mdl_user_1: match.mdl_user_1,
+                            mdl_user_2: match.mdl_user_2,
                         };
                     });
                     // collect participants
                     let participantIds = [];
-                    _.forEach(this.pairings, pair => {
-                        participantIds.push(pair.mdl_user_1);
-                        participantIds.push(pair.mdl_user_2);
+                    _.forEach(this.matches, match => {
+                        participantIds.push(match.mdl_user_1);
+                        participantIds.push(match.mdl_user_2);
                     });
                     this.participants = _.filter(this.mdlUsers, user => participantIds.includes(user.id));
                 });
             },
-            clearPairings() {
-                this.pairings = [];
+            clearMatches() {
+                this.matches = [];
             },
             goToTournamentList() {
                 this.$router.push({name: 'admin-tournament-list'});
@@ -98,10 +98,10 @@
                 }
                 let payload = {
                     tournamentid: this.tournament.id,
-                    pairings: this.pairings,
+                    matches: this.matches,
                 };
                 this.saving = true;
-                this.savePairings(payload)
+                this.saveMatches(payload)
                     .then((successful) => {
                         this.saving = false;
                         if (successful) {
@@ -119,7 +119,7 @@
             },
         },
         components: {
-            pairingsSelect,
+            matchesSelect,
             usersSelect,
             loadingIcon,
             loadingAlert,

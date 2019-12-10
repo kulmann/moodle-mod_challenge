@@ -19,13 +19,13 @@ namespace mod_challenge\model;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class tournament_pairing
+ * Class tournament_match
  *
  * @package    mod_challenge\model
  * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tournament_pairing extends abstract_model {
+class tournament_match extends abstract_model {
 
     const WINNER_OPEN = 'open';
     const WINNER_TIE = 'tie';
@@ -39,15 +39,15 @@ class tournament_pairing extends abstract_model {
     ];
 
     /**
-     * @var int The timestamp of the creation of this pairing.
+     * @var int The timestamp of the creation of this match.
      */
     protected $timecreated;
     /**
-     * @var int The timestamp of the last update of this pairing.
+     * @var int The timestamp of the last update of this match.
      */
     protected $timemodified;
     /**
-     * @var int The id of the tournament instance this pairing belongs to.
+     * @var int The id of the tournament instance this match belongs to.
      */
     protected $tournament;
     /**
@@ -63,15 +63,15 @@ class tournament_pairing extends abstract_model {
      */
     protected $mdl_user_2;
     /**
-     * @var string The state of this pairing, out of [open, tie, p1, p2].
+     * @var string The state of this match, out of [open, tie, p1, p2].
      */
     protected $winner;
 
     /**
-     * tournament_pairing constructor.
+     * tournament_match constructor.
      */
     function __construct() {
-        parent::__construct('challenge_tnmt_pairings', 0);
+        parent::__construct('challenge_tnmt_matches', 0);
         $this->timecreated = \time();
         $this->timemodified = \time();
         $this->tournament = 0;
@@ -217,7 +217,7 @@ class tournament_pairing extends abstract_model {
     }
 
     /**
-     * Returns whether this pairing is already finished.
+     * Returns whether this match is already finished.
      *
      * @return bool
      */

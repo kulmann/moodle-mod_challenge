@@ -161,25 +161,25 @@ export default {
             return result.result;
         },
         /**
-         * Fetches the pairings of a tournament.
+         * Fetches the matches of a tournament.
          *
          * @param context
          * @param payload
          * @returns {Promise<void>}
          */
-        async fetchPairings(context, payload) {
-            return await ajax('mod_challenge_get_tournament_pairings', payload);
+        async fetchMatches(context, payload) {
+            return await ajax('mod_challenge_get_tournament_matches', payload);
         },
         /**
-         * Updates the participant pairings of the given tournament.
+         * Updates the participant matches of the given tournament.
          *
          * @param context
          * @param payload
          *
          * @returns {Promise<*>}
          */
-        async savePairings(context, payload) {
-            const result = await ajax('mod_challenge_save_tournament_pairings', payload);
+        async saveMatches(context, payload) {
+            const result = await ajax('mod_challenge_save_tournament_matches', payload);
             context.dispatch('fetchTournaments');
             return result.result;
         },

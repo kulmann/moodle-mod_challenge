@@ -39,11 +39,11 @@ class tournament extends abstract_model {
     ];
 
     /**
-     * @var int The timestamp of the creation of this pairing.
+     * @var int The timestamp of the creation of this tournament.
      */
     protected $timecreated;
     /**
-     * @var int The timestamp of the last update of this pairing.
+     * @var int The timestamp of the last update of this tournament.
      */
     protected $timemodified;
     /**
@@ -103,72 +103,72 @@ class tournament extends abstract_model {
     }
 
     /**
-     * Clears the participant pairings of an unpublished tournament.
+     * Clears the participant matches of an unpublished tournament.
      *
-     * @return bool Whether clearing the pairings was successful.
+     * @return bool Whether clearing the matches was successful.
      * @throws \dml_exception
      * @throws \invalid_state_exception If the state is not 'unpublished' anymore.
      */
-    public function clear_pairings() {
+    public function clear_matches() {
         if ($this->get_state() !== self::STATE_UNPUBLISHED) {
-            throw new \invalid_state_exception("it's not allowed to clear the participant pairings of a published tournament.");
+            throw new \invalid_state_exception("it's not allowed to clear the participant matches of a published tournament.");
         }
         global $DB;
         $conditions = ['tournament' => $this->get_id()];
-        return $DB->delete_records('challenge_tnmt_pairings', $conditions);
+        return $DB->delete_records('challenge_tnmt_matches', $conditions);
     }
 
     /**
-     * Creates new pairings for the given pairing data and saves them in the DB.
+     * Creates new matches for the given match data and saves them in the DB.
      *
-     * @param array $pairings_data
+     * @param array $matches_data
      *
      * @throws \dml_exception
      * @throws \invalid_state_exception
      */
-    public function create_pairings($pairings_data) {
+    public function create_matches($matches_data) {
         if ($this->get_state() !== self::STATE_UNPUBLISHED) {
-            throw new \invalid_state_exception("it's not allowed to create fresh participant pairings for a published tournament.");
+            throw new \invalid_state_exception("it's not allowed to create fresh participant matches for a published tournament.");
         }
-        foreach ($pairings_data as $pairing_data) {
-            $pairing = new tournament_pairing();
-            $pairing->set_tournament($this->get_id());
-            $pairing->set_step(0);
-            $pairing->set_mdl_user_1($pairing_data['mdl_user_1']);
-            $pairing->set_mdl_user_2($pairing_data['mdl_user_2']);
-            $pairing->save();
+        foreach ($matches_data as $match_data) {
+            $match = new tournament_match();
+            $match->set_tournament($this->get_id());
+            $match->set_step(0);
+            $match->set_mdl_user_1($match_data['mdl_user_1']);
+            $match->set_mdl_user_2($match_data['mdl_user_2']);
+            $match->save();
         }
     }
 
     /**
-     * Checks if this tournament already has pairings.
+     * Checks if this tournament already has matches.
      *
      * @return bool
      * @throws \dml_exception
      */
-    public function has_pairings() {
+    public function has_matches() {
         global $DB;
-        $count_pairings = $DB->count_records('challenge_tnmt_pairings', ['tournament' => $this->get_id()]);
-        return $count_pairings > 0;
+        $count_matches = $DB->count_records('challenge_tnmt_matches', ['tournament' => $this->get_id()]);
+        return $count_matches > 0;
     }
 
     /**
-     * Loads all pairings of this tournament for the given $step.
+     * Loads all matches of this tournament for the given $step.
      *
      * @param int $step
      *
-     * @return tournament_pairing[]
+     * @return tournament_match[]
      * @throws \dml_exception
      */
-    public function get_pairings($step) {
+    public function get_matches($step) {
         global $DB;
         $sql_conditions = ['tournament' => $this->get_id(), 'step' => $step];
-        $records = $DB->get_records('challenge_tnmt_pairings', $sql_conditions);
+        $records = $DB->get_records('challenge_tnmt_matches', $sql_conditions);
         $result = [];
-        foreach($records as $pairing_data) {
-            $pairing = new tournament_pairing();
-            $pairing->apply($pairing_data);
-            $result[] = $pairing;
+        foreach($records as $match_data) {
+            $match = new tournament_match();
+            $match->apply($match_data);
+            $result[] = $match;
         }
         return $result;
     }

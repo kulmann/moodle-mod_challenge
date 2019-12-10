@@ -7,7 +7,7 @@
                     userAvatar._pointer(:size="20", :user="user")
                     span._pointer {{ user.firstname + ' ' + user.lastname }}
         div.uk-alert.uk-alert-primary
-            span {{ strings.admin_tournament_pairing_info_participants | stringParams(selectedUsers.length) }}
+            span {{ strings.admin_tournament_match_info_participants | stringParams(selectedUsers.length) }}
 </template>
 
 <script>

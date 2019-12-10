@@ -26,7 +26,7 @@ use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\bool_dto;
 use mod_challenge\external\exporter\tournament_dto;
-use mod_challenge\external\exporter\tournament_pairing_dto;
+use mod_challenge\external\exporter\tournament_match_dto;
 use mod_challenge\model\tournament;
 use mod_challenge\util;
 use moodle_exception;
@@ -295,11 +295,11 @@ class tournaments extends external_api {
     }
 
     /**
-     * Definition of parameters for {@see get_tournament_pairings}.
+     * Definition of parameters for {@see get_tournament_matches}.
      *
      * @return external_function_parameters
      */
-    public static function get_tournament_pairings_parameters() {
+    public static function get_tournament_matches_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
             'tournamentid' => new external_value(PARAM_INT, 'the id of the tournament'),
@@ -308,16 +308,16 @@ class tournaments extends external_api {
     }
 
     /**
-     * Definition of return type for {@see get_tournament_pairings}.
+     * Definition of return type for {@see get_tournament_matches}.
      *
      * @return external_multiple_structure
      */
-    public static function get_tournament_pairings_returns() {
-        return new external_multiple_structure(tournament_pairing_dto::get_read_structure());
+    public static function get_tournament_matches_returns() {
+        return new external_multiple_structure(tournament_match_dto::get_read_structure());
     }
 
     /**
-     * Get all pairings of the given tournament.
+     * Get all matches of the given tournament.
      *
      * @param int $coursemoduleid
      * @param int $tournamentid
@@ -330,9 +330,9 @@ class tournaments extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function get_tournament_pairings($coursemoduleid, $tournamentid, $step = 0) {
+    public static function get_tournament_matches($coursemoduleid, $tournamentid, $step = 0) {
         $params = ['coursemoduleid' => $coursemoduleid, 'tournamentid' => $tournamentid, 'step' => $step];
-        self::validate_parameters(self::get_tournament_pairings_parameters(), $params);
+        self::validate_parameters(self::get_tournament_matches_parameters(), $params);
 
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
@@ -346,26 +346,26 @@ class tournaments extends external_api {
         $tournament = util::get_tournament($tournamentid);
         util::validate_tournament($game, $tournament);
 
-        // load pairings
-        $pairings = $tournament->get_pairings($step);
+        // load matches
+        $matches = $tournament->get_matches($step);
         $result = [];
-        foreach($pairings as $pairing) {
-            $exporter = new tournament_pairing_dto($pairing, $game, $ctx);
+        foreach($matches as $match) {
+            $exporter = new tournament_match_dto($match, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }
         return $result;
     }
 
     /**
-     * Definition of parameters for {@see save_tournament_pairings}.
+     * Definition of parameters for {@see save_tournament_matches}.
      *
      * @return external_function_parameters
      */
-    public static function save_tournament_pairings_parameters() {
+    public static function save_tournament_matches_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
             'tournamentid' => new external_value(PARAM_INT, 'the id of the tournament'),
-            'pairings' => new external_multiple_structure(new external_single_structure([
+            'matches' => new external_multiple_structure(new external_single_structure([
                 'mdl_user_1' => new external_value(PARAM_INT, 'the moodle user id of the first user'),
                 'mdl_user_2' => new external_value(PARAM_INT, 'the moodle user id of the second user'),
             ]))
@@ -373,20 +373,20 @@ class tournaments extends external_api {
     }
 
     /**
-     * Definition of return type for {@see save_tournament_pairings}.
+     * Definition of return type for {@see save_tournament_matches}.
      *
      * @return external_single_structure
      */
-    public static function save_tournament_pairings_returns() {
+    public static function save_tournament_matches_returns() {
         return bool_dto::get_read_structure();
     }
 
     /**
-     * Clears and then inserts the participant pairings for the given tournament.
+     * Clears and then inserts the participant matches for the given tournament.
      *
      * @param int $coursemoduleid
      * @param int $tournamentid
-     * @param array $pairings
+     * @param array $matches
      *
      * @return stdClass
      * @throws \required_capability_exception
@@ -396,13 +396,13 @@ class tournaments extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function save_tournament_pairings($coursemoduleid, $tournamentid, $pairings) {
+    public static function save_tournament_matches($coursemoduleid, $tournamentid, $matches) {
         $params = [
             'coursemoduleid' => $coursemoduleid,
             'tournamentid' => $tournamentid,
-            'pairings' => $pairings,
+            'matches' => $matches,
         ];
-        self::validate_parameters(self::save_tournament_pairings_parameters(), $params);
+        self::validate_parameters(self::save_tournament_matches_parameters(), $params);
 
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
@@ -417,10 +417,10 @@ class tournaments extends external_api {
         $tournament = util::get_tournament($tournamentid);
         util::validate_tournament($game, $tournament);
 
-        // create new pairings
+        // create new matches
         try {
-            $tournament->clear_pairings();
-            $tournament->create_pairings($pairings);
+            $tournament->clear_matches();
+            $tournament->create_matches($matches);
         } catch(\invalid_state_exception $e) {
             $exporter = new bool_dto(false, $ctx);
             return $exporter->export($renderer);

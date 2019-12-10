@@ -18,7 +18,7 @@
                 levels(v-else-if="viewMode === VIEW_MODE_LEVELS", :levels="levels")
             template(v-else)
                 tournamentEdit(v-if="viewMode === VIEW_MODE_TOURNAMENT_EDIT", :tournament="tournamentForEditing")
-                pairingsEdit(v-else-if="viewMode === VIEW_MODE_PAIRINGS_EDIT", :tournament="tournamentForEditing")
+                matchesEdit(v-else-if="viewMode === VIEW_MODE_MATCHES_EDIT", :tournament="tournamentForEditing")
                 levelEdit(v-else-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing")
 </template>
 
@@ -33,18 +33,18 @@
     import levelEdit from "./level-edit";
     import tournamentEdit from "./tournament-edit";
     import tournaments from "./tournaments";
-    import pairingsEdit from "./pairings/pairings-edit";
+    import matchesEdit from "./matches/matches-edit";
 
     export default {
         mixins: [mixins],
         data() {
             return {
                 VIEW_MODE_NONE: 'none',
-                VIEW_MODE_LEVELS: 'levels',
-                VIEW_MODE_LEVEL_EDIT: 'levelEdit',
-                VIEW_MODE_TOURNAMENTS: 'tournaments',
-                VIEW_MODE_TOURNAMENT_EDIT: 'tournamentEdit',
-                VIEW_MODE_PAIRINGS_EDIT: 'pairingsEdit',
+                VIEW_MODE_LEVELS: 'admin-level-list',
+                VIEW_MODE_LEVEL_EDIT: 'admin-level-edit',
+                VIEW_MODE_TOURNAMENTS: 'admin-tournament-list',
+                VIEW_MODE_TOURNAMENT_EDIT: 'admin-tournament-edit',
+                VIEW_MODE_MATCHES_EDIT: 'admin-matches-edit',
             }
         },
         computed: {
@@ -65,16 +65,15 @@
                 return _.endsWith(this.$route.name, '-list');
             },
             viewMode() {
-                if (this.$route.name === 'admin-level-list') {
-                    return this.VIEW_MODE_LEVELS;
-                } else if (this.$route.name === 'admin-level-edit') {
-                    return this.VIEW_MODE_LEVEL_EDIT;
-                } else if (this.$route.name === 'admin-tournament-list') {
-                    return this.VIEW_MODE_TOURNAMENTS;
-                } else if (this.$route.name === 'admin-tournament-edit') {
-                    return this.VIEW_MODE_TOURNAMENT_EDIT;
-                } else if (this.$route.name === 'admin-pairings-edit') {
-                    return this.VIEW_MODE_PAIRINGS_EDIT;
+                const routes = [
+                    this.VIEW_MODE_LEVELS,
+                    this.VIEW_MODE_LEVEL_EDIT,
+                    this.VIEW_MODE_TOURNAMENTS,
+                    this.VIEW_MODE_TOURNAMENT_EDIT,
+                    this.VIEW_MODE_MATCHES_EDIT,
+                ];
+                if (routes.includes(this.$route.name)) {
+                    return this.$route.name;
                 } else {
                     return this.VIEW_MODE_NONE;
                 }
@@ -124,7 +123,7 @@
             loadingAlert,
             levels,
             levelEdit,
-            pairingsEdit,
+            matchesEdit,
             tournamentEdit,
             tournaments
         },

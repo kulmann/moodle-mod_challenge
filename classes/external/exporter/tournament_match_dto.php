@@ -20,41 +20,41 @@ use context;
 use core\external\exporter;
 use mod_challenge\model\game;
 use mod_challenge\model\tournament;
-use mod_challenge\model\tournament_pairing;
+use mod_challenge\model\tournament_match;
 use mod_challenge\model\tournament_gamesession;
 use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class tournament_pairing_dto
+ * Class tournament_match_dto
  *
  * @package    mod_challenge\external\exporter
  * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tournament_pairing_dto extends exporter {
+class tournament_match_dto extends exporter {
 
     /**
-     * @var tournament_pairing
+     * @var tournament_match
      */
-    protected $pairing;
+    protected $match;
     /**
      * @var game
      */
     protected $game;
 
     /**
-     * tournament_pairing_dto constructor.
+     * tournament_match_dto constructor.
      *
-     * @param tournament_pairing $pairing
+     * @param tournament_match $match
      * @param game $game
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(tournament_pairing $pairing, game $game, context $context) {
-        $this->pairing = $pairing;
+    public function __construct(tournament_match $match, game $game, context $context) {
+        $this->match = $match;
         $this->game = $game;
         parent::__construct([], ['context' => $context]);
     }
@@ -83,15 +83,15 @@ class tournament_pairing_dto extends exporter {
             ],
             'mdl_user_1' => [
                 'type' => PARAM_INT,
-                'description' => 'first moodle user of the pairing',
+                'description' => 'first moodle user of the match',
             ],
             'mdl_user_2' => [
                 'type' => PARAM_INT,
-                'description' => 'second moodle user of the pairing',
+                'description' => 'second moodle user of the match',
             ],
             'winner' => [
                 'type' => PARAM_ALPHA,
-                'description' => 'winner of this pairing, out of [open, tie, p1, p2]',
+                'description' => 'winner of this match, out of [open, tie, p1, p2]',
             ],
         ];
     }
@@ -103,6 +103,6 @@ class tournament_pairing_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        return $this->pairing->to_array();
+        return $this->match->to_array();
     }
 }

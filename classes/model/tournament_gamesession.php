@@ -75,9 +75,9 @@ class tournament_gamesession extends abstract_model {
      */
     protected $levels_order;
     /**
-     * @var int The id of the user pairing step within this tournament.
+     * @var int The id of the user match within this tournament.
      */
-    protected $pairing;
+    protected $match;
 
     /**
      * tournament_round constructor.
@@ -94,7 +94,7 @@ class tournament_gamesession extends abstract_model {
         $this->answers_correct = 0;
         $this->state = self::STATE_PROGRESS;
         $this->levels_order = '';
-        $this->pairing = 0;
+        $this->match = 0;
     }
 
     /**
@@ -113,7 +113,7 @@ class tournament_gamesession extends abstract_model {
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
         $this->game = $data['game'];
         $this->tournament = $data['tournament'];
-        $this->pairing = $data['pairing'];
+        $this->match = $data['match'];
         $this->mdl_user = $data['mdl_user'];
         $this->score = isset($data['score']) ? $data['score'] : 0;
         $this->answers_total = isset($data['answers_total']) ? $data['answers_total'] : 0;
@@ -217,15 +217,15 @@ class tournament_gamesession extends abstract_model {
     /**
      * @return int
      */
-    public function get_pairing(): int {
-        return $this->pairing;
+    public function get_match(): int {
+        return $this->match;
     }
 
     /**
-     * @param int $pairing
+     * @param int $match
      */
-    public function set_pairing(int $pairing) {
-        $this->pairing = $pairing;
+    public function set_match(int $match) {
+        $this->match = $match;
     }
 
     /**

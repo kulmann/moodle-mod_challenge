@@ -18,9 +18,9 @@
                                 td.actions.uk-table-shrink.uk-preserve-width
                                     button.btn.btn-default(@click="editTournament(tournament)", :disabled="stateChangeInProgress")
                                         v-icon(name="regular/edit")
-                                    button.btn.btn-default(@click="createPairings(tournament)", :disabled="stateChangeInProgress")
+                                    button.btn.btn-default(@click="createMatches(tournament)", :disabled="stateChangeInProgress")
                                         v-icon(name="users")
-                                    button.btn.btn-default(@click="publishTournamentAsk(tournament)", :disabled="stateChangeInProgress || !hasPairings(tournament)")
+                                    button.btn.btn-default(@click="publishTournamentAsk(tournament)", :disabled="stateChangeInProgress || !hasMatches(tournament)")
                                         v-icon(name="rocket")
                                     button.btn.btn-default(@click="deleteTournamentAsk(tournament)", :disabled="stateChangeInProgress")
                                         v-icon(name="trash")
@@ -96,8 +96,8 @@
             ...mapActions({
                 setTournamentState: 'admin/setTournamentState',
             }),
-            hasPairings(tournament) {
-                return tournament.has_pairings;
+            hasMatches(tournament) {
+                return tournament.has_matches;
             },
             createTournament() {
                 this.$router.push({name: 'admin-tournament-edit'});
@@ -105,8 +105,8 @@
             editTournament(tournament) {
                 this.$router.push({name: 'admin-tournament-edit', params: {tournamentId: tournament.id}});
             },
-            createPairings(tournament) {
-                this.$router.push({name: 'admin-pairings-edit', params: {tournamentId: tournament.id}});
+            createMatches(tournament) {
+                this.$router.push({name: 'admin-matches-edit', params: {tournamentId: tournament.id}});
             },
             publishTournamentAsk(tournament) {
                 this.publishConfirmationTournamentId = tournament.id;

@@ -93,17 +93,17 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_save_tournament_pairings' => [
+    'mod_challenge_save_tournament_matches' => [
         'classname' => 'mod_challenge\external\tournaments',
-        'methodname' => 'save_tournament_pairings',
-        'description' => 'Save the pairings for a tournament',
+        'methodname' => 'save_tournament_matches',
+        'description' => 'Save the matches for a tournament',
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_get_tournament_pairings' => [
+    'mod_challenge_get_tournament_matches' => [
         'classname' => 'mod_challenge\external\tournaments',
-        'methodname' => 'get_tournament_pairings',
-        'description' => 'Get the pairings of a tournament',
+        'methodname' => 'get_tournament_matches',
+        'description' => 'Get the matches of a tournament',
         'type' => 'read',
         'ajax' => true,
     ],

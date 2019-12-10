@@ -1,30 +1,30 @@
 <template lang="pug">
     div
-        failureAlert(v-if="!validUserSelection", :message="strings.admin_tournament_pairing_invalid_users")
+        failureAlert(v-if="!validUserSelection", :message="strings.admin_tournament_match_invalid_users")
         template(v-else)
-            button.btn.btn-primary(@click="generatePairings") {{ strings.admin_btn_generate }}
-            template(v-if="pairings.length === 0")
-                h4 {{ strings.admin_tournament_pairing_none_title }}
-                p {{ strings.admin_tournament_pairing_none_msg }}
+            button.btn.btn-primary(@click="generateMatches") {{ strings.admin_btn_generate }}
+            template(v-if="matches.length === 0")
+                h4 {{ strings.admin_tournament_match_none_title }}
+                p {{ strings.admin_tournament_match_none_msg }}
             template(v-else)
-                h4 {{ strings.admin_tournament_pairing_done_title }}
-                p {{ strings.admin_tournament_pairing_done_msg }}
+                h4 {{ strings.admin_tournament_match_done_title }}
+                p {{ strings.admin_tournament_match_done_msg }}
                 table.uk-table.uk-table-striped
                     thead
                         tr
-                            th.uk-table-shrink {{ strings.admin_tournament_pairing_table_number }}
-                            th.uk-table-expand {{ strings.admin_tournament_pairing_table_participant }}
+                            th.uk-table-shrink {{ strings.admin_tournament_match_table_number }}
+                            th.uk-table-expand {{ strings.admin_tournament_match_table_participant }}
                     tbody
-                        tr(v-for="(pair, index) in pairings", :key="'pair-' + index")
+                        tr(v-for="(match, index) in matches", :key="'match-' + index")
                             td.uk-table-middle.uk-text-center
                                 b(style="font-size: 1.5em;") {{ index + 1 }}
                             td.uk-table-middle
                                 div
-                                    userAvatar(:size="20", :user="getMdlUser(pair.mdl_user_1)")
-                                    span {{ getMdlUser(pair.mdl_user_1).firstname + ' ' + getMdlUser(pair.mdl_user_1).lastname }}
+                                    userAvatar(:size="20", :user="getMdlUser(match.mdl_user_1)")
+                                    span {{ getMdlUser(match.mdl_user_1).firstname + ' ' + getMdlUser(match.mdl_user_1).lastname }}
                                 div.uk-margin-small-top
-                                    userAvatar(:size="20", :user="getMdlUser(pair.mdl_user_2)")
-                                    span {{ getMdlUser(pair.mdl_user_2).firstname + ' ' + getMdlUser(pair.mdl_user_2).lastname }}
+                                    userAvatar(:size="20", :user="getMdlUser(match.mdl_user_2)")
+                                    span {{ getMdlUser(match.mdl_user_2).firstname + ' ' + getMdlUser(match.mdl_user_2).lastname }}
 </template>
 <script>
     import _ from 'lodash';
@@ -40,7 +40,7 @@
         },
         data() {
             return {
-                pairings: [],
+                matches: [],
             }
         },
         computed: {
@@ -56,28 +56,25 @@
             },
         },
         methods: {
-            ...mapActions({
-                savePairings: 'admin/savePairings',
-            }),
-            generatePairings() {
+            generateMatches() {
                 let mdlUserIds = _.shuffle(_.map(this.participants, p => p.id));
-                let pairings = [];
+                let matches = [];
                 while (mdlUserIds.length > 1) {
-                    pairings.push({
+                    matches.push({
                         mdl_user_1: mdlUserIds.pop(),
                         mdl_user_2: mdlUserIds.pop(),
                     });
                 }
-                this.pairings = pairings;
-                this.$emit('input', this.pairings);
+                this.matches = matches;
+                this.$emit('input', this.matches);
             },
         },
         mounted() {
-            this.pairings = this.value;
+            this.matches = this.value;
         },
         watch: {
             value() {
-                this.pairings = this.value;
+                this.matches = this.value;
             },
         },
         components: {UserAvatar, failureAlert},

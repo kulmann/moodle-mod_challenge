@@ -91,9 +91,9 @@ class tournament_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'score of the winning user'
             ],
-            'has_pairings' => [
+            'has_matches' => [
                 'type' => PARAM_BOOL,
-                'description' => 'whether or not this tournament already has pairings',
+                'description' => 'whether or not this tournament already has matches',
             ],
         ];
     }
@@ -108,7 +108,7 @@ class tournament_dto extends exporter {
         return \array_merge(
             $this->tournament->to_array(),
             [
-                'has_pairings' => $this->tournament->has_pairings(),
+                'has_matches' => $this->tournament->has_matches(),
             ]
         );
     }

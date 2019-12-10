@@ -162,7 +162,7 @@ class game extends abstract_model {
     }
 
     /**
-     * Loads all tournaments of this game where the given user is involved in a pairing.
+     * Loads all tournaments of this game where the given user is involved in a match.
      *
      * @param int $mdl_user_id
      *
@@ -180,11 +180,11 @@ class game extends abstract_model {
         ];
         $records = $DB->get_records_sql("SELECT t.* 
                     FROM {challenge_tournaments} t
-                    INNER JOIN {challenge_tnmt_pairings} p ON t.id=p.tournament
+                    INNER JOIN {challenge_tnmt_matches} m ON t.id=m.tournament
                     WHERE t.game = :game 
-                        AND (p.mdl_user_1 = :user_1 OR p.mdl_user_2 = :user_2) 
+                        AND (m.mdl_user_1 = :user_1 OR m.mdl_user_2 = :user_2) 
                         AND t.state <> :state_unpublished AND t.state <> :state_dumped
-                    ORDER BY p.timecreated DESC", $sql_params);
+                    ORDER BY m.timecreated DESC", $sql_params);
         $result = [];
         foreach ($records as $tournament_data) {
             $tournament = new tournament();

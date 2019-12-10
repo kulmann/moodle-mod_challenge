@@ -67,7 +67,7 @@
             </KEYS>
         </TABLE>
         <TABLE NAME="challenge_tournaments"
-               COMMENT="A tournament of a game consists of a player pairing and a number of gamesessions.">
+               COMMENT="A tournament of a game consists of a player matches and a number of gamesessions.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
@@ -84,8 +84,8 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="challenge_tnmt_pairings"
-               COMMENT="Pairings are a combination of two players in a tournament">
+        <TABLE NAME="challenge_tnmt_matches"
+               COMMENT="Matches are a combination of two players in a tournament">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
@@ -96,7 +96,7 @@
                 <FIELD NAME="mdl_user_1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="winner" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" DEFAULT="open"
-                       COMMENT="State of this pairing, out of [open, tie, p1, p2]."/>
+                       COMMENT="State of this match, out of [open, tie, p1, p2]."/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -111,7 +111,7 @@
                        SEQUENCE="false"/>
                 <FIELD NAME="game" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="tournament" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="pairing" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="match" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="score" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="answers_total" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
