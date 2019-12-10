@@ -73,13 +73,13 @@ class tournament_question_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'timestamp when this question was modified',
             ],
-            'tournament' => [
+            'topic' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the tournament this question belongs to',
+                'description' => 'id of the topic this question was chosen from',
             ],
-            'level' => [
+            'mdl_user' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the level this question was chosen for',
+                'description' => 'id of the moodle user this question was chosen for',
             ],
             'mdl_question' => [
                 'type' => PARAM_INT,

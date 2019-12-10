@@ -43,13 +43,13 @@ class tournament_question extends abstract_model {
      */
     protected $timemodified;
     /**
-     * @var int The id of the gamesession instance this question belongs to.
+     * @var int The id of the tournament topic.
      */
-    protected $gamesession;
+    protected $topic;
     /**
-     * @var int The id of the level this question was chosen for.
+     * @var int The id of the moodle user who got this question.
      */
-    protected $level;
+    protected $mdl_user;
     /**
      * @var int The id of the moodle question.
      */
@@ -90,8 +90,8 @@ class tournament_question extends abstract_model {
         parent::__construct('challenge_tnmt_questions', 0);
         $this->timecreated = \time();
         $this->timemodified = \time();
-        $this->gamesession = 0;
-        $this->level = 0;
+        $this->topic = 0;
+        $this->mdl_user = 0;
         $this->mdl_question = 0;
         $this->mdl_answers_order = '';
         $this->mdl_answer_given = 0;
@@ -115,8 +115,8 @@ class tournament_question extends abstract_model {
         $this->id = isset($data['id']) ? $data['id'] : 0;
         $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
-        $this->gamesession = $data['gamesession'];
-        $this->level = $data['level'];
+        $this->topic = $data['topic'];
+        $this->mdl_user = $data['mdl_user'];
         $this->mdl_question = $data['mdl_question'];
         $this->mdl_answers_order = $data['mdl_answers_order'];
         $this->mdl_answer_given = isset($data['mdl_answer_given']) ? $data['mdl_answer_given'] : null;
@@ -190,29 +190,29 @@ class tournament_question extends abstract_model {
     /**
      * @return int
      */
-    public function get_gamesession(): int {
-        return $this->gamesession;
+    public function get_topic(): int {
+        return $this->topic;
     }
 
     /**
-     * @param int $gamesession
+     * @param int $topic
      */
-    public function set_gamesession(int $gamesession) {
-        $this->gamesession = $gamesession;
+    public function set_topic(int $topic) {
+        $this->topic = $topic;
     }
 
     /**
      * @return int
      */
-    public function get_level(): int {
-        return $this->level;
+    public function get_mdl_user(): int {
+        return $this->mdl_user;
     }
 
     /**
-     * @param int $level
+     * @param int $mdl_user
      */
-    public function set_level(int $level) {
-        $this->level = $level;
+    public function set_mdl_user(int $mdl_user) {
+        $this->mdl_user = $mdl_user;
     }
 
     /**

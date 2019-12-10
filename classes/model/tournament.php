@@ -17,6 +17,7 @@
 namespace mod_challenge\model;
 
 use dml_exception;
+use mod_challenge\external\exporter\tournament_question_dto;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -174,6 +175,30 @@ class tournament extends abstract_model {
     }
 
     /**
+     * Loads all matches of this tournament where the given mdl_user is involved.
+     *
+     * @param int $mdl_user
+     *
+     * @return tournament_match[]
+     * @throws dml_exception
+     */
+    public function get_user_matches($mdl_user) {
+        global $DB;
+        $sql = "SELECT * 
+                  FROM {challenge_tnmt_matches} 
+                 WHERE tournament = :tournament AND (mdl_user_1 = :user1 OR mdl_user_2 = :user2)
+              ORDER BY step ASC";
+        $records = $DB->get_records_sql($sql, ['tournament' => $this->get_id(), 'user1' => $mdl_user, 'user2' => $mdl_user]);
+        $result = [];
+        foreach ($records as $record) {
+            $match = new tournament_match();
+            $match->apply($record);
+            $result[] = $match;
+        }
+        return $result;
+    }
+
+    /**
      * Checks if this tournament already has topics.
      *
      * @return bool
@@ -225,6 +250,32 @@ class tournament extends abstract_model {
     public function get_number_of_steps() {
         $number_of_participants = $this->count_participants();
         return $number_of_participants - 1;
+    }
+
+    /**
+     * Gets all questions ever created for this tournament.
+     *
+     * @return tournament_question[]
+     * @throws dml_exception
+     */
+    public function get_questions() {
+        global $DB;
+        $sql_conditions = ['tournament' => $this->get_id()];
+        $sql = "
+            SELECT questions.*
+              FROM {challenge_tnmt_questions} questions
+        INNER JOIN {challenge_tnmt_topics} topics ON questions.topic = topics.id 
+             WHERE topics.tournament = :tournament
+          ORDER BY questions.timecreated DESC
+        ";
+        $records = $DB->get_records_sql($sql, $sql_conditions);
+        $result = [];
+        foreach ($records as $record) {
+            $question = new tournament_question();
+            $question->apply($record);
+            $result[] = $question;
+        }
+        return $result;
     }
 
     /**

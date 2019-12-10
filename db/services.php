@@ -121,6 +121,13 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_get_tournament_questions' => [
+        'classname' => 'mod_challenge\external\get_tournament_questions',
+        'methodname' => 'get',
+        'description' => 'Get the questions related to this tournament',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     'mod_challenge_get_user_tournaments' => [
         'classname' => 'mod_challenge\external\tournaments',
         'methodname' => 'get_user_tournaments',

@@ -20,6 +20,7 @@ use context;
 use core\external\exporter;
 use mod_challenge\model\game;
 use mod_challenge\model\tournament_topic;
+use mod_challenge\util;
 use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
@@ -83,6 +84,10 @@ class tournament_topic_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'id of the level',
             ],
+            'level_name' => [
+                'type' => PARAM_TEXT,
+                'description' => 'name of the level',
+            ],
         ];
     }
 
@@ -93,6 +98,12 @@ class tournament_topic_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        return $this->topic->to_array();
+        $level = util::get_level($this->topic->get_level());
+        return \array_merge(
+            $this->topic->to_array(),
+            [
+                'level_name' => $level->get_name(),
+            ]
+        );
     }
 }

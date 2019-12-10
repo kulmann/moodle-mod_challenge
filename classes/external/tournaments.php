@@ -420,9 +420,13 @@ class tournaments extends external_api {
         util::validate_tournament($game, $tournament);
 
         // load matches
-        $matches = $tournament->get_matches();
+        if ($mdluserid) {
+            $matches = $tournament->get_user_matches($mdluserid);
+        } else {
+            $matches = $tournament->get_matches();
+        }
         $result = [];
-        foreach($matches as $match) {
+        foreach ($matches as $match) {
             $exporter = new tournament_match_dto($match, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }
@@ -494,7 +498,7 @@ class tournaments extends external_api {
         try {
             $tournament->clear_matches();
             $tournament->create_matches($matches);
-        } catch(\invalid_state_exception $e) {
+        } catch (\invalid_state_exception $e) {
             $exporter = new bool_dto(false, $ctx);
             return $exporter->export($renderer);
         }

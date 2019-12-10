@@ -89,6 +89,26 @@ export default {
             return await ajax('mod_challenge_get_user_tournament_matches', payload);
         },
         /**
+         * Fetches all questions.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<void>}
+         */
+        async fetchQuestions(context, payload) {
+            return await ajax('mod_challenge_get_tournament_questions', payload);
+        },
+        /**
+         * Fetches the topics of a tournament.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async fetchTopics(context, payload) {
+            return await ajax('mod_challenge_get_tournament_topics', payload);
+        },
+        /**
          * Loads the question for the given level index. Doesn't matter if it's already answered.
          *
          * @param context

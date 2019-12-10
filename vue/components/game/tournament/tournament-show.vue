@@ -18,8 +18,7 @@
             failureAlert(v-if="match === null", :message="strings.game_tournament_match_show_error")
             template(v-else)
                 matchHeader(:match="match").uk-margin-small-bottom
-                matchOpen(v-if="match.open", :match="match")
-                matchDone(v-else, :match="match")
+                matchTopics(:match="match", :topics="getTopicsByStep(match.step)", :questions="questions", :ownUserId="ownUserId")
 </template>
 
 <script>
@@ -27,8 +26,7 @@
     import {mapActions, mapGetters, mapState} from 'vuex';
     import failureAlert from "../../helper/failure-alert";
     import matchHeader from "./match/match-header";
-    import matchOpen from "./match/match-open";
-    import matchDone from "./match/match-done";
+    import matchTopics from "./match/match-topics";
 
     export default {
         mixins: [Mixins],
@@ -36,6 +34,8 @@
             return {
                 matches: [],
                 matchIndex: 0,
+                questions: [],
+                topicsBySteps: {},
             }
         },
         computed: {
@@ -71,13 +71,41 @@
         methods: {
             ...mapActions({
                 fetchMatches: 'player/fetchMatches',
+                fetchTopics: 'player/fetchTopics',
+                fetchQuestions: 'player/fetchQuestions',
             }),
+            initData() {
+                this.loadMatches();
+                this.loadTopics();
+                this.loadQuestions();
+            },
             loadMatches() {
                 this.fetchMatches({
                     tournamentid: this.tournamentId
                 }).then(matches => {
                     this.matches = _.sortBy(matches, 'step');
                     this.matchIndex = this.matches.length - 1;
+                });
+            },
+            loadTopics() {
+                this.fetchTopics({
+                    tournamentid: this.tournamentId
+                }).then(topics => {
+                    let map = {};
+                    _.forEach(topics, topic => {
+                        if (!map.hasOwnProperty(topic.step)) {
+                            map[topic.step] = [];
+                        }
+                        map[topic.step].push(topic);
+                    });
+                    this.topicsBySteps = map;
+                });
+            },
+            loadQuestions() {
+                this.fetchQuestions({
+                    tournamentid: this.tournamentId
+                }).then(questions => {
+                    this.questions = questions;
                 });
             },
             goToPrevMatch() {
@@ -89,20 +117,25 @@
                 if (this.matchIndex < this.matches.length - 1) {
                     this.matchIndex++;
                 }
-            }
+            },
+            getTopicsByStep(step) {
+                if (this.topicsBySteps.hasOwnProperty(step)) {
+                    return this.topicsBySteps[step];
+                }
+                return [];
+            },
         },
         mounted() {
-            this.loadMatches();
+            this.initData();
         },
         watch: {
             tournamentId() {
-                this.loadMatches();
+                this.initData();
             }
         },
         components: {
             matchHeader,
-            matchDone,
-            matchOpen,
+            matchTopics,
             failureAlert
         }
     }
