@@ -98,7 +98,15 @@ class tournament_dto extends exporter {
             'has_topics' => [
                 'type' => PARAM_BOOL,
                 'description' => 'whether or not this tournament already has topics for all the steps',
-            ]
+            ],
+            'number_of_participants' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of participants in this tournament',
+            ],
+            'number_of_steps' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of steps/rounds required in the tournament until a winner is determined'
+            ],
         ];
     }
 
@@ -114,6 +122,8 @@ class tournament_dto extends exporter {
             [
                 'has_matches' => $this->tournament->has_matches(),
                 'has_topics' => $this->tournament->has_topics(),
+                'number_of_participants' => $this->tournament->count_participants(),
+                'number_of_steps' => $this->tournament->get_number_of_steps(),
             ]
         );
     }

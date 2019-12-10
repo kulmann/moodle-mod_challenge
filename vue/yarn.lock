@@ -4676,6 +4676,11 @@ randomfill@^1.0.3:
     randombytes "^2.0.5"
     safe-buffer "^5.1.0"
 
+range-inclusive@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/range-inclusive/-/range-inclusive-1.0.2.tgz#46cd8ab237af55928a5c38f3a50a178920e1a509"
+  integrity sha1-Rs2KsjevVZKKXDjzpQoXiSDhpQk=
+
 range-parser@^1.2.1, range-parser@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"

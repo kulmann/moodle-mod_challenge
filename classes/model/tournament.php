@@ -205,6 +205,29 @@ class tournament extends abstract_model {
     }
 
     /**
+     * Counts the number of participants of a tournament.
+     *
+     * @return int
+     * @throws dml_exception
+     */
+    public function count_participants() {
+        global $DB;
+        $count_matches = $DB->count_records('challenge_tnmt_matches', ['tournament' => $this->get_id(), 'step' => 0]);
+        return $count_matches * 2;
+    }
+
+    /**
+     * Calculates the number of game rounds / steps until all matches are done and a winner is determined.
+     *
+     * @return int
+     * @throws dml_exception
+     */
+    public function get_number_of_steps() {
+        $number_of_participants = $this->count_participants();
+        return $number_of_participants - 1;
+    }
+
+    /**
      * @return int
      */
     public function get_timecreated(): int {

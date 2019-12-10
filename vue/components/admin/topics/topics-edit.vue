@@ -1,11 +1,19 @@
 <template lang="pug">
     .uk-card.uk-card-default
-        .uk-card-body(v-if="matches === null || topics === null")
+        .uk-card-body(v-if="topics === null")
             loadingAlert(:message="strings.admin_tournament_topics_loading")
         template(v-else)
             .uk-card-body
                 h3 {{ strings.admin_tournament_title_topics }}
-                
+                table.uk-table.uk-table-striped
+                    thead
+                        tr
+                            th.uk-table-shrink {{ strings.admin_tournament_topics_lbl_step }}
+                            th.uk-table-expand {{ strings.admin_tournament_topics_lbl_levels }}
+                    tbody
+                        tr(v-for="step in stepIndices")
+                            td.uk-text-center {{ step + 1 }}
+                            td TODO: have to add level selection here
             .uk-card-footer.uk-text-right
                 button.btn.btn-primary(@click="save()", :disabled="saving || isDataInvalid")
                     v-icon(name="save").uk-margin-small-right
@@ -22,6 +30,7 @@
 <script>
     import {mapActions, mapState} from 'vuex';
     import mixins from '../../../mixins';
+    import rangeInclusive from 'range-inclusive';
     import loadingAlert from "../../helper/loading-alert";
     import loadingIcon from "../../helper/loading-icon";
 
@@ -32,7 +41,6 @@
         },
         data() {
             return {
-                matches: null,
                 topics: null,
                 saving: false,
             }
@@ -47,24 +55,21 @@
                 'levels',
             ]),
             isDataInvalid() {
-                return this.topics === null || this.topics.length < this.matches.length;
+                return this.topics === null || this.topics.length < this.steps;
             },
+            steps() {
+                return this.tournament.number_of_steps;
+            },
+            stepIndices() {
+                return rangeInclusive(0, this.steps - 1, 1);
+            }
         },
         methods: {
             ...mapActions({
-                fetchMatches: 'admin/fetchMatches',
                 fetchTopics: 'admin/fetchTopics',
                 saveTopics: 'admin/saveTopics',
             }),
             initData(tournament) {
-                this.fetchMatches({tournamentid: tournament.id}).then(matches => {
-                    this.matches = _.map(matches, match => {
-                        return {
-                            mdl_user_1: match.mdl_user_1,
-                            mdl_user_2: match.mdl_user_2,
-                        };
-                    });
-                });
                 this.fetchTopics({tournamentid: tournament.id}).then(topics => {
                     this.topics = topics;
                 });

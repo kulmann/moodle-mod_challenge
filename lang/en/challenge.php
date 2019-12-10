@@ -137,6 +137,8 @@ $string['admin_tournament_match_table_participant'] = 'Participant';
 $string['admin_tournament_title_topics'] = 'Edit tournament topics';
 $string['admin_tournament_topics_loading'] = 'Loading tournament topics';
 $string['admin_tournament_topics_saving'] = 'Saving the topics, please wait';
+$string['admin_tournament_topics_lbl_step'] = 'Round';
+$string['admin_tournament_topics_lbl_levels'] = 'Available levels';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
