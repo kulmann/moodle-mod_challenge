@@ -15,7 +15,7 @@
     import loadingAlert from '../helper/loading-alert';
     import infoAlert from "../helper/info-alert";
     import tournaments from "./tournaments/tournaments";
-    import TournamentShow from "./tournament/tournament-show";
+    import tournamentShow from "./tournament/tournament-show";
 
     export default {
         mixins: [mixins],
@@ -53,8 +53,8 @@
             }
         },
         components: {
-            TournamentShow,
             tournaments,
+            tournamentShow,
             infoAlert,
             loadingAlert,
             VkGrid
