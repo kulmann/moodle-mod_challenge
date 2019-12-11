@@ -107,6 +107,15 @@ class tournament_match_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
+        // make sure, logged in user is always the first one
+        $mdl_user_1 = $this->match->get_mdl_user_1();
+        $mdl_user_2 = $this->match->get_mdl_user_2();
+        global $USER;
+        if (intval($USER->id) === $mdl_user_2) {
+            $this->match->set_mdl_user_1($mdl_user_2);
+            $this->match->set_mdl_user_2($mdl_user_1);
+        }
+        // return data
         return \array_merge(
             $this->match->to_array(),
             [
