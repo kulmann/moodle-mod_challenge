@@ -18,7 +18,6 @@ namespace mod_challenge\external;
 
 use coding_exception;
 use dml_exception;
-use function end;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
@@ -30,7 +29,6 @@ use mod_challenge\external\exporter\category_dto;
 use mod_challenge\external\exporter\level_dto;
 use mod_challenge\model\category;
 use mod_challenge\model\level;
-use mod_challenge\model\tournament_question;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -55,7 +53,6 @@ class levels extends external_api {
     public static function get_levels_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'gamesessionid' => new external_value(PARAM_INT, 'the id of the current game session, if question information should be added', false)
         ]);
     }
 
@@ -74,7 +71,6 @@ class levels extends external_api {
      * Get all levels.
      *
      * @param int $coursemoduleid
-     * @param int $gamesessionid The id of the current game session, if question information should be added.
      *
      * @return array
      * @throws coding_exception
@@ -83,8 +79,8 @@ class levels extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function get_levels($coursemoduleid, $gamesessionid = 0) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'gamesessionid' => $gamesessionid];
+    public static function get_levels($coursemoduleid) {
+        $params = ['coursemoduleid' => $coursemoduleid];
         self::validate_parameters(self::get_levels_parameters(), $params);
 
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
@@ -95,51 +91,15 @@ class levels extends external_api {
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
 
-        // try to get gamesession - only if it exists! don't create one here!
-        if ($gamesessionid > 0) {
-            $gamesession = util::get_gamesession($gamesessionid);
-            util::validate_gamesession($game, $gamesession);
-        } else {
-            $gamesession = null;
-        }
-
         // get active levels from DB
         $levels = $game->get_active_levels();
-
-        // sort levels by the saved fixed order (if there is a gamesession)
-        if ($gamesession !== null) {
-            $level_ids = \explode(',', $gamesession->get_levels_order());
-            $sorted_levels = [];
-            foreach ($level_ids as $level_id) {
-                $level = \reset(\array_filter($levels, function(level $level) use ($level_id) {
-                    return $level_id == $level->get_id();
-                }));
-                if ($level) {
-                    $sorted_levels[] = $level;
-                }
-            }
-            $levels = $sorted_levels;
-        }
-
-        // collect all already answered questions (if there is a gamesession)
-        $questions_by_position = [];
-        if ($gamesession !== null) {
-            foreach ($levels as $level) {
-                \assert($level instanceof level);
-                $question = $gamesession->get_question_by_level($level->get_id());
-                if ($question !== null) {
-                    $questions_by_position[$level->get_position()] = $question;
-                }
-            }
-        }
 
         // collect export data from levels
         $result = [];
         foreach ($levels as $level_data) {
             $level = new level();
             $level->apply($level_data);
-            $question = isset($questions_by_position[$level->get_position()]) ? $questions_by_position[$level->get_position()] : null;
-            $exporter = new level_dto($level, $question, $game, $ctx);
+            $exporter = new level_dto($level, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }
         return $result;

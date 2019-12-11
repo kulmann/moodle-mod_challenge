@@ -25,6 +25,9 @@
                 const question = this.getQuestionByTopicAndUser(this.topic.id, this.mdlUserRight);
                 return this.getClassByQuestion(question);
             },
+            level() {
+
+            },
         },
         methods: {
             getQuestionByTopicAndUser(topicId, mdlUserId) {

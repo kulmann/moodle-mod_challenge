@@ -13,6 +13,7 @@ export default {
         contextID: 0,
         strings: {},
         game: null,
+        levels: [],
         mdlUsers: [],
     },
     mutations: {
@@ -37,6 +38,9 @@ export default {
         setGame(state, game) {
             state.game = game;
         },
+        setLevels(state, levels) {
+            state.levels = levels;
+        },
         setMdlUsers(state, mdlUsers) {
             state.mdlUsers = mdlUsers;
         },
@@ -55,6 +59,9 @@ export default {
                 return state.player && state.player.initialized;
             }
         },
+        getLevel: state => levelId => {
+            return _.first(_.filter(state.levels, level => level.id === levelId));
+        },
         getMdlUser: state => (mdlUserId) => {
             return _.first(_.filter(state.mdlUsers, user => user.id === mdlUserId));
         }
@@ -72,6 +79,7 @@ export default {
                     return Promise.all([
                         context.dispatch('loadComponentStrings'),
                         context.dispatch('fetchGame'),
+                        context.dispatch('fetchLevels'),
                         context.dispatch('fetchMdlUsers'),
                     ]).then(() => {
                         context.commit('setInitialized', true);
@@ -138,6 +146,17 @@ export default {
         async fetchGame(context) {
             const game = await ajax('mod_challenge_get_game');
             context.commit('setGame', game);
+        },
+        /**
+         * Fetches levels, including information on whether or not a level is finished.
+         * Should not be called directly. Will be called automatically in fetchGameSession.
+         *
+         * @param context
+         * @returns {Promise<void>}
+         */
+        async fetchLevels(context) {
+            const levels = await ajax('mod_challenge_get_levels', {});
+            context.commit('setLevels', levels);
         },
         /**
          * Fetches all non-teacher moodle users that have access to this course.

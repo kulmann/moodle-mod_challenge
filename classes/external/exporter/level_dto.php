@@ -39,10 +39,6 @@ class level_dto extends exporter {
      */
     protected $level;
     /**
-     * @var tournament_question
-     */
-    protected $question;
-    /**
      * @var game
      */
     protected $game;
@@ -51,15 +47,13 @@ class level_dto extends exporter {
      * level_dto constructor.
      *
      * @param level $level
-     * @param tournament_question|null $question
      * @param game $game
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(level $level, $question, game $game, context $context) {
+    public function __construct(level $level, game $game, context $context) {
         $this->level = $level;
-        $this->question = $question;
         $this->game = $game;
         parent::__construct([], ['context' => $context]);
     }
@@ -98,22 +92,6 @@ class level_dto extends exporter {
                 'type' => PARAM_TEXT,
                 'description' => 'url of background image for level representation',
             ],
-            'finished' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not the level is already finished',
-            ],
-            'correct' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not the question for this level was answered correctly',
-            ],
-            'score' => [
-                'type' => PARAM_INT,
-                'description' => 'the score that was reached by answering this question',
-            ],
-            'seen' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not this level has been seen by the user (i.e. if a question was shown)',
-            ],
             'tile_alpha' => [
                 'type' => PARAM_INT,
                 'description' => 'the alpha value of the level tile overlay',
@@ -132,18 +110,13 @@ class level_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        $result = \array_merge(
+        return \array_merge(
             $this->level->to_array(),
             [
                 'imageurl' => $this->level->get_image_url($this->related['context']),
-                'finished' => $this->question ? $this->question->is_finished() : false,
-                'correct' => $this->question ? $this->question->is_correct() : false,
-                'score' => $this->question ? $this->question->get_score() : 0,
-                'seen' => $this->question !== null,
                 'tile_alpha' => $this->game->get_level_tile_alpha(),
                 'tile_height_px' => $this->game->get_level_tile_height_px(),
             ]
         );
-        return $result;
     }
 }

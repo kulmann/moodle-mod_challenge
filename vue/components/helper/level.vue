@@ -15,15 +15,16 @@
 
 <script>
     import mixins from '../../mixins';
+    import {mapState} from 'vuex';
 
     export default {
         mixins: [mixins],
         props: {
-            strings: Object,
             level: Object,
             game: Object,
         },
         computed: {
+            ...mapState(['strings']),
             textStyles() {
                 let alpha = ((100 - this.game.level_tile_alpha) / 100.0);
                 let styles = [

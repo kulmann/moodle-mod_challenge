@@ -75,7 +75,8 @@
     export default {
         mixins: [mixins],
         props: {
-            level: Object
+            level: Object,
+            levels: Array,
         },
         data() {
             return {
@@ -93,7 +94,6 @@
                 'game',
             ]),
             ...mapState('admin', [
-                'levels',
                 'levelCategories',
                 'mdl_categories'
             ]),

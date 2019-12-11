@@ -20,7 +20,7 @@
                 tournamentEdit(v-if="viewMode === VIEW_MODE_TOURNAMENT_EDIT", :tournament="tournamentForEditing")
                 matchesEdit(v-else-if="viewMode === VIEW_MODE_MATCHES_EDIT", :tournament="tournamentForEditing")
                 topicsEdit(v-else-if="viewMode === VIEW_MODE_TOPICS_EDIT", :tournament="tournamentForEditing")
-                levelEdit(v-else-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing")
+                levelEdit(v-else-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing", :levels="levels")
 </template>
 
 <script>
@@ -53,13 +53,13 @@
         computed: {
             ...mapState([
                 'strings',
+                'levels',
             ]),
             ...mapGetters([
                 'isAdminUser',
                 'isInitialized'
             ]),
             ...mapState('admin', [
-                'levels',
                 'editableTournaments',
                 'activeTournaments',
                 'finishedTournaments',
