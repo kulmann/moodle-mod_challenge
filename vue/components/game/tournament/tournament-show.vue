@@ -16,16 +16,13 @@
                 button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
                     v-icon(name="chevron-right")
             failureAlert(v-if="match === null", :message="strings.game_tournament_match_show_error")
-            template(v-else)
-                matchHeader(:match="match").uk-margin-small-bottom
-                matchTopics(:match="match", :topics="getTopicsByStep(match.step)", :questions="questions", :ownUserId="ownUserId")
+            matchTopics(v-else, :match="match", :topics="getTopicsByStep(match.step)", :questions="questions", :ownUserId="ownUserId")
 </template>
 
 <script>
     import Mixins from '../../../mixins';
     import {mapActions, mapGetters, mapState} from 'vuex';
     import failureAlert from "../../helper/failure-alert";
-    import matchHeader from "./match/match-header";
     import matchTopics from "./match/match-topics";
 
     export default {
@@ -134,7 +131,6 @@
             }
         },
         components: {
-            matchHeader,
             matchTopics,
             failureAlert
         }

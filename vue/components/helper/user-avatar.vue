@@ -2,7 +2,7 @@
     img.userpicture.defaultuserpic(:width="size", :height="size",
         :title="strings.admin_avatar_alt | stringParams(user.firstname + ' ' + user.lastname)",
         :alt="strings.admin_avatar_alt | stringParams(user.firstname + ' ' + user.lastname)",
-        :src="user.image")
+        :src="user.image", :style="'width: ' + size + 'px; height: ' + size + 'px;'")
 </template>
 
 <script>

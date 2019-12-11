@@ -154,6 +154,7 @@ $string['game_tournaments_finished_title'] = 'Beendete Turniere';
 $string['game_tournaments_finished_none'] = 'Sie haben noch kein Turnier beendet.';
 $string['game_tournaments_list_name'] = 'Name';
 $string['game_tournament_match_show_error'] = 'Bei der Anzeige des ausgewählten Matches ist etwas schiefgelaufen.';
+$string['game_tournament_match_versus'] = 'gegen';
 $string['game_tournament_match_step'] = 'Runde {$a->step} / {$a->total}';
 $string['game_tournament_match_lbl_open'] = 'offen';
 $string['game_tournament_match_lbl_won'] = 'gewonnen';
