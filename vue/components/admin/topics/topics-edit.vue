@@ -15,9 +15,14 @@
                             td.uk-text-center
                                 b {{ step + 1 }}
                             td
-                                b TODO: have to add level selection here
-
-
+                                div(v-for="topic in topics[step]")
+                                    editableDropDown(:items="dropDownValues", v-model="topic.level", :unlockEditMode="true")
+                                        template(v-slot:current="valueProps")
+                                            span(v-if="valueProps.value === 0") Please Select
+                                            level(v-else, :level="getLevel(valueProps.value)", :game="game", style="width: 200px;")
+                                        template(v-slot:listItem="itemProps")
+                                            span(v-if="itemProps.item === 0") None
+                                            level(v-else, :level="getLevel(itemProps.item)", :game="game", style="width: 200px;")
             .uk-card-footer.uk-text-right
                 button.btn.btn-primary(@click="save()", :disabled="saving || isDataInvalid")
                     v-icon(name="save").uk-margin-small-right
@@ -32,12 +37,13 @@
 </template>
 
 <script>
-    import {mapActions, mapState} from 'vuex';
+    import {mapActions, mapGetters, mapState} from 'vuex';
     import mixins from '../../../mixins';
     import rangeInclusive from 'range-inclusive';
     import loadingAlert from "../../helper/loading-alert";
     import loadingIcon from "../../helper/loading-icon";
     import editableDropDown from "../../helper/editable-drop-down";
+    import level from "../../helper/level";
 
     export default {
         mixins: [mixins],
@@ -54,11 +60,15 @@
             ...mapState([
                 'strings',
                 'game',
+                'levels',
                 'mdlUsers',
             ]),
-            ...mapState('admin', [
-                'levels',
+            ...mapGetters([
+                'getLevel'
             ]),
+            dropDownValues() {
+                return _.concat([0], _.map(_.sortBy(this.levels, 'name'), level => level.id));
+            },
             isDataInvalid() {
                 return this.topics === null || this.topics.length < this.steps;
             },
@@ -67,7 +77,7 @@
             },
             stepIndices() {
                 return rangeInclusive(0, this.steps - 1, 1);
-            }
+            },
         },
         methods: {
             ...mapActions({
@@ -76,7 +86,20 @@
             }),
             initData(tournament) {
                 this.fetchTopics({tournamentid: tournament.id}).then(topics => {
-                    this.topics = topics;
+                    const questionsPerStep = this.game.question_count;
+                    let topicsByStep = {};
+                    for(let step = 0; step < this.steps; step++) {
+                        let stepTopics = _.filter(topics, topic => topic.step === step);
+                        while(stepTopics.length < questionsPerStep) {
+                            stepTopics.push({
+                                id: 0,
+                                step: step,
+                                level: 0,
+                            });
+                        }
+                        topicsByStep[step] = stepTopics;
+                    }
+                    this.topics = topicsByStep;
                 });
             },
             goToTournamentList() {
@@ -109,6 +132,7 @@
             },
         },
         components: {
+            level,
             editableDropDown,
             loadingIcon,
             loadingAlert,
