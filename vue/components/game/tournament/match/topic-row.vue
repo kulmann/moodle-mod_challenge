@@ -18,7 +18,6 @@
         },
         computed: {
             leftClass() {
-                console.log(this.questions);
                 const question = this.getQuestionByTopicAndUser(this.topic.id, this.mdlUserLeft);
                 return this.getClassByQuestion(question);
             },

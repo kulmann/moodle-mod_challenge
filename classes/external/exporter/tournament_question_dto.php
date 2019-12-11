@@ -20,6 +20,7 @@ use context;
 use core\external\exporter;
 use mod_challenge\model\game;
 use mod_challenge\model\level;
+use mod_challenge\model\tournament;
 use mod_challenge\model\tournament_question;
 use mod_challenge\util;
 use renderer_base;
@@ -40,6 +41,10 @@ class tournament_question_dto extends exporter {
      */
     protected $question;
     /**
+     * @var tournament
+     */
+    protected $tournament;
+    /**
      * @var game
      */
     protected $game;
@@ -48,13 +53,15 @@ class tournament_question_dto extends exporter {
      * tournament_question_dto constructor.
      *
      * @param tournament_question $question
+     * @param tournament $tournament
      * @param game $game
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(tournament_question $question, game $game, context $context) {
+    public function __construct(tournament_question $question, tournament $tournament, game $game, context $context) {
         $this->question = $question;
+        $this->tournament = $tournament;
         $this->game = $game;
         parent::__construct([], ['context' => $context]);
     }
@@ -117,6 +124,14 @@ class tournament_question_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'the max score you can get for answering this question correct.',
             ],
+            'time_max' => [
+                'type' => PARAM_INT,
+                'description' => 'the max time for answering this questions',
+            ],
+            'tournament' => [
+                'type' => PARAM_INT,
+                'description' => 'the id of the tournament this question belongs to.',
+            ],
         ];
     }
 
@@ -134,6 +149,8 @@ class tournament_question_dto extends exporter {
                 'mdl_question_id' => $mdl_question->id,
                 'mdl_question_type' => \get_class($mdl_question),
                 'score_max' => $this->game->get_question_duration(),
+                'time_max' => $this->game->get_question_duration(),
+                'tournament' => $this->tournament->get_id(),
             ]
         );
     }

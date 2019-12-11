@@ -10,10 +10,12 @@
 
     export default {
         mixins: [mixins],
+        props: {
+            question: Object,
+        },
         computed: {
             ...mapState([
                 'strings',
-                'question'
             ]),
         },
     }

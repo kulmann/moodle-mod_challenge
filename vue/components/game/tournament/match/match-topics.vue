@@ -9,7 +9,7 @@
                     :questions="getQuestionsByTopic(topic.id)",
                 )
                 .uk-width-expand.uk-text-center(v-if="isQuestionOpen(topic.id)")
-                    button.btn.btn-primary(@click="goToQuestion(topic.id)") Answer
+                    button.btn.btn-primary(@click="goToQuestion(topic.id)") {{ strings.game_btn_answer }}
                 .uk-heading-divider.uk-margin-small-bottom(v-if="!lastRow(index)")
 </template>
 
@@ -44,7 +44,7 @@
                 }
             },
             goToQuestion(topicId) {
-                console.log(topicId);
+                this.$router.push({name: 'player-question-play', params: {topicId: topicId}})
             }
         },
         components: {topicRow}

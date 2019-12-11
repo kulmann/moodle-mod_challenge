@@ -17,13 +17,16 @@
 namespace mod_challenge;
 
 use cm_info;
+use coding_exception;
+use context;
 use dml_exception;
 use invalid_parameter_exception;
 use mod_challenge\model\game;
-use mod_challenge\model\tournament;
-use mod_challenge\model\tournament_gamesession;
 use mod_challenge\model\level;
+use mod_challenge\model\tournament;
 use mod_challenge\model\tournament_question;
+use mod_challenge\model\tournament_topic;
+use required_capability_exception;
 
 class util {
 
@@ -31,13 +34,13 @@ class util {
      * Checks if the logged in user has the given $capability.
      *
      * @param string $capability
-     * @param \context $context
+     * @param context $context
      * @param int|null $userid
      *
      * @return bool
-     * @throws \coding_exception
+     * @throws coding_exception
      */
-    public static function user_has_capability(string $capability, \context $context, $userid = null): bool {
+    public static function user_has_capability(string $capability, context $context, $userid = null): bool {
         return \has_capability($capability, $context, $userid);
     }
 
@@ -45,47 +48,28 @@ class util {
      * Kills the current request if the logged in user doesn't have the required capabilities.
      *
      * @param string $capability
-     * @param \context $context
+     * @param context $context
      * @param int|null $userid
      *
      * @return void
-     * @throws \required_capability_exception
+     * @throws required_capability_exception
      */
-    public static function require_user_has_capability(string $capability, \context $context, $userid = null) {
+    public static function require_user_has_capability(string $capability, context $context, $userid = null) {
         \require_capability($capability, $context, $userid);
     }
 
     /**
-     * Checks that the gamesession belongs to the given $game and the logged in $USER.
+     * Checks that the question belongs to the given user.
      *
-     * @param game $game
-     * @param tournament_gamesession $gamesession
-     *
-     * @return void
-     * @throws invalid_parameter_exception
-     */
-    public static function validate_gamesession(game $game, tournament_gamesession $gamesession) {
-        if ($game->get_id() !== $gamesession->get_game()) {
-            throw new invalid_parameter_exception("gamesession " . $gamesession->get_id() . " doesn't belong to game " . $game->get_id());
-        }
-        global $USER;
-        if ($gamesession->get_mdl_user() != $USER->id) {
-            throw new invalid_parameter_exception("gamesession " . $gamesession->get_id() . " doesn't belong to logged in user");
-        }
-    }
-
-    /**
-     * Checks that the question belongs to the given $gamesession.
-     *
-     * @param tournament_gamesession $gamesession
+     * @param int $mdl_user_id
      * @param tournament_question $question
      *
      * @return void
      * @throws invalid_parameter_exception
      */
-    public static function validate_question(tournament_gamesession $gamesession, tournament_question $question) {
-        if ($gamesession->get_id() !== $question->get_gamesession()) {
-            throw new invalid_parameter_exception("question " . $question->get_id() . " doesn't belong to given gamesession");
+    public static function validate_question($mdl_user_id, tournament_question $question) {
+        if ($mdl_user_id !== $question->get_mdl_user()) {
+            throw new invalid_parameter_exception("question " . $question->get_id() . " doesn't belong to given moodle user $mdl_user_id ");
         }
     }
 
@@ -162,17 +146,17 @@ class util {
     }
 
     /**
-     * Gets the gamesession instance for the given $gamesessionid from the database.
+     * Gets the topic instance for the given $topicid from the database.
      *
-     * @param int $gamesessionid
+     * @param int $topicid
      *
-     * @return tournament_gamesession
+     * @return tournament_topic
      * @throws dml_exception
      */
-    public static function get_gamesession($gamesessionid): tournament_gamesession {
-        $gamesession = new tournament_gamesession();
-        $gamesession->load_data_by_id($gamesessionid);
-        return $gamesession;
+    public static function get_topic($topicid): tournament_topic {
+        $topic = new tournament_topic();
+        $topic->load_data_by_id($topicid);
+        return $topic;
     }
 
     /**
@@ -204,80 +188,20 @@ class util {
     }
 
     /**
-     * Gets or creates a gamesession for the current user. Allowed existing gamesessions are either in state
-     * PROGRESS or FINISHED.
+     * Checks if the question is already timed out and sets the question data accordingly.
      *
+     * @param tournament_question $question
      * @param game $game
-     *
-     * @return tournament_gamesession
      * @throws dml_exception
      */
-    public static function get_or_create_gamesession(game $game): tournament_gamesession {
-        global $DB, $USER;
-        // try to find existing in-progress or finished gamesession
-        $sql = "
-            SELECT *
-              FROM {challenge_gamesessions}
-             WHERE game = :game AND mdl_user = :mdl_user AND state IN (:state_progress, :state_finished)
-          ORDER BY timemodified DESC
-        ";
-        $params = [
-            'game' => $game->get_id(),
-            'mdl_user' => $USER->id,
-            'state_progress' => tournament_gamesession::STATE_PROGRESS,
-            'state_finished' => tournament_gamesession::STATE_FINISHED,
-        ];
-        $record = $DB->get_record_sql($sql, $params);
-        // get or create game session
-        if ($record === false) {
-            $gamesession = self::insert_gamesession($game);
-        } else {
-            $gamesession = new tournament_gamesession();
-            $gamesession->apply($record);
+    public static function force_question_timeout(tournament_question $question, game $game) {
+        if (!$question->is_finished() && $question->get_timecreated() + $game->get_question_duration() < \time()) {
+            $question->set_mdl_answer_given(0);
+            $question->set_finished(true);
+            $question->set_correct(false);
+            $question->set_score(0);
+            $question->set_timeremaining(0);
+            $question->save();
         }
-        return $gamesession;
-    }
-
-    /**
-     * Closes all game sessions of the current user, which are in state 'progress'.
-     *
-     * @param game $game
-     *
-     * @return void
-     * @throws dml_exception
-     */
-    public static function dump_running_gamesessions(game $game) {
-        global $DB, $USER;
-        $conditions = [
-            'game' => $game->get_id(),
-            'mdl_user' => $USER->id,
-            'state' => tournament_gamesession::STATE_PROGRESS,
-        ];
-        $gamesession = new tournament_gamesession();
-        $DB->set_field($gamesession->get_table_name(), 'state', $gamesession::STATE_DUMPED, $conditions);
-    }
-
-    /**
-     * Inserts a new game session into the DB (for the current user).
-     *
-     * @param game $game
-     *
-     * @return tournament_gamesession
-     * @throws dml_exception
-     */
-    public static function insert_gamesession(game $game): tournament_gamesession {
-        global $USER;
-        $gamesession = new tournament_gamesession();
-        $gamesession->set_game($game->get_id());
-        $gamesession->set_mdl_user($USER->id);
-        $level_ids = \array_map(function (level $level) {
-            return $level->get_id();
-        }, $game->get_active_levels());
-        if ($game->is_shuffle_levels()) {
-            \shuffle($level_ids);
-        }
-        $gamesession->set_levels_order(implode(',', $level_ids));
-        $gamesession->save();
-        return $gamesession;
     }
 }

@@ -6,6 +6,7 @@
         template(v-else)
             tournaments(v-if="viewMode === VIEW_MODE_TOURNAMENTS")
             tournamentShow(v-else-if="viewMode === VIEW_MODE_TOURNAMENT_SHOW")
+            question(v-else-if="viewMode === VIEW_MODE_QUESTION_PLAY")
 </template>
 
 <script>
@@ -16,6 +17,7 @@
     import infoAlert from "../helper/info-alert";
     import tournaments from "./tournaments/tournaments";
     import tournamentShow from "./tournament/tournament-show";
+    import question from "./question/question";
 
     export default {
         mixins: [mixins],
@@ -24,6 +26,7 @@
                 VIEW_MODE_NONE: 'none',
                 VIEW_MODE_TOURNAMENTS: 'player-tournament-list',
                 VIEW_MODE_TOURNAMENT_SHOW: 'player-tournament-show',
+                VIEW_MODE_QUESTION_PLAY: 'player-question-play',
             }
         },
         computed: {
@@ -38,6 +41,7 @@
                 const viewModes = [
                     this.VIEW_MODE_TOURNAMENTS,
                     this.VIEW_MODE_TOURNAMENT_SHOW,
+                    this.VIEW_MODE_QUESTION_PLAY,
                 ];
                 const viewMode = this.$route.name;
                 if (viewModes.includes(viewMode)) {
@@ -53,6 +57,7 @@
             }
         },
         components: {
+            question,
             tournaments,
             tournamentShow,
             infoAlert,

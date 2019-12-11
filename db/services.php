@@ -114,16 +114,16 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
-    'mod_challenge_get_tournament_topics' => [
-        'classname' => 'mod_challenge\external\get_tournament_topics',
-        'methodname' => 'get',
+    'mod_challenge_tournament_get_topics' => [
+        'classname' => 'mod_challenge\external\tournament_get_topics',
+        'methodname' => 'request',
         'description' => 'Get the topics of a tournament',
         'type' => 'read',
         'ajax' => true,
     ],
-    'mod_challenge_get_tournament_questions' => [
-        'classname' => 'mod_challenge\external\get_tournament_questions',
-        'methodname' => 'get',
+    'mod_challenge_tournament_get_questions' => [
+        'classname' => 'mod_challenge\external\tournament_get_questions',
+        'methodname' => 'request',
         'description' => 'Get the questions related to this tournament',
         'type' => 'read',
         'ajax' => true,
@@ -135,23 +135,23 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
-    'mod_challenge_get_question' => [
-        'classname' => 'mod_challenge\external\gamesessions',
-        'methodname' => 'get_question',
-        'description' => 'Gets or creates the current question from the current gamesession for the logged in user.',
+    'mod_challenge_tournament_request_question' => [
+        'classname' => 'mod_challenge\external\tournament_request_question',
+        'methodname' => 'request',
+        'description' => 'Gets or creates a question from the given topic for the logged in user.',
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_submit_answer' => [
-        'classname' => 'mod_challenge\external\gamesessions',
-        'methodname' => 'submit_answer',
+    'mod_challenge_question_submit_answer' => [
+        'classname' => 'mod_challenge\external\question_submit_answer',
+        'methodname' => 'request',
         'description' => 'Submit answer for the current question',
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_cancel_answer' => [
-        'classname' => 'mod_challenge\external\gamesessions',
-        'methodname' => 'cancel_answer',
+    'mod_challenge_question_cancel_answer' => [
+        'classname' => 'mod_challenge\external\question_cancel_answer',
+        'methodname' => 'request',
         'description' => 'Submit that time ran out for the current question',
         'type' => 'write',
         'ajax' => true,

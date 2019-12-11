@@ -17,7 +17,6 @@
 namespace mod_challenge\model;
 
 use dml_exception;
-use mod_challenge\external\exporter\tournament_question_dto;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -276,6 +275,27 @@ class tournament extends abstract_model {
             $result[] = $question;
         }
         return $result;
+    }
+
+    /**
+     * Gets a question for the given user and topic, if it exists. Returns null otherwise.
+     *
+     * @param int $mdl_user_id
+     * @param int $topic_id
+     *
+     * @return tournament_question|null
+     * @throws dml_exception
+     */
+    public function get_question_by_user_and_topic($mdl_user_id, $topic_id) {
+        global $DB;
+        $records = $DB->get_records('challenge_tnmt_questions', ['topic' => $topic_id, 'mdl_user' => $mdl_user_id]);
+        if (empty($records)) {
+            return null;
+        } else {
+            $question = new tournament_question();
+            $question->apply($records[0]);
+            return $question;
+        }
     }
 
     /**

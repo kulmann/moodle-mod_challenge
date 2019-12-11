@@ -8,7 +8,6 @@
     export default {
         props: {
             question: Object,
-            game: Object,
         },
         data() {
             return {
@@ -43,18 +42,21 @@
             }
         },
         methods: {
-            ...mapActions([
-                'cancelAnswer',
-            ]),
+            ...mapActions({
+                cancelAnswer: 'player/cancelAnswer'
+            }),
+            goToTournament() {
+                const tournamentId = this.question.tournament;
+                this.$router.push({name: 'player-tournament-show', params: {tournamentId: tournamentId}});
+            },
         },
         watch: {
             remainingSeconds(seconds) {
                 if (this.question && this.cancelledQuestionId !== this.question.id && seconds <= 0) {
                     this.cancelledQuestionId = this.question.id;
                     this.cancelAnswer({
-                        'gamesessionid': this.question.gamesession,
                         'questionid': this.question.id,
-                    });
+                    }).then(() => this.goToTournament());
                 }
             }
         }

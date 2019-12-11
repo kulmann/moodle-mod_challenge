@@ -183,7 +183,7 @@ export default {
          * @returns {Promise<*>}
          */
         async fetchTopics(context, payload) {
-            return await ajax('mod_challenge_get_tournament_topics', payload);
+            return await ajax('mod_challenge_tournament_get_topics', payload);
         },
         /**
          * Updates the topics of the given tournament.

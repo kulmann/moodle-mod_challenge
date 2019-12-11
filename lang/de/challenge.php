@@ -147,6 +147,7 @@ $string['game_qtype_not_supported'] = 'Der Fragentyp »{$a}« wird nicht unterst
 $string['game_loading_question'] = 'Frage wird geladen';
 $string['game_btn_continue'] = 'Weiter';
 $string['game_btn_show'] = 'Zeigen';
+$string['game_btn_answer'] = 'Beantworten';
 $string['game_tournaments_active_title'] = 'Aktive Turniere';
 $string['game_tournaments_active_none'] = 'Sie nehmen derzeit an keinen Turnieren teil.';
 $string['game_tournaments_finished_title'] = 'Beendete Turniere';

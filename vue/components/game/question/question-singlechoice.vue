@@ -6,7 +6,7 @@
                     .uk-width-expand
                         i.uk-h5 {{ levelName }}
                     .uk-width-auto
-                        questionTimer(:question="question", :game="game")
+                        questionTimer(:question="question")
             .uk-card-body
                 p._question(v-html="mdl_question.questiontext")
         vk-grid.uk-margin-top(matched)
@@ -18,26 +18,22 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import {mapActions, mapState} from 'vuex';
     import mixins from '../../../mixins';
     import VkGrid from "vuikit/src/library/grid/components/grid";
-    import _ from 'lodash';
-    import {GAME_PROGRESS} from "../../../constants";
     import questionTimer from "./question-timer";
 
     export default {
         mixins: [mixins],
         props: {
-            levels: Array,
             game: Object,
-            gameSession: Object,
             question: Object,
             mdl_question: Object,
             mdl_answers: Array,
         },
         data() {
             return {
-                mostRecentQuestionId: null,
                 clickedAnswerId: null,
             }
         },
@@ -74,27 +70,18 @@
                     return '';
                 }
             },
-            isGameOver() {
-                return this.gameSession.state !== GAME_PROGRESS;
-            }
         },
         methods: {
-            ...mapActions([
-                'submitAnswer'
-            ]),
+            ...mapActions({
+                submitAnswer: 'player/submitAnswer'
+            }),
             selectAnswer(answer) {
-                if (this.isGameOver) {
-                    // don't allow another submission if game is over
-                    return;
-                }
                 if (this.isFinished) {
                     // don't allow another submission if already answered
                     return;
                 }
-                this.mostRecentQuestionId = this.question.id;
                 this.clickedAnswerId = answer.id;
                 this.submitAnswer({
-                    'gamesessionid': this.question.gamesession,
                     'questionid': this.question.id,
                     'mdlanswerid': this.clickedAnswerId,
                 });
@@ -126,7 +113,6 @@
                 return this.correctAnswerId === answer.id;
             },
             initQuestion() {
-                this.mostRecentQuestionId = this.question.id;
                 this.clickedAnswerId = (this.question.mdl_answer_given > 0) ? this.question.mdl_answer_given : null;
             },
         },
@@ -136,10 +122,8 @@
             }
         },
         watch: {
-            question(question) {
-                if (this.mostRecentQuestionId !== question.id) {
-                    this.initQuestion();
-                }
+            question() {
+                this.initQuestion();
             }
         },
         components: {

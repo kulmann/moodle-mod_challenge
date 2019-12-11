@@ -147,6 +147,7 @@ $string['game_qtype_not_supported'] = 'The question type »{$a}« is not support
 $string['game_loading_question'] = 'Loading question details';
 $string['game_btn_continue'] = 'Continue';
 $string['game_btn_show'] = 'Show';
+$string['game_btn_answer'] = 'Answer';
 $string['game_tournaments_active_title'] = 'Active tournaments';
 $string['game_tournaments_active_none'] = 'You are not participating in any tournaments, yet.';
 $string['game_tournaments_finished_title'] = 'Finished tournaments';
