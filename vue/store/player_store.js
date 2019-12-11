@@ -117,17 +117,6 @@ export default {
             return await ajax('mod_challenge_question_submit_answer', payload);
         },
         /**
-         * Submit that the time ran out on the currently loaded question.
-         *
-         * @param context
-         * @param payload
-         *
-         * @returns {Promise<*>}
-         */
-        async cancelAnswer(context, payload) {
-            return await ajax('mod_challenge_question_cancel_answer', payload);
-        },
-        /**
          * Fetches the moodle question for the currently loaded question.
          *
          * @param context

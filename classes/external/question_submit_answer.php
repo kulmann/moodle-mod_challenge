@@ -113,11 +113,16 @@ class question_submit_answer extends external_api {
         assert($correct_mdl_answer instanceof question_answer);
         $question->set_mdl_answer_given($mdlanswerid);
         $question->set_finished(true);
-        $question->set_correct($correct_mdl_answer->id == $mdlanswerid);
-        $time_taken = (\time() - $question->get_timecreated());
-        $time_available = $game->get_question_duration();
-        $time_remaining = \max(0, ($time_available - $time_taken));
-        $question->set_timeremaining($time_remaining);
+        if (intval($mdlanswerid) === 0) {
+            $question->set_correct(false);
+            $question->set_timeremaining(0);
+        } else {
+            $question->set_correct($correct_mdl_answer->id === intval($mdlanswerid));
+            $time_taken = (\time() - $question->get_timecreated());
+            $time_available = $game->get_question_duration();
+            $time_remaining = \max(0, ($time_available - $time_taken));
+            $question->set_timeremaining($time_remaining);
+        }
         if ($question->is_correct()) {
             $max_points = $game->get_question_duration();
             $points = \min($time_remaining, $max_points);

@@ -43,7 +43,7 @@
         },
         methods: {
             ...mapActions({
-                cancelAnswer: 'player/cancelAnswer'
+                submitAnswer: 'player/submitAnswer'
             }),
             goToTournament() {
                 const tournamentId = this.question.tournament;
@@ -54,8 +54,9 @@
             remainingSeconds(seconds) {
                 if (this.question && this.cancelledQuestionId !== this.question.id && seconds <= 0) {
                     this.cancelledQuestionId = this.question.id;
-                    this.cancelAnswer({
+                    this.submitAnswer({
                         'questionid': this.question.id,
+                        'mdlanswerid': 0,
                     }).then(() => this.goToTournament());
                 }
             }

@@ -149,13 +149,6 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_question_cancel_answer' => [
-        'classname' => 'mod_challenge\external\question_cancel_answer',
-        'methodname' => 'request',
-        'description' => 'Submit that time ran out for the current question',
-        'type' => 'write',
-        'ajax' => true,
-    ],
     'mod_challenge_get_mdl_question' => [
         'classname' => 'mod_challenge\external\questionbank',
         'methodname' => 'get_mdl_question',
