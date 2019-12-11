@@ -7,7 +7,7 @@
                 button.btn.btn-default(:disabled="isFirstMatch", @click="goToPrevMatch")
                     v-icon(name="chevron-left")
                 div
-                    b.uk-margin-small-left.uk-margin-small-right {{ strings.game_tournament_match_step | stringParams(matchIndex + 1) }}
+                    b.uk-margin-small-left.uk-margin-small-right {{ strings.game_tournament_match_step | stringParams({step: matchIndex + 1, total: tournament.number_of_steps}) }}
                     template(v-if="match")
                         br
                         i(v-if="match.open") {{ strings.game_tournament_match_lbl_open }}
