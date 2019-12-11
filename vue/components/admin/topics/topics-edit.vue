@@ -12,8 +12,12 @@
                             th.uk-table-expand {{ strings.admin_tournament_topics_lbl_levels }}
                     tbody
                         tr(v-for="step in stepIndices")
-                            td.uk-text-center {{ step + 1 }}
-                            td TODO: have to add level selection here
+                            td.uk-text-center
+                                b {{ step + 1 }}
+                            td
+                                b TODO: have to add level selection here
+
+
             .uk-card-footer.uk-text-right
                 button.btn.btn-primary(@click="save()", :disabled="saving || isDataInvalid")
                     v-icon(name="save").uk-margin-small-right
@@ -33,6 +37,7 @@
     import rangeInclusive from 'range-inclusive';
     import loadingAlert from "../../helper/loading-alert";
     import loadingIcon from "../../helper/loading-icon";
+    import editableDropDown from "../../helper/editable-drop-down";
 
     export default {
         mixins: [mixins],
@@ -104,6 +109,7 @@
             },
         },
         components: {
+            editableDropDown,
             loadingIcon,
             loadingAlert,
         },
