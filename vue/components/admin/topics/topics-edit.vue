@@ -89,7 +89,13 @@
                     const questionsPerStep = this.game.question_count;
                     let topicsByStep = {};
                     for(let step = 0; step < this.steps; step++) {
-                        let stepTopics = _.filter(topics, topic => topic.step === step);
+                        let stepTopics = _.map(_.filter(topics, topic => topic.step === step), topic => {
+                            return {
+                                id: topic.id,
+                                step: topic.step,
+                                level: topic.level,
+                            };
+                        });
                         while(stepTopics.length < questionsPerStep) {
                             stepTopics.push({
                                 id: 0,
@@ -109,9 +115,13 @@
                 if (this.isDataInvalid) {
                     return;
                 }
+                let topicsForSaving = [];
+                _.forEach(this.topics, topics => {
+                    topicsForSaving = _.concat(topicsForSaving, topics);
+                });
                 let payload = {
                     tournamentid: this.tournament.id,
-                    topics: this.topics,
+                    topics: topicsForSaving,
                 };
                 this.saving = true;
                 this.saveTopics(payload)

@@ -43,7 +43,7 @@
                 if (questions.length > 0) {
                     return !_.first(questions).finished;
                 } else {
-                    return true;
+                    return false;
                 }
             },
         },

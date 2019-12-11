@@ -17,6 +17,7 @@
 namespace mod_challenge\model;
 
 use dml_exception;
+use invalid_state_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -109,11 +110,11 @@ class tournament extends abstract_model {
      *
      * @return bool Whether clearing the matches was successful.
      * @throws dml_exception
-     * @throws \invalid_state_exception If the state is not 'unpublished' anymore.
+     * @throws invalid_state_exception If the state is not 'unpublished' anymore.
      */
     public function clear_matches() {
         if ($this->get_state() !== self::STATE_UNPUBLISHED) {
-            throw new \invalid_state_exception("it's not allowed to clear the participant matches of a published tournament.");
+            throw new invalid_state_exception("it's not allowed to clear the participant matches of a published tournament.");
         }
         global $DB;
         $conditions = ['tournament' => $this->get_id()];
@@ -126,11 +127,11 @@ class tournament extends abstract_model {
      * @param array $matches_data
      *
      * @throws dml_exception
-     * @throws \invalid_state_exception
+     * @throws invalid_state_exception
      */
     public function create_matches($matches_data) {
         if ($this->get_state() !== self::STATE_UNPUBLISHED) {
-            throw new \invalid_state_exception("it's not allowed to create fresh participant matches for a published tournament.");
+            throw new invalid_state_exception("it's not allowed to create fresh participant matches for a published tournament.");
         }
         foreach ($matches_data as $match_data) {
             $match = new tournament_match();
@@ -195,6 +196,45 @@ class tournament extends abstract_model {
             $result[] = $match;
         }
         return $result;
+    }
+
+    /**
+     * Clears the topics of an unpublished tournament.
+     *
+     * @return bool
+     * @throws dml_exception
+     * @throws invalid_state_exception
+     */
+    public function clear_topics() {
+        if ($this->get_state() !== self::STATE_UNPUBLISHED) {
+            throw new invalid_state_exception("it's not allowed to clear the topics of a published tournament.");
+        }
+        global $DB;
+        $conditions = ['tournament' => $this->get_id()];
+        return $DB->delete_records('challenge_tnmt_topics', $conditions);
+    }
+
+    /**
+     * Creates new topics for the given topics data and saves them in the DB.
+     *
+     * @param array $topics_data
+     *
+     * @throws invalid_state_exception
+     * @throws dml_exception
+     */
+    public function create_topics($topics_data) {
+        if ($this->get_state() !== self::STATE_UNPUBLISHED) {
+            throw new invalid_state_exception("it's not allowed to clear the topics of a published tournament.");
+        }
+        foreach ($topics_data as $topic_data) {
+            if ($topic_data['level'] == 0) {
+                continue;
+            }
+            $topic = new tournament_topic();
+            $topic->apply($topic_data);
+            $topic->set_tournament($this->get_id());
+            $topic->save();
+        }
     }
 
     /**

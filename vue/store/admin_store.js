@@ -177,7 +177,7 @@ export default {
          * @returns {Promise<*>}
          */
         async saveTopics(context, payload) {
-            const result = await ajax('mod_challenge_save_tournament_topics', payload);
+            const result = await ajax('mod_challenge_tournament_save_topics', payload);
             context.dispatch('fetchTournaments');
             return result.result;
         },

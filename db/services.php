@@ -121,6 +121,13 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_tournament_save_topics' => [
+        'classname' => 'mod_challenge\external\tournament_save_topics',
+        'methodname' => 'request',
+        'description' => 'Save the topics of a tournament',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'mod_challenge_tournament_get_questions' => [
         'classname' => 'mod_challenge\external\tournament_get_questions',
         'methodname' => 'request',

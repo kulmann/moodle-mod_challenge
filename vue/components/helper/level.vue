@@ -55,7 +55,7 @@
         methods: {
             selectLevel() {
                 if (!this.levelFinished) {
-                    this.$emit('onSelectLevel', level.id);
+                    this.$emit('onSelectLevel', this.level.id);
                 }
             },
         }
