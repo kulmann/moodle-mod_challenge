@@ -91,6 +91,25 @@ class tournament_match extends abstract_model {
         $this->mdl_user_winner = isset($data['mdl_user_winner']) ? $data['mdl_user_winner'] : 0;
     }
 
+    public function get_questions() {
+        global $DB;
+        $sql = "
+                SELECT question.*
+                  FROM {challenge_tnmt_questions} question
+            INNER JOIN {challenge_tnmt_topics} topic ON question.topic = topic.id 
+                 WHERE topic.tournament = :tournament AND topic.step = :step AND (question.mdl_user = :user1 OR question.mdl_user = :user2)
+        ";
+        $sql_conditions = ['tournament' => $this->get_tournament(), 'step' => $this->get_step(), 'user1' => $this->get_mdl_user_1(), 'user2' => $this->get_mdl_user_2()];
+        $records = $DB->get_records_sql($sql, $sql_conditions);
+        $result = [];
+        foreach ($records as $record) {
+            $question = new tournament_question();
+            $question->apply($record);
+            $result[] = $question;
+        }
+        return $result;
+    }
+
     /**
      * @return int
      */
@@ -173,20 +192,6 @@ class tournament_match extends abstract_model {
      */
     public function get_mdl_user_winner(): int {
         return $this->mdl_user_winner;
-    }
-
-    /**
-     * Marks the first player as winner.
-     */
-    public function set_winner_player1() {
-        $this->set_winner(self::WINNER_P1);
-    }
-
-    /**
-     * Marks the second player as winner.
-     */
-    public function set_winner_player2() {
-        $this->set_winner(self::WINNER_P2);
     }
 
     /**

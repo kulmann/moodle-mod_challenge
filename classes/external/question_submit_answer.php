@@ -113,11 +113,11 @@ class question_submit_answer extends external_api {
         assert($correct_mdl_answer instanceof question_answer);
         $question->set_mdl_answer_given($mdlanswerid);
         $question->set_finished(true);
-        if (intval($mdlanswerid) === 0) {
+        if ($mdlanswerid == 0) {
             $question->set_correct(false);
             $question->set_timeremaining(0);
         } else {
-            $question->set_correct($correct_mdl_answer->id === intval($mdlanswerid));
+            $question->set_correct($correct_mdl_answer->id == $mdlanswerid);
             $time_taken = (\time() - $question->get_timecreated());
             $time_available = $game->get_question_duration();
             $time_remaining = \max(0, ($time_available - $time_taken));
@@ -129,9 +129,6 @@ class question_submit_answer extends external_api {
             $question->set_score($points);
         }
         $question->save();
-
-        // check if this answer concludes a match
-        // TODO: determine winner
 
         // create export
         $exporter = new tournament_question_dto($question, $tournament, $game, $ctx);

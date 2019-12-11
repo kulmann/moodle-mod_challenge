@@ -106,7 +106,7 @@ class tournament_request_question extends external_api {
             $question->set_mdl_answers_order(implode(",", $mdl_answer_ids));
             $question->save();
         } else {
-            util::force_question_timeout($question, $game);
+            util::check_question_timeout($question, $game);
         }
 
         // create export

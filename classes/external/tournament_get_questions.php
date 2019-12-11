@@ -86,7 +86,7 @@ class tournament_get_questions extends external_api {
         $result = [];
         $questions = $tournament->get_questions();
         foreach ($questions as $question) {
-            util::force_question_timeout($question, $game);
+            util::check_question_timeout($question, $game);
             $exporter = new tournament_question_dto($question, $tournament, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }

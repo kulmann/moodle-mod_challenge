@@ -11,8 +11,8 @@
                     template(v-if="match")
                         br
                         i(v-if="match.open") {{ strings.game_tournament_match_lbl_open }}
-                        span.uk-text-success(v-else-if="match.mdl_user_winner === ownUserId") {{ strings.game_tournament_match_lbl_won }}
-                        span.uk-text-danger(v-else) {{ strings.game_tournament_match_lbl_lost }}
+                        b.uk-text-success(v-else-if="match.mdl_user_winner === ownUserId") {{ strings.game_tournament_match_lbl_won }}
+                        b.uk-text-danger(v-else) {{ strings.game_tournament_match_lbl_lost }}
                 button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
                     v-icon(name="chevron-right")
             failureAlert(v-if="match === null", :message="strings.game_tournament_match_show_error")

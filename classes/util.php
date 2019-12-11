@@ -24,6 +24,7 @@ use invalid_parameter_exception;
 use mod_challenge\model\game;
 use mod_challenge\model\level;
 use mod_challenge\model\tournament;
+use mod_challenge\model\tournament_match;
 use mod_challenge\model\tournament_question;
 use mod_challenge\model\tournament_topic;
 use required_capability_exception;
@@ -194,7 +195,7 @@ class util {
      * @param game $game
      * @throws dml_exception
      */
-    public static function force_question_timeout(tournament_question $question, game $game) {
+    public static function check_question_timeout(tournament_question $question, game $game) {
         if (!$question->is_finished() && $question->get_timecreated() + $game->get_question_duration() < \time()) {
             $question->set_mdl_answer_given(0);
             $question->set_finished(true);
@@ -202,6 +203,56 @@ class util {
             $question->set_score(0);
             $question->set_timeremaining(0);
             $question->save();
+        }
+    }
+
+    /**
+     * Checks if the given match is done, i.e. if it is not marked as finished, we determine (and persist) the winner, if there is one.
+     *
+     * @param tournament_match $match
+     * @param game $game
+     *
+     * @throws dml_exception
+     */
+    public static function check_match_done(tournament_match $match, game $game) {
+        // load all questions related to this match and check if they timed out
+        if (!$match->is_finished()) {
+            $questions = $match->get_questions();
+            // check if user 1 answered enough questions
+            $user1 = $match->get_mdl_user_1();
+            $questions_user1 = \array_filter($questions, function(tournament_question $question) use ($user1) {
+                return $question->get_mdl_user() === $user1;
+            });
+            $answer_count_user1 = \count($questions_user1);
+            if ($answer_count_user1 < $game->get_question_count()) {
+                return;
+            }
+            // check if user 2 answered enough questions
+            $user2 = $match->get_mdl_user_2();
+            $questions_user2 = \array_filter($questions, function(tournament_question $question) use ($user2) {
+                return $question->get_mdl_user() === $user2;
+            });
+            $answer_count_user2 = \count($questions_user2);
+            if ($answer_count_user2 < $game->get_question_count()) {
+                return;
+            }
+            // check which user won
+            $win_count_user1 = \count(\array_filter($questions_user1, function(tournament_question $question) {
+                return $question->is_correct();
+            }));
+            $win_count_user2 = \count(\array_filter($questions_user2, function(tournament_question $question) {
+                return $question->is_correct();
+            }));
+            if ($win_count_user1 > $win_count_user2) {
+                $match->set_mdl_user_winner($user1);
+                $match->save();
+                return;
+            }
+            if ($win_count_user2 > $win_count_user1) {
+                $match->set_mdl_user_winner($user2);
+                $match->save();
+                return;
+            }
         }
     }
 }
