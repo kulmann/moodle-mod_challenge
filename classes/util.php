@@ -214,7 +214,7 @@ class util {
      *
      * @throws dml_exception
      */
-    public static function check_match_done(tournament_match $match, game $game) {
+    public static function check_match_winner(tournament_match $match, game $game) {
         // load all questions related to this match and check if they timed out
         if (!$match->is_finished()) {
             $questions = $match->get_questions();
@@ -250,6 +250,18 @@ class util {
             }
             if ($win_count_user2 > $win_count_user1) {
                 $match->set_mdl_user_winner($user2);
+                $match->save();
+                return;
+            }
+            if ($win_count_user1 === $win_count_user2) {
+                // tie breaking rule is the earlier participation
+                $datetime_sum_user1 = \array_sum(\array_map(function(tournament_question $question) {
+                    return $question->get_timecreated();
+                }, $questions_user1));
+                $datetime_sum_user2 = \array_sum(\array_map(function(tournament_question $question) {
+                    return $question->get_timecreated();
+                }, $questions_user2));
+                $match->set_mdl_user_winner(($datetime_sum_user1 < $datetime_sum_user2) ? $user1 : $user2);
                 $match->save();
                 return;
             }

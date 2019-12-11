@@ -427,7 +427,7 @@ class tournaments extends external_api {
         }
         $result = [];
         foreach ($matches as $match) {
-            util::check_match_done($match, $game);
+            util::check_match_winner($match, $game);
             $exporter = new tournament_match_dto($match, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }
