@@ -50,13 +50,13 @@ $string['review_duration'] = 'Anzeigedauer Lösung (Sekunden)';
 $string['review_duration_help'] = 'Anzeigezeit der Lösung (in Sekunden), bevor automatisch zur nächsten Frage weitergeleitet wird.';
 $string['question_shuffle_answers'] = 'Antworten mischen';
 $string['question_shuffle_answers_help'] = 'Wenn diese Option aktiviert ist, werden die Antworten der Fragen gemischt bevor sie angezeigt werden.';
-$string['level_tile_height'] = 'Kachel-Höhe Levels';
-$string['level_tile_height_help'] = 'Wählen Sie für die Darstellung von Levels eine Kachel-Höhe.';
+$string['level_tile_height'] = 'Kachel-Höhe Themengebiete';
+$string['level_tile_height_help'] = 'Wählen Sie für die Darstellung von Themengebieten eine Kachel-Höhe.';
 $string['level_tile_height_0'] = 'Flach';
 $string['level_tile_height_1'] = 'Normal';
 $string['level_tile_height_2'] = 'Hoch';
-$string['level_tile_alpha'] = 'Alpha Level-Overlay';
-$string['level_tile_alpha_help'] = 'Zur besseren Lesbarkeit von Text wird ein Overlay über die Level-Kacheln gelegt. Mit diesem Wert bestimmen Sie die Durchlässigkeit dieses Overlays.';
+$string['level_tile_alpha'] = 'Alpha-Overlay Themengebiete';
+$string['level_tile_alpha_help'] = 'Zur besseren Lesbarkeit von Text wird ein Overlay über die Themengebiets-Kacheln gelegt. Mit diesem Wert bestimmen Sie die Durchlässigkeit dieses Overlays.';
 
 /* activity edit page: control */
 $string['control_edit'] = 'Steuerung';
@@ -84,14 +84,14 @@ $string['admin_btn_confirm_delete'] = 'Wirklich Löschen';
 $string['admin_btn_generate'] = 'Generieren';
 $string['admin_avatar_alt'] = 'Foto von {$a}';
 /* admin: levels */
-$string['admin_nav_levels'] = 'Levels';
-$string['admin_levels_title'] = 'Levels bearbeiten';
-$string['admin_levels_none'] = 'Sie haben noch keine Levels angelegt.';
-$string['admin_levels_intro'] = 'Sie haben die folgenden Levels für dieses Spiel angelegt. Sie können hier die Daten und Reihenfolge der Levels verändern, oder Levels löschen. Bitte beachten Sie, dass Sie damit bei einem Spiel, das bereits Teilnehmer hat, die Rangliste wertlos machen könnten.';
-$string['admin_level_delete_confirm'] = 'Möchten Sie das Level »{$a}« wirklich löschen?';
-$string['admin_level_title_add'] = 'Level {$a} erstellen';
-$string['admin_level_title_edit'] = 'Level {$a} bearbeiten';
-$string['admin_level_loading'] = 'Lade Level-Daten';
+$string['admin_nav_levels'] = 'Themengebiete';
+$string['admin_levels_title'] = 'Themengebiet bearbeiten';
+$string['admin_levels_none'] = 'Sie haben noch keine Themengebiete angelegt.';
+$string['admin_levels_intro'] = 'Sie haben die folgenden Themengebiete für dieses Spiel angelegt. Sie können hier die Daten und Reihenfolge der Themengebiete verändern, oder sie löschen. Bitte beachten Sie, dass das Löschen nur für die zukünftige Turniere Auswirkungen hat.';
+$string['admin_level_delete_confirm'] = 'Möchten Sie das Themengebiet »{$a}« wirklich löschen?';
+$string['admin_level_title_add'] = 'Themengebiet {$a} erstellen';
+$string['admin_level_title_edit'] = 'Themengebiet {$a} bearbeiten';
+$string['admin_level_loading'] = 'Lade Themengebiet-Daten';
 $string['admin_level_lbl_name'] = 'Name';
 $string['admin_level_lbl_bgcolor'] = 'Hintergrund-Farbe';
 $string['admin_level_lbl_bgcolor_help'] = 'HEX-Format, mit oder ohne #, im 3er oder 6er Format. Beispiel: #cc0033 oder #c03';
@@ -102,7 +102,7 @@ $string['admin_level_lbl_image_remove'] = 'Entfernen';
 $string['admin_level_lbl_categories'] = 'Fragen-Zuweisungen';
 $string['admin_level_lbl_category'] = 'Kategorie {$a}';
 $string['admin_level_lbl_category_please_select'] = 'Kategorie auswählen';
-$string['admin_level_msg_saving'] = 'Das Level wird gespeichert, bitte warten';
+$string['admin_level_msg_saving'] = 'Das Themengebiet wird gespeichert, bitte warten';
 /* admin: tournaments */
 $string['admin_nav_tournaments'] = 'Turniere';
 $string['admin_tournaments_title'] = 'Turniere bearbeiten';
@@ -138,7 +138,7 @@ $string['admin_tournament_title_topics'] = 'Turnier-Themen bearbeiten';
 $string['admin_tournament_topics_loading'] = 'Lade Turnier-Themen';
 $string['admin_tournament_topics_saving'] = 'Die Themen werden gespeichert, bitte warten';
 $string['admin_tournament_topics_lbl_step'] = 'Runde';
-$string['admin_tournament_topics_lbl_levels'] = 'Verfügbare Level';
+$string['admin_tournament_topics_lbl_levels'] = 'Verfügbare Themengebiete';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';

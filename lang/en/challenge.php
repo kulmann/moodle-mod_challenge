@@ -50,13 +50,13 @@ $string['review_duration'] = 'Time to display solution (seconds)';
 $string['review_duration_help'] = 'The duration how long the solution of a question is being displayed (in seconds) before continuing to the next question automatically.';
 $string['question_shuffle_answers'] = 'Shuffle answers';
 $string['question_shuffle_answers_help'] = 'If enabled, the answers of questions will be shuffled.';
-$string['level_tile_height'] = 'Level tile height';
-$string['level_tile_height_help'] = 'Please select the height for level tile representation.';
+$string['level_tile_height'] = 'Topic tile height';
+$string['level_tile_height_help'] = 'Please select the height for topic tile representation.';
 $string['level_tile_height_0'] = 'Flat';
 $string['level_tile_height_1'] = 'Regular';
 $string['level_tile_height_2'] = 'Tall';
-$string['level_tile_alpha'] = 'Level overlay alpha';
-$string['level_tile_alpha_help'] = 'For improved readability there will be an overlay on the level tiles. Please select the how dark (0%) or light (100%) this overlay should be.';
+$string['level_tile_alpha'] = 'Alpha overlay topics';
+$string['level_tile_alpha_help'] = 'For improved readability there will be an overlay on the topic tiles. Please select the how dark (0%) or light (100%) this overlay should be.';
 
 /* activity edit page: control */
 $string['control_edit'] = 'Control';
@@ -84,14 +84,14 @@ $string['admin_btn_confirm_delete'] = 'Confirm Delete';
 $string['admin_btn_generate'] = 'Generate';
 $string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: levels */
-$string['admin_nav_levels'] = 'Levels';
-$string['admin_levels_title'] = 'Edit levels';
-$string['admin_levels_none'] = 'You didn\'t add any levels, yet.';
-$string['admin_levels_intro'] = 'You have already created the following levels for this game. You may edit their data and order, or even delete them. Please note, that editing levels which already has had participants might render existing highscores worthless.';
-$string['admin_level_delete_confirm'] = 'Do you really want to delete the level »{$a}«?';
-$string['admin_level_title_add'] = 'Create level {$a}';
-$string['admin_level_title_edit'] = 'Edit level {$a}';
-$string['admin_level_loading'] = 'Loading level data';
+$string['admin_nav_levels'] = 'Topics';
+$string['admin_levels_title'] = 'Edit topics';
+$string['admin_levels_none'] = 'You didn\'t add any topics, yet.';
+$string['admin_levels_intro'] = 'You have already created the following topics for this game. You may edit their data and order, or even delete them. Please note, that deleting topics only has effects for future tournaments.';
+$string['admin_level_delete_confirm'] = 'Do you really want to delete the topic »{$a}«?';
+$string['admin_level_title_add'] = 'Create topic {$a}';
+$string['admin_level_title_edit'] = 'Edit topic {$a}';
+$string['admin_level_loading'] = 'Loading topic data';
 $string['admin_level_lbl_name'] = 'Name';
 $string['admin_level_lbl_bgcolor'] = 'Background Color';
 $string['admin_level_lbl_bgcolor_help'] = 'HEX format, with or without #, as 3 or 6 chars. Example: #cc0033 or #c03';
@@ -102,7 +102,7 @@ $string['admin_level_lbl_image_remove'] = 'Remove';
 $string['admin_level_lbl_categories'] = 'Question assignments';
 $string['admin_level_lbl_category'] = 'Category {$a}';
 $string['admin_level_lbl_category_please_select'] = 'Select category';
-$string['admin_level_msg_saving'] = 'Saving the level, please wait';
+$string['admin_level_msg_saving'] = 'Saving the topic, please wait';
 /* admin: tournaments */
 $string['admin_nav_tournaments'] = 'Tournaments';
 $string['admin_tournaments_title'] = 'Edit tournaments';
@@ -138,7 +138,7 @@ $string['admin_tournament_title_topics'] = 'Edit tournament topics';
 $string['admin_tournament_topics_loading'] = 'Loading tournament topics';
 $string['admin_tournament_topics_saving'] = 'Saving the topics, please wait';
 $string['admin_tournament_topics_lbl_step'] = 'Round';
-$string['admin_tournament_topics_lbl_levels'] = 'Available levels';
+$string['admin_tournament_topics_lbl_levels'] = 'Available topics';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';

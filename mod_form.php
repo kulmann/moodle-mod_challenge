@@ -88,7 +88,7 @@ class mod_challenge_mod_form extends moodleform_mod {
             $level_tile_heights[$height] = get_string('level_tile_height_' . $height, 'challenge');
         }
         $mform->addElement('select', 'level_tile_height', get_string('level_tile_height', 'challenge'), $level_tile_heights);
-        $mform->setDefault('level_tile_height', MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE);
+        $mform->setDefault('level_tile_height', MOD_CHALLENGE_LEVEL_TILE_HEIGHT_MEDIUM);
         $mform->addHelpButton('level_tile_height', 'level_tile_height', 'challenge');
         // ... tile overlay alpha
         $level_tile_alphas = [];
