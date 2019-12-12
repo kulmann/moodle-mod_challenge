@@ -32,6 +32,10 @@ use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/lib/questionlib.php');
+require_once($CFG->dirroot . '/question/engine/bank.php');
+
 class tournament_request_question extends external_api {
 
     /**
@@ -42,6 +46,7 @@ class tournament_request_question extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
+            'matchid' => new external_value(PARAM_INT, 'match id'),
             'topicid' => new external_value(PARAM_INT, 'topic id'),
         ]);
     }
@@ -59,6 +64,7 @@ class tournament_request_question extends external_api {
      * Get an existing or create a new question for the logged in user for the given topic.
      *
      * @param int $coursemoduleid
+     * @param int $matchid
      * @param int $topicid
      *
      * @return stdClass
@@ -68,8 +74,8 @@ class tournament_request_question extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid, $topicid) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'topicid' => $topicid];
+    public static function request($coursemoduleid, $matchid, $topicid) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'matchid' => $matchid, 'topicid' => $topicid];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
@@ -79,21 +85,38 @@ class tournament_request_question extends external_api {
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
+        $match = util::get_match($matchid);
         $topic = util::get_topic($topicid);
         $tournament = util::get_tournament($topic->get_tournament());
         util::validate_tournament($game, $tournament);
+        if (intval($USER->id) !== $match->get_mdl_user_1() && intval($USER->id) !== $match->get_mdl_user_2()) {
+            throw new invalid_parameter_exception("User is not allowed to fetch a question for this match.");
+        }
 
-        // grab the requested level
-        $level = util::get_level($topic->get_level());
+        // get questions of this match
+        $questions = $tournament->get_questions_by_topic_and_users($topicid, $match->get_mdl_user_1(), $match->get_mdl_user_2());
+        foreach ($questions as $question) {
+            util::check_question_timeout($question, $game);
+        }
 
-        // get question or create a new one if necessary.
-        $question = $tournament->get_question_by_user_and_topic(intval($USER->id), $topicid);
-        if ($question === null) {
-            $question = new tournament_question();
-            $question->set_topic($topicid);
-            $question->set_mdl_user($USER->id);
-            $mdl_question = $level->get_random_question();
-            $question->set_mdl_question($mdl_question->id);
+        // load question of the user or create a new one
+        $question_of_user = self::get_question_owner_by_user(intval($USER->id), $questions);
+        if ($question_of_user === null) {
+            $question_of_user = new tournament_question();
+            $question_of_user->set_topic($topicid);
+            $question_of_user->set_mdl_user($USER->id);
+
+            // if other user already had a question, pick the same one!
+            if (empty($questions)) {
+                $level = util::get_level($topic->get_level());
+                $mdl_question = $level->get_random_question();
+            } else {
+                $question = \reset($questions);
+                $mdl_question = \question_bank::load_question($question->get_mdl_question(), false);
+            }
+            $question_of_user->set_mdl_question($mdl_question->id);
+
+            // fixate the answer order
             $mdl_answer_ids = array_map(
                 function ($mdl_answer) {
                     return $mdl_answer->id;
@@ -103,14 +126,31 @@ class tournament_request_question extends external_api {
             if ($game->is_question_shuffle_answers()) {
                 shuffle($mdl_answer_ids);
             }
-            $question->set_mdl_answers_order(implode(",", $mdl_answer_ids));
-            $question->save();
-        } else {
-            util::check_question_timeout($question, $game);
+            $question_of_user->set_mdl_answers_order(implode(",", $mdl_answer_ids));
+
+            // save this question
+            $question_of_user->save();
         }
 
         // create export
-        $exporter = new tournament_question_dto($question, $tournament, $game, $ctx);
+        $exporter = new tournament_question_dto($question_of_user, $tournament, $game, $ctx);
         return $exporter->export($renderer);
+    }
+
+    /**
+     * Returns the question object that belongs to the given user, or null if none found.
+     *
+     * @param int $mdl_user
+     * @param tournament_question[] $questions
+     *
+     * @return tournament_question | null
+     */
+    private static function get_question_owner_by_user($mdl_user, $questions) {
+        foreach ($questions as $question) {
+            if ($question->get_mdl_user() === $mdl_user) {
+                return $question;
+            }
+        }
+        return null;
     }
 }

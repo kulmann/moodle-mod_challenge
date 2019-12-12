@@ -14,6 +14,7 @@
         template(v-for="(topic, index) in topics")
             topicRow(:key="'topic-row-' + topic.id",
                 :index="index",
+                :match="match",
                 :topic="topic",
                 :mdlUserLeft="match.mdl_user_1",
                 :mdlUserRight="match.mdl_user_2",

@@ -43,6 +43,9 @@
             topicId () {
                 return parseInt(this.$route.params.topicId);
             },
+            matchId () {
+                return parseInt(this.$route.params.matchId);
+            },
             loading() {
                 return this.question === null || this.mdl_question === null || this.mdl_answers === null;
             }
@@ -55,6 +58,7 @@
             }),
             loadQuestion() {
                 this.requestQuestionByTopic({
+                    matchid: this.matchId,
                     topicid: this.topicId
                 }).then(question => {
                     this.question = question;

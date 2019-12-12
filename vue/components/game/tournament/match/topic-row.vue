@@ -1,6 +1,6 @@
 <template lang="pug">
-    router-link(:to="{name: 'player-question-play', params: {topicId: topic.id}}")
-        vk-grid(matched, @click="goToQuestion", :class="{'_pointer': !isQuestionAnswered}").uk-flex-middle
+    router-link(:to="{name: 'player-question-play', params: {topicId: topic.id, matchId: match.id}}")
+        vk-grid(matched, :class="{'_pointer': !isQuestionAnswered}").uk-flex-middle
             .uk-width-1-5
                 v-icon(:name="leftIcon", :scale="2", :style="leftStyle")
             .uk-width-3-5
@@ -24,6 +24,7 @@
         mixins: [Mixins],
         props: {
             index: Number,
+            match: Object,
             topic: Object,
             mdlUserLeft: Number,
             mdlUserRight: Number,
@@ -104,11 +105,6 @@
                 }
                 return styles.join(' ');
             },
-            goToQuestion() {
-                if (!this.isQuestionAnswered) {
-                    this.$router.push({name: 'player-question-play', params: {topicId: this.topic.id}});
-                }
-            }
         },
         mounted () {
             const ownQuestion = this.ownQuestion;

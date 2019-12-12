@@ -320,22 +320,29 @@ class tournament extends abstract_model {
     /**
      * Gets a question for the given user and topic, if it exists. Returns null otherwise.
      *
-     * @param int $mdl_user_id
-     * @param int $topic_id
+     * @param int $topic
+     * @param int $mdl_user_1
+     * @param int $mdl_user_2
      *
-     * @return tournament_question|null
+     * @return tournament_question[]
      * @throws dml_exception
      */
-    public function get_question_by_user_and_topic($mdl_user_id, $topic_id) {
+    public function get_questions_by_topic_and_users($topic, $mdl_user_1, $mdl_user_2) {
         global $DB;
-        $record = $DB->get_record('challenge_tnmt_questions', ['topic' => $topic_id, 'mdl_user' => $mdl_user_id]);
-        if ($record) {
+        $sql = "
+            SELECT *
+            FROM {challenge_tnmt_questions}
+            WHERE topic = :topic AND (mdl_user = :user1 OR mdl_user = :user2)
+        ";
+        $sql_conditions = ['topic' => $topic, 'user1' => $mdl_user_1, 'user2' => $mdl_user_2];
+        $records = $DB->get_records_sql($sql, $sql_conditions);
+        $result = [];
+        foreach ($records as $record) {
             $question = new tournament_question();
             $question->apply($record);
-            return $question;
-        } else {
-            return null;
+            $result[] = $question;
         }
+        return $result;
     }
 
     /**

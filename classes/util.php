@@ -147,6 +147,20 @@ class util {
     }
 
     /**
+     * Gets the match instance for the given $matchid from the database.
+     *
+     * @param int $matchid
+     *
+     * @return tournament_match
+     * @throws dml_exception
+     */
+    public static function get_match($matchid): tournament_match {
+        $match = new tournament_match();
+        $match->load_data_by_id($matchid);
+        return $match;
+    }
+
+    /**
      * Gets the topic instance for the given $topicid from the database.
      *
      * @param int $topicid

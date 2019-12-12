@@ -55,7 +55,7 @@ function init(coursemoduleid, contextid) {
                 path: 'tournament/:tournamentId',
                 name: 'player-tournament-show',
             }, {
-                path: 'question/:topicId',
+                path: 'question/:matchId/:topicId',
                 name: 'player-question-play',
             }]
         }, {
