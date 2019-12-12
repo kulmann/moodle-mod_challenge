@@ -1,6 +1,6 @@
 <template lang="pug">
     div
-        vk-grid(matched).uk-text-middle
+        vk-grid(matched).uk-text-middle.uk-margin-bottom
             .uk-width-2-5.uk-text-center
                 span
                     userAvatar(:size="80", :user="user1")
@@ -13,6 +13,7 @@
                 b {{ user2.firstname }} {{ user2.lastname }}
         template(v-for="(topic, index) in topics")
             topicRow(:key="'topic-row-' + topic.id",
+                :index="index",
                 :topic="topic",
                 :mdlUserLeft="match.mdl_user_1",
                 :mdlUserRight="match.mdl_user_2",

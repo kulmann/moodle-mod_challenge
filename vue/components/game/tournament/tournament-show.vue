@@ -3,20 +3,22 @@
         .uk-card-header
             h3 {{ tournament.name }}
         .uk-card-body
-            .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom
-                button.btn.btn-default(:disabled="isFirstMatch", @click="goToPrevMatch")
-                    v-icon(name="chevron-left")
-                div
-                    b.uk-margin-small-left.uk-margin-small-right {{ strings.game_tournament_match_step | stringParams({step: matchIndex + 1, total: tournament.number_of_steps}) }}
-                    template(v-if="match")
-                        br
-                        i(v-if="match.open") {{ strings.game_tournament_match_lbl_open }}
-                        b.uk-text-success(v-else-if="match.mdl_user_winner === ownUserId") {{ strings.game_tournament_match_lbl_won }}
-                        b.uk-text-danger(v-else) {{ strings.game_tournament_match_lbl_lost }}
-                button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
-                    v-icon(name="chevron-right")
-            failureAlert(v-if="match === null", :message="strings.game_tournament_match_show_error")
-            matchTopics(v-else, :match="match", :topics="getTopicsByStep(match.step)", :questions="questions", :ownUserId="ownUserId")
+            loadingAlert(v-if="loading", :message="strings.game_tournament_match_loading")
+            template(v-else)
+                .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom
+                    button.btn.btn-default(v-if="isMultiRoundMatch", :disabled="isFirstMatch", @click="goToPrevMatch")
+                        v-icon(name="chevron-left")
+                    div
+                        b.uk-margin-small-left.uk-margin-small-right {{ strings.game_tournament_match_step | stringParams({step: matchIndex + 1, total: tournament.number_of_steps}) }}
+                        template(v-if="match")
+                            br
+                            i(v-if="match.open") {{ strings.game_tournament_match_lbl_open }}
+                            b.uk-text-success(v-else-if="match.mdl_user_winner === ownUserId") {{ strings.game_tournament_match_lbl_won }}
+                            b.uk-text-danger(v-else) {{ strings.game_tournament_match_lbl_lost }}
+                    button.btn.btn-default(v-if="isMultiRoundMatch", :disabled="isLastMatch", @click="goToNextMatch")
+                        v-icon(name="chevron-right")
+                failureAlert(v-if="match === null", :message="strings.game_tournament_match_show_error")
+                matchTopics(v-else, :match="match", :topics="getTopicsByStep(match.step)", :questions="questions", :ownUserId="ownUserId")
 </template>
 
 <script>
@@ -24,11 +26,13 @@
     import {mapActions, mapGetters, mapState} from 'vuex';
     import failureAlert from "../../helper/failure-alert";
     import matchTopics from "./match/match-topics";
+    import LoadingAlert from "../../helper/loading-alert";
 
     export default {
         mixins: [Mixins],
         data() {
             return {
+                loading: true,
                 matches: [],
                 matchIndex: 0,
                 questions: [],
@@ -55,6 +59,9 @@
                 }
                 return null;
             },
+            isMultiRoundMatch() {
+                return this.tournament.number_of_steps > 1;
+            },
             isFirstMatch() {
                 return this.matchIndex === 0;
             },
@@ -70,14 +77,19 @@
                 fetchMatches: 'player/fetchMatches',
                 fetchTopics: 'player/fetchTopics',
                 fetchQuestions: 'player/fetchQuestions',
+                fetchMdlQuestion: 'player/fetchMdlQuestion',
             }),
             initData() {
-                this.loadMatches();
-                this.loadTopics();
-                this.loadQuestions();
+                Promise.all([
+                    this.loadMatches(),
+                    this.loadTopics(),
+                    this.loadQuestions()
+                ]).then(() => {
+                    this.loading = false;
+                })
             },
             loadMatches() {
-                this.fetchMatches({
+                return this.fetchMatches({
                     tournamentid: this.tournamentId
                 }).then(matches => {
                     this.matches = _.sortBy(matches, 'step');
@@ -85,7 +97,7 @@
                 });
             },
             loadTopics() {
-                this.fetchTopics({
+                return this.fetchTopics({
                     tournamentid: this.tournamentId
                 }).then(topics => {
                     let map = {};
@@ -99,7 +111,7 @@
                 });
             },
             loadQuestions() {
-                this.fetchQuestions({
+                return this.fetchQuestions({
                     tournamentid: this.tournamentId
                 }).then(questions => {
                     this.questions = questions;
@@ -131,6 +143,7 @@
             }
         },
         components: {
+            LoadingAlert,
             matchTopics,
             failureAlert
         }
