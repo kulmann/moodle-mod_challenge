@@ -45,7 +45,6 @@ class tournament_save_topics extends external_api {
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
             'tournamentid' => new external_value(PARAM_INT, 'tournament id'),
             'topics' => new external_multiple_structure(new external_function_parameters([
-                'id' => new external_value(PARAM_INT, 'topic id'),
                 'level' => new external_value(PARAM_INT, 'level id'),
                 'step' => new external_value(PARAM_INT, 'step index'),
             ]))

@@ -139,6 +139,8 @@ $string['admin_tournament_topics_loading'] = 'Lade Turnier-Themen';
 $string['admin_tournament_topics_saving'] = 'Die Themen werden gespeichert, bitte warten';
 $string['admin_tournament_topics_lbl_step'] = 'Runde';
 $string['admin_tournament_topics_lbl_levels'] = 'Verfügbare Themengebiete';
+$string['admin_tournament_topics_lbl_select'] = 'Bitte Themengebiet für Runde {$a} auswählen';
+$string['admin_tournament_topics_lbl_none'] = 'Keins';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';

@@ -1,6 +1,6 @@
 <template lang="pug">
     .uk-card.uk-card-default
-        .uk-card-body(v-if="topics === null")
+        .uk-card-body(v-if="levelsByStep === null")
             loadingAlert(:message="strings.admin_tournament_topics_loading")
         template(v-else)
             .uk-card-body
@@ -15,14 +15,13 @@
                             td.uk-text-center
                                 b {{ step + 1 }}
                             td
-                                div(v-for="topic in topics[step]")
-                                    editableDropDown(:items="dropDownValues", v-model="topic.level", :unlockEditMode="true")
-                                        template(v-slot:current="valueProps")
-                                            span(v-if="valueProps.value === 0") Please Select
-                                            level(v-else, :level="getLevel(valueProps.value)", :game="game", style="width: 200px;")
-                                        template(v-slot:listItem="itemProps")
-                                            span(v-if="itemProps.item === 0") None
-                                            level(v-else, :level="getLevel(itemProps.item)", :game="game", style="width: 200px;")
+                                editableDropDown(:items="dropDownValues", v-model="levelsByStep[step]", :unlockEditMode="true")
+                                    template(v-slot:current="valueProps")
+                                        span(v-if="valueProps.value === 0") {{ strings.admin_tournament_topics_lbl_select | stringParams(step + 1) }}
+                                        level(v-else, :level="getLevel(valueProps.value)", :game="game", style="width: 200px;")
+                                    template(v-slot:listItem="itemProps")
+                                        span(v-if="itemProps.item === 0") {{ strings.admin_tournament_topics_lbl_none }}
+                                        level(v-else, :level="getLevel(itemProps.item)", :game="game", style="width: 200px;")
             .uk-card-footer.uk-text-right
                 button.btn.btn-primary(@click="save()", :disabled="saving || isDataInvalid")
                     v-icon(name="save").uk-margin-small-right
@@ -52,7 +51,7 @@
         },
         data() {
             return {
-                topics: null,
+                levelsByStep: null,
                 saving: false,
             }
         },
@@ -70,7 +69,7 @@
                 return _.concat([0], _.map(_.sortBy(this.levels, 'name'), level => level.id));
             },
             isDataInvalid() {
-                return this.topics === null || this.topics.length < this.steps;
+                return this.levelsByStep === null || _.includes(this.levelsByStep, 0);
             },
             steps() {
                 return this.tournament.number_of_steps;
@@ -86,26 +85,16 @@
             }),
             initData(tournament) {
                 this.fetchTopics({tournamentid: tournament.id}).then(topics => {
-                    const questionsPerStep = this.game.question_count;
-                    let topicsByStep = {};
+                    let levelsByStep = {};
                     for(let step = 0; step < this.steps; step++) {
-                        let stepTopics = _.map(_.filter(topics, topic => topic.step === step), topic => {
-                            return {
-                                id: topic.id,
-                                step: topic.step,
-                                level: topic.level,
-                            };
-                        });
-                        while(stepTopics.length < questionsPerStep) {
-                            stepTopics.push({
-                                id: 0,
-                                step: step,
-                                level: 0,
-                            });
+                        let stepTopics = _.filter(topics, topic => (topic.step === step));
+                        if (stepTopics.length > 0) {
+                            levelsByStep[step] = _.first(stepTopics).level;
+                        } else {
+                            levelsByStep[step] = 0;
                         }
-                        topicsByStep[step] = stepTopics;
                     }
-                    this.topics = topicsByStep;
+                    this.levelsByStep = levelsByStep;
                 });
             },
             goToTournamentList() {
@@ -115,9 +104,15 @@
                 if (this.isDataInvalid) {
                     return;
                 }
+                const questionsPerStep = this.game.question_count;
                 let topicsForSaving = [];
-                _.forEach(this.topics, topics => {
-                    topicsForSaving = _.concat(topicsForSaving, topics);
+                _.forEach(this.levelsByStep, (levelId, stepIndex) => {
+                    for(let i=0; i<questionsPerStep; i++) {
+                        topicsForSaving.push({
+                            step: stepIndex,
+                            level: levelId,
+                        });
+                    }
                 });
                 let payload = {
                     tournamentid: this.tournament.id,

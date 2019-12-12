@@ -30,5 +30,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'mod_challenge';
 $plugin->requires = 2017111302;
 $plugin->maturity = MATURITY_BETA;
-$plugin->version = 2019121101;
-$plugin->release = '0.2.0';
+$plugin->version = 2019121201;
+$plugin->release = '0.2.1';

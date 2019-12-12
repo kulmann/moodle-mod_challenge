@@ -139,6 +139,8 @@ $string['admin_tournament_topics_loading'] = 'Loading tournament topics';
 $string['admin_tournament_topics_saving'] = 'Saving the topics, please wait';
 $string['admin_tournament_topics_lbl_step'] = 'Round';
 $string['admin_tournament_topics_lbl_levels'] = 'Available topics';
+$string['admin_tournament_topics_lbl_select'] = 'Please select a topic for round {$a}';
+$string['admin_tournament_topics_lbl_none'] = 'None';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
