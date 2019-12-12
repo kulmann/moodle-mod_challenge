@@ -328,13 +328,13 @@ class tournament extends abstract_model {
      */
     public function get_question_by_user_and_topic($mdl_user_id, $topic_id) {
         global $DB;
-        $records = $DB->get_records('challenge_tnmt_questions', ['topic' => $topic_id, 'mdl_user' => $mdl_user_id]);
-        if (empty($records)) {
-            return null;
-        } else {
+        $record = $DB->get_record('challenge_tnmt_questions', ['topic' => $topic_id, 'mdl_user' => $mdl_user_id]);
+        if ($record) {
             $question = new tournament_question();
-            $question->apply($records[0]);
+            $question->apply($record);
             return $question;
+        } else {
+            return null;
         }
     }
 

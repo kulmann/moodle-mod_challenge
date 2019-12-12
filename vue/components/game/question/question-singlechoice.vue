@@ -84,6 +84,8 @@
                 this.submitAnswer({
                     'questionid': this.question.id,
                     'mdlanswerid': this.clickedAnswerId,
+                }).then(() => {
+                    this.$emit('reloadQuestion');
                 });
             },
             getAnswerClasses(answer) {

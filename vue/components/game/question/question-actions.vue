@@ -52,6 +52,7 @@
                 this.timer = setInterval(() => {
                     this.countdownValue--;
                     if (this.countdownValue <= 0) {
+                        clearInterval(this.timer);
                         this.goToTournament();
                     }
                 }, 1000);

@@ -87,7 +87,7 @@ class tournament_request_question extends external_api {
         $level = util::get_level($topic->get_level());
 
         // get question or create a new one if necessary.
-        $question = $tournament->get_question_by_user_and_topic($USER->id, $topicid);
+        $question = $tournament->get_question_by_user_and_topic(intval($USER->id), $topicid);
         if ($question === null) {
             $question = new tournament_question();
             $question->set_topic($topicid);

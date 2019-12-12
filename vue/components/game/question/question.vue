@@ -1,9 +1,9 @@
 <template lang="pug">
-    .uk-card.uk-card-default
+    div
         loadingAlert(v-if="loading", :message="strings.game_loading_question")
         template(v-else)
-            div(:is="componentByType", :game="game", :question="question", :mdl_question="mdl_question", :mdl_answers="mdl_answers")
-            actions(v-if="areActionsAllowed", :questino="question").uk-margin-small-top
+            div(:is="componentByType", :game="game", :question="question", :mdl_question="mdl_question", :mdl_answers="mdl_answers", @reloadQuestion="loadQuestion")
+            actions(v-if="areActionsAllowed", :question="question").uk-margin-small-top
 </template>
 
 <script>
