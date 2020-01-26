@@ -25,7 +25,7 @@
  * Moodle is performing actions across all modules.
  *
  * @package    mod_challenge
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -40,14 +40,14 @@ define('MOD_CHALLENGE_VALID_QTYPES_DB', [
     MOD_CHALLENGE_QTYPE_SINGLE_CHOICE_DB,
 ]);
 
-// tile heights
-define('MOD_CHALLENGE_LEVEL_TILE_HEIGHT_SMALL', 0);
-define('MOD_CHALLENGE_LEVEL_TILE_HEIGHT_MEDIUM', 1);
-define('MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE', 2);
-define('MOD_CHALLENGE_LEVEL_TILE_HEIGHTS', [
-    MOD_CHALLENGE_LEVEL_TILE_HEIGHT_SMALL,
-    MOD_CHALLENGE_LEVEL_TILE_HEIGHT_MEDIUM,
-    MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE,
+// round duration units
+define('MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS', 'hours');
+define('MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS', 'days');
+define('MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS', 'weeks');
+define('MOD_CHALLENGE_ROUND_DURATION_UNITS', [
+    MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS,
+    MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS,
+    MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS,
 ]);
 
 /**

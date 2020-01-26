@@ -21,7 +21,7 @@
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod_challenge
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -62,7 +62,7 @@ class mod_challenge_mod_form extends moodleform_mod {
 
         // Game options
         $mform->addElement('header', 'game_options_fieldset', get_string('game_options_fieldset', 'challenge'));
-        // ... question count per gamesession
+        // ... question count per tournament
         $mform->addElement('text', 'question_count', get_string('question_count', 'challenge'), ['size' => 5]);
         $mform->setType('question_count', PARAM_INT);
         $mform->setDefault('question_count', 3);
@@ -82,22 +82,26 @@ class mod_challenge_mod_form extends moodleform_mod {
         $mform->setDefault('question_shuffle_answers', 1);
         $mform->addHelpButton('question_shuffle_answers', 'question_shuffle_answers', 'challenge');
 
-        // ... tile height for level cards
-        $level_tile_heights = [];
-        foreach (MOD_CHALLENGE_LEVEL_TILE_HEIGHTS as $height) {
-            $level_tile_heights[$height] = get_string('level_tile_height_' . $height, 'challenge');
+        // Round options
+        $mform->addElement('header', 'rounds_fieldset', get_string('rounds_fieldset', 'challenge'));
+        // ... round duration unit
+        $round_duration_units = [];
+        foreach (MOD_CHALLENGE_ROUND_DURATION_UNITS as $unit) {
+            $round_duration_units[$unit] = get_string('round_duration_unit_' . $unit, 'challenge');
         }
-        $mform->addElement('select', 'level_tile_height', get_string('level_tile_height', 'challenge'), $level_tile_heights);
-        $mform->setDefault('level_tile_height', MOD_CHALLENGE_LEVEL_TILE_HEIGHT_MEDIUM);
-        $mform->addHelpButton('level_tile_height', 'level_tile_height', 'challenge');
-        // ... tile overlay alpha
-        $level_tile_alphas = [];
-        for($i=0; $i<=10; $i++) {
-            $level_tile_alphas[$i * 10] = ($i * 10) . "%";
-        }
-        $mform->addElement('select', 'level_tile_alpha', get_string('level_tile_alpha', 'challenge'), $level_tile_alphas);
-        $mform->setDefault('level_tile_alpha', 50);
-        $mform->addHelpButton('level_tile_alpha', 'level_tile_alpha', 'challenge');
+        $mform->addElement('select', 'round_duration_unit', get_string('round_duration_unit', 'challenge'), $round_duration_units);
+        $mform->setDefault('round_duration_unit', MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS);
+        $mform->addHelpButton('round_duration_unit', 'round_duration_unit', 'challenge');
+        // ... round duration value
+        $mform->addElement('text', 'round_duration_value', get_string('round_duration_value', 'challenge'), ['size' => 5]);
+        $mform->setType('round_duration_value', PARAM_INT);
+        $mform->setDefault('round_duration_value', 7);
+        $mform->addHelpButton('round_duration_value', 'round_duration_value', 'challenge');
+        // ... number of rounds
+        $mform->addElement('text', 'rounds', get_string('rounds', 'challenge'), ['size' => 5]);
+        $mform->setType('rounds', PARAM_INT);
+        $mform->setDefault('rounds', 10);
+        $mform->addHelpButton('rounds', 'rounds', 'challenge');
 
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();

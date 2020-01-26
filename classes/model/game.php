@@ -31,10 +31,21 @@ defined('MOODLE_INTERNAL') || die();
  * Class game
  *
  * @package    mod_challenge\model
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class game extends abstract_model {
+
+    const STATE_FINISHED = 'finished';
+    const STATE_DUMPED = 'dumped';
+    const STATE_PROGRESS = 'progress';
+    const STATE_UNPUBLISHED = 'unpublished';
+    const STATES = [
+        self::STATE_FINISHED,
+        self::STATE_DUMPED,
+        self::STATE_PROGRESS,
+        self::STATE_UNPUBLISHED,
+    ];
 
     /**
      * @var int Timestamp of creation of this game.
@@ -69,13 +80,29 @@ class game extends abstract_model {
      */
     protected $question_shuffle_answers;
     /**
-     * @var int One of the tile height categories (see lib.php).
+     * @var int The time unit for duration of a round (see lib.php).
      */
-    protected $level_tile_height;
+    protected $round_duration_unit;
     /**
-     * @var int The alpha value of the level tile overlay (out of [0,100]).
+     * @var int The value for duration of a round.
      */
-    protected $level_tile_alpha;
+    protected $round_duration_value;
+    /**
+     * @var int The number of rounds until the game ends.
+     */
+    protected $rounds;
+    /**
+     * @var int The moodle user id of the winner
+     */
+    protected $winner_mdl_user;
+    /**
+     * @var int The final score of the winning user
+     */
+    protected $winner_score;
+    /**
+     * @var string The state of this game.
+     */
+    protected $state;
 
     /**
      * game constructor.
@@ -90,8 +117,12 @@ class game extends abstract_model {
         $this->question_duration = 30;
         $this->review_duration = 2;
         $this->question_shuffle_answers = true;
-        $this->level_tile_height = MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE;
-        $this->level_tile_alpha = 50;
+        $this->round_duration_unit = MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
+        $this->round_duration_value = 7;
+        $this->rounds = 10;
+        $this->winner_mdl_user = 0;
+        $this->winner_score = 0;
+        $this->state = self::STATE_UNPUBLISHED;
     }
 
     /**
@@ -114,8 +145,12 @@ class game extends abstract_model {
         $this->question_duration = isset($data['question_duration']) ? $data['question_duration'] : 30;
         $this->review_duration = isset($data['review_duration']) ? $data['review_duration'] : 2;
         $this->question_shuffle_answers = isset($data['question_shuffle_answers']) ? ($data['question_shuffle_answers'] == 1) : true;
-        $this->level_tile_height = isset($data['level_tile_height']) ? $data['level_tile_height'] : MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE;
-        $this->level_tile_alpha = isset($data['level_tile_alpha']) ? $data['level_tile_alpha'] : 50;
+        $this->round_duration_unit = isset($data['round_duration_unit']) ? $data['round_duration_unit'] : MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
+        $this->round_duration_value = isset($data['round_duration_value']) ? $data['round_duration_value'] : 7;
+        $this->rounds = isset($data['rounds']) ? $data['rounds'] : 10;
+        $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
+        $this->winner_score = isset($data['winner_score']) ? $data['winner_score'] : 0;
+        $this->state = isset($data['state']) ? $data['state'] : self::STATE_UNPUBLISHED;
     }
 
     /**
@@ -195,94 +230,6 @@ class game extends abstract_model {
     }
 
     /**
-     * Counts the active levels of this game.
-     *
-     * @return int
-     * @throws dml_exception
-     */
-    public function count_active_levels(): int {
-        global $DB;
-        $sql = "
-            SELECT COUNT(id)
-              FROM {challenge_levels}
-             WHERE game = :game AND state = :state
-        ";
-        $count = $DB->get_field_sql($sql, ['game' => $this->get_id(), 'state' => level::STATE_ACTIVE]);
-        return $count === false ? 0 : $count;
-    }
-
-    /**
-     * Gets an active level which belongs to this game and has the given $position value. Will return null
-     * if no such level exists.
-     *
-     * @param int $position
-     *
-     * @return level|null
-     * @throws dml_exception
-     */
-    public function get_active_level_by_position($position) {
-        global $DB;
-        $sql = "
-            SELECT *
-              FROM {challenge_levels}
-             WHERE game = :game AND state = :state AND position = :position
-        ";
-        $record = $DB->get_record_sql($sql, ['game' => $this->get_id(), 'state' => level::STATE_ACTIVE, 'position' => $position]);
-        if ($record === false) {
-            return null;
-        } else {
-            $level = new level();
-            $level->apply($record);
-            return $level;
-        }
-    }
-
-    /**
-     * Gets all active levels for this game from the DB.
-     *
-     * @return level[]
-     * @throws dml_exception
-     */
-    public function get_active_levels() {
-        global $DB;
-        $sql_params = ['game' => $this->get_id(), 'state' => level::STATE_ACTIVE];
-        $records = $DB->get_records('challenge_levels', $sql_params, 'position ASC');
-        $result = [];
-        foreach ($records as $level_data) {
-            $level = new level();
-            $level->apply($level_data);
-            $result[] = $level;
-        }
-        return $result;
-    }
-
-    /**
-     * Goes through all active levels, fixing their individual position.
-     *
-     * @return void
-     * @throws dml_exception
-     */
-    public function fix_level_positions() {
-        $levels = $this->get_active_levels();
-        // sort levels ascending
-        usort($levels, function (level $level1, level $level2) {
-            $pos1 = $level1->get_position();
-            $pos2 = $level2->get_position();
-            if ($pos1 === $pos2) {
-                return 0;
-            }
-            return ($pos1 < $pos2) ? -1 : 1;
-        });
-        // walk through sorted list and set new positions
-        $pos = 0;
-        foreach ($levels as $level) {
-            assert($level instanceof level);
-            $level->set_position($pos++);
-            $level->save();
-        }
-    }
-
-    /**
      * @return int
      */
     public function get_timecreated(): int {
@@ -297,13 +244,6 @@ class game extends abstract_model {
     }
 
     /**
-     * @param int $timemodified
-     */
-    public function set_timemodified(int $timemodified) {
-        $this->timemodified = $timemodified;
-    }
-
-    /**
      * @return int
      */
     public function get_course(): int {
@@ -311,24 +251,10 @@ class game extends abstract_model {
     }
 
     /**
-     * @param int $course
-     */
-    public function set_course(int $course) {
-        $this->course = $course;
-    }
-
-    /**
      * @return string
      */
     public function get_name(): string {
         return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function set_name(string $name) {
-        $this->name = $name;
     }
 
     /**
@@ -362,29 +288,69 @@ class game extends abstract_model {
     /**
      * @return int
      */
-    public function get_level_tile_height(): int {
-        return $this->level_tile_height;
+    public function get_round_duration_unit(): int {
+        return $this->round_duration_unit;
     }
 
     /**
      * @return int
      */
-    public function get_level_tile_height_px() {
-        switch ($this->get_level_tile_height()) {
-            case MOD_CHALLENGE_LEVEL_TILE_HEIGHT_SMALL:
-                return 60;
-            case MOD_CHALLENGE_LEVEL_TILE_HEIGHT_LARGE:
-                return 200;
-            case MOD_CHALLENGE_LEVEL_TILE_HEIGHT_MEDIUM:
+    public function get_round_duration_value(): int {
+        return $this->round_duration_value;
+    }
+
+    /**
+     * Calculates the duration of one round as seconds.
+     *
+     * @return int
+     */
+    public function calculate_round_duration_seconds(): int {
+        $factor = $this->determine_round_duration_factor();
+        return $this->round_duration_value * $factor;
+    }
+
+    /**
+     * Determines the factor for translating the round duration to seconds.
+     *
+     * @return int
+     */
+    private function determine_round_duration_factor(): int {
+        switch($this->round_duration_unit) {
+            case MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS:
+                return 60 * 60;
+            case MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS:
+                return 60 * 60 * 24;
+            case MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS:
             default:
-                return 120;
+                return 60 * 60 * 24 * 7;
         }
     }
 
     /**
      * @return int
      */
-    public function get_level_tile_alpha() {
-        return $this->level_tile_alpha;
+    public function get_rounds(): int {
+        return $this->rounds;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_winner_mdl_user(): int {
+        return $this->winner_mdl_user;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_winner_score(): int {
+        return $this->winner_score;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_state(): string {
+        return $this->state;
     }
 }

@@ -26,7 +26,7 @@ use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\bool_dto;
 use mod_challenge\external\exporter\tournament_dto;
-use mod_challenge\external\exporter\tournament_match_dto;
+use mod_challenge\external\exporter\match_dto;
 use mod_challenge\model\tournament;
 use mod_challenge\util;
 use moodle_exception;
@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class tournaments
  *
  * @package    mod_challenge\external
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tournaments extends external_api {
@@ -348,7 +348,7 @@ class tournaments extends external_api {
      * @return external_multiple_structure
      */
     private static function get_tournament_matches_returns() {
-        return new external_multiple_structure(tournament_match_dto::get_read_structure());
+        return new external_multiple_structure(match_dto::get_read_structure());
     }
 
     /**
@@ -428,7 +428,7 @@ class tournaments extends external_api {
         $result = [];
         foreach ($matches as $match) {
             util::check_match_winner($match, $game);
-            $exporter = new tournament_match_dto($match, $game, $ctx);
+            $exporter = new match_dto($match, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }
         return $result;

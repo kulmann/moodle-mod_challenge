@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class tournament
  *
  * @package    mod_challenge\model
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tournament extends abstract_model {
@@ -134,7 +134,7 @@ class tournament extends abstract_model {
             throw new invalid_state_exception("it's not allowed to create fresh participant matches for a published tournament.");
         }
         foreach ($matches_data as $match_data) {
-            $match = new tournament_match();
+            $match = new _match();
             $match->set_tournament($this->get_id());
             $match->set_step(0);
             $match->set_mdl_user_1($match_data['mdl_user_1']);
@@ -158,7 +158,7 @@ class tournament extends abstract_model {
     /**
      * Loads all matches of this tournament.
      *
-     * @return tournament_match[]
+     * @return _match[]
      * @throws dml_exception
      */
     public function get_matches() {
@@ -167,7 +167,7 @@ class tournament extends abstract_model {
         $records = $DB->get_records('challenge_tnmt_matches', $sql_conditions);
         $result = [];
         foreach ($records as $match_data) {
-            $match = new tournament_match();
+            $match = new _match();
             $match->apply($match_data);
             $result[] = $match;
         }
@@ -179,7 +179,7 @@ class tournament extends abstract_model {
      *
      * @param int $mdl_user
      *
-     * @return tournament_match[]
+     * @return _match[]
      * @throws dml_exception
      */
     public function get_user_matches($mdl_user) {
@@ -191,7 +191,7 @@ class tournament extends abstract_model {
         $records = $DB->get_records_sql($sql, ['tournament' => $this->get_id(), 'user1' => $mdl_user, 'user2' => $mdl_user]);
         $result = [];
         foreach ($records as $record) {
-            $match = new tournament_match();
+            $match = new _match();
             $match->apply($record);
             $result[] = $match;
         }
@@ -230,7 +230,7 @@ class tournament extends abstract_model {
             if ($topic_data['level'] == 0) {
                 continue;
             }
-            $topic = new tournament_topic();
+            $topic = new round();
             $topic->apply($topic_data);
             $topic->set_tournament($this->get_id());
             $topic->save();
@@ -252,7 +252,7 @@ class tournament extends abstract_model {
     /**
      * Loads all topics of this tournament.
      *
-     * @return tournament_topic[]
+     * @return round[]
      * @throws dml_exception
      */
     public function get_topics() {
@@ -261,7 +261,7 @@ class tournament extends abstract_model {
         $records = $DB->get_records('challenge_tnmt_topics', $sql_conditions);
         $result = [];
         foreach ($records as $topic_data) {
-            $topic = new tournament_topic();
+            $topic = new round();
             $topic->apply($topic_data);
             $result[] = $topic;
         }
@@ -294,7 +294,7 @@ class tournament extends abstract_model {
     /**
      * Gets all questions ever created for this tournament.
      *
-     * @return tournament_question[]
+     * @return _question[]
      * @throws dml_exception
      */
     public function get_questions() {
@@ -310,7 +310,7 @@ class tournament extends abstract_model {
         $records = $DB->get_records_sql($sql, $sql_conditions);
         $result = [];
         foreach ($records as $record) {
-            $question = new tournament_question();
+            $question = new _question();
             $question->apply($record);
             $result[] = $question;
         }
@@ -324,7 +324,7 @@ class tournament extends abstract_model {
      * @param int $mdl_user_1
      * @param int $mdl_user_2
      *
-     * @return tournament_question[]
+     * @return _question[]
      * @throws dml_exception
      */
     public function get_questions_by_topic_and_users($topic, $mdl_user_1, $mdl_user_2) {
@@ -338,7 +338,7 @@ class tournament extends abstract_model {
         $records = $DB->get_records_sql($sql, $sql_conditions);
         $result = [];
         foreach ($records as $record) {
-            $question = new tournament_question();
+            $question = new _question();
             $question->apply($record);
             $result[] = $question;
         }

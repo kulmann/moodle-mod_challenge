@@ -22,7 +22,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class level
  *
  * @package    mod_challenge\model
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class level extends abstract_model {

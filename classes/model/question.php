@@ -29,10 +29,10 @@ require_once($CFG->dirroot . '/question/engine/bank.php');
  * Class tournament_question
  *
  * @package    mod_challenge\model
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tournament_question extends abstract_model {
+class question extends abstract_model {
 
     /**
      * @var int The timestamp of the creation of this question.
@@ -43,9 +43,13 @@ class tournament_question extends abstract_model {
      */
     protected $timemodified;
     /**
-     * @var int The id of the tournament topic.
+     * @var int The id of the associated match.
      */
-    protected $topic;
+    protected $match;
+    /**
+     * @var int The position within the question set of the match.
+     */
+    protected $number;
     /**
      * @var int The id of the moodle user who got this question.
      */
@@ -87,10 +91,11 @@ class tournament_question extends abstract_model {
      * tournament_question constructor.
      */
     function __construct() {
-        parent::__construct('challenge_tnmt_questions', 0);
+        parent::__construct('challenge_questions', 0);
         $this->timecreated = \time();
         $this->timemodified = \time();
-        $this->topic = 0;
+        $this->match = 0;
+        $this->number = 0;
         $this->mdl_user = 0;
         $this->mdl_question = 0;
         $this->mdl_answers_order = '';
@@ -115,7 +120,8 @@ class tournament_question extends abstract_model {
         $this->id = isset($data['id']) ? $data['id'] : 0;
         $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
-        $this->topic = $data['topic'];
+        $this->match = $data['match'];
+        $this->number = $data['number'];
         $this->mdl_user = $data['mdl_user'];
         $this->mdl_question = $data['mdl_question'];
         $this->mdl_answers_order = $data['mdl_answers_order'];
@@ -176,29 +182,29 @@ class tournament_question extends abstract_model {
     /**
      * @return int
      */
-    public function get_game(): int {
-        return $this->game;
+    public function get_match(): int {
+        return $this->match;
     }
 
     /**
-     * @param int $game
+     * @param int $match
      */
-    public function set_game(int $game) {
-        $this->game = $game;
+    public function set_match(int $match) {
+        $this->match = $match;
     }
 
     /**
      * @return int
      */
-    public function get_topic(): int {
-        return $this->topic;
+    public function get_number(): int {
+        return $this->number;
     }
 
     /**
-     * @param int $topic
+     * @param int $number
      */
-    public function set_topic(int $topic) {
-        $this->topic = $topic;
+    public function set_number(int $number) {
+        $this->number = $number;
     }
 
     /**

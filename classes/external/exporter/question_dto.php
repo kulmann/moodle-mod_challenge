@@ -19,10 +19,8 @@ namespace mod_challenge\external\exporter;
 use context;
 use core\external\exporter;
 use mod_challenge\model\game;
-use mod_challenge\model\level;
-use mod_challenge\model\tournament;
-use mod_challenge\model\tournament_question;
-use mod_challenge\util;
+use mod_challenge\model\match;
+use mod_challenge\model\question;
 use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
@@ -31,19 +29,19 @@ defined('MOODLE_INTERNAL') || die();
  * Class tournament_question_dto
  *
  * @package    mod_challenge\external\exporter
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tournament_question_dto extends exporter {
+class question_dto extends exporter {
 
     /**
-     * @var tournament_question
+     * @var question
      */
     protected $question;
     /**
-     * @var tournament
+     * @var match
      */
-    protected $tournament;
+    protected $match;
     /**
      * @var game
      */
@@ -52,16 +50,16 @@ class tournament_question_dto extends exporter {
     /**
      * tournament_question_dto constructor.
      *
-     * @param tournament_question $question
-     * @param tournament $tournament
+     * @param question $question
+     * @param match $match
      * @param game $game
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(tournament_question $question, tournament $tournament, game $game, context $context) {
+    public function __construct(question $question, match $match, game $game, context $context) {
         $this->question = $question;
-        $this->tournament = $tournament;
+        $this->match = $match;
         $this->game = $game;
         parent::__construct([], ['context' => $context]);
     }
@@ -80,9 +78,13 @@ class tournament_question_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'timestamp when this question was modified',
             ],
-            'topic' => [
+            'match' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the topic this question was chosen from',
+                'description' => 'id of the match this question was chosen from',
+            ],
+            'number' => [
+                'type' => PARAM_INT,
+                'description' => 'position within the question set of the match',
             ],
             'mdl_user' => [
                 'type' => PARAM_INT,
@@ -112,6 +114,7 @@ class tournament_question_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'the time the user had left at the time of answering this question.',
             ],
+            // custom (non-model) fields
             'mdl_question_id' => [
                 'type' => PARAM_INT,
                 'description' => 'id of the associated moodle question',
@@ -127,10 +130,6 @@ class tournament_question_dto extends exporter {
             'time_max' => [
                 'type' => PARAM_INT,
                 'description' => 'the max time for answering this questions',
-            ],
-            'tournament' => [
-                'type' => PARAM_INT,
-                'description' => 'the id of the tournament this question belongs to.',
             ],
         ];
     }
@@ -150,7 +149,6 @@ class tournament_question_dto extends exporter {
                 'mdl_question_type' => \get_class($mdl_question),
                 'score_max' => $this->game->get_question_duration(),
                 'time_max' => $this->game->get_question_duration(),
-                'tournament' => $this->tournament->get_id(),
             ]
         );
     }

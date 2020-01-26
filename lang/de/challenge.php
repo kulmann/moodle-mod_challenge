@@ -18,7 +18,7 @@
  * German strings for challenge
  *
  * @package    mod_challenge
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,13 +50,18 @@ $string['review_duration'] = 'Anzeigedauer Lösung (Sekunden)';
 $string['review_duration_help'] = 'Anzeigezeit der Lösung (in Sekunden), bevor automatisch zur nächsten Frage weitergeleitet wird.';
 $string['question_shuffle_answers'] = 'Antworten mischen';
 $string['question_shuffle_answers_help'] = 'Wenn diese Option aktiviert ist, werden die Antworten der Fragen gemischt bevor sie angezeigt werden.';
-$string['level_tile_height'] = 'Kachel-Höhe Themengebiete';
-$string['level_tile_height_help'] = 'Wählen Sie für die Darstellung von Themengebieten eine Kachel-Höhe.';
-$string['level_tile_height_0'] = 'Flach';
-$string['level_tile_height_1'] = 'Normal';
-$string['level_tile_height_2'] = 'Hoch';
-$string['level_tile_alpha'] = 'Alpha-Overlay Themengebiete';
-$string['level_tile_alpha_help'] = 'Zur besseren Lesbarkeit von Text wird ein Overlay über die Themengebiets-Kacheln gelegt. Mit diesem Wert bestimmen Sie die Durchlässigkeit dieses Overlays.';
+
+/* main admin form: round options */
+$string['rounds_fieldset'] = 'Spielrunden';
+$string['round_duration_unit'] = 'Einheit der Dauer';
+$string['round_duration_unit_help'] = 'Einheit für die Dauer einer Spielrunde bzw. für die Zeit nach welcher die nächste Spielrunde automatisch gestartet wird.';
+$string['round_duration_unit_hours'] = 'Stunden';
+$string['round_duration_unit_days'] = 'Tage';
+$string['round_duration_unit_weeks'] = 'Wochen';
+$string['round_duration_value'] = 'Dauer';
+$string['round_duration_value_help'] = 'Wert für die Dauer einer Spielrunde bzw. für die Zeit nach welcher die nächste Spielrunde automatisch gestartet wird.';
+$string['rounds'] = 'Anzahl Runden';
+$string['rounds_help'] = 'Gesamtzahl Spielrunden bis zur Schlusswertung. Falls hier eine 0 eingetragen wird, werden unbegrenzt / bis zum Kursende weitere Spielrunden generiert.';
 
 /* activity edit page: control */
 $string['control_edit'] = 'Steuerung';

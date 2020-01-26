@@ -18,7 +18,7 @@
  * English strings for challenge
  *
  * @package    mod_challenge
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,13 +50,18 @@ $string['review_duration'] = 'Time to display solution (seconds)';
 $string['review_duration_help'] = 'The duration how long the solution of a question is being displayed (in seconds) before continuing to the next question automatically.';
 $string['question_shuffle_answers'] = 'Shuffle answers';
 $string['question_shuffle_answers_help'] = 'If enabled, the answers of questions will be shuffled.';
-$string['level_tile_height'] = 'Topic tile height';
-$string['level_tile_height_help'] = 'Please select the height for topic tile representation.';
-$string['level_tile_height_0'] = 'Flat';
-$string['level_tile_height_1'] = 'Regular';
-$string['level_tile_height_2'] = 'Tall';
-$string['level_tile_alpha'] = 'Alpha overlay topics';
-$string['level_tile_alpha_help'] = 'For improved readability there will be an overlay on the topic tiles. Please select the how dark (0%) or light (100%) this overlay should be.';
+
+/* main admin form: round options */
+$string['rounds_fieldset'] = 'Rounds';
+$string['round_duration_unit'] = 'Duration unit';
+$string['round_duration_unit_help'] = 'Time unit for the duration of one round.';
+$string['round_duration_unit_hours'] = 'Hours';
+$string['round_duration_unit_days'] = 'Days';
+$string['round_duration_unit_weeks'] = 'Weeks';
+$string['round_duration_value'] = 'Duration value';
+$string['round_duration_value_help'] = 'Amount for the selected unit to determine the duration of one round.';
+$string['rounds'] = 'Number of rounds';
+$string['rounds_help'] = 'Total number of rounds until final score. When setting this to 0 the game will run forever / until end of course.';
 
 /* activity edit page: control */
 $string['control_edit'] = 'Control';

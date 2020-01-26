@@ -18,23 +18,27 @@ namespace mod_challenge\model;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->dirroot . '/lib/questionlib.php');
-require_once($CFG->dirroot . '/question/engine/bank.php');
-
 /**
  * Class category
  *
  * @package    mod_challenge\model
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class category extends abstract_model {
 
     /**
-     * @var int The id of the level this question was chosen for.
+     * @var int The id of the game instance.
      */
-    protected $level;
+    protected $game;
+    /**
+     * @var int The id of the first round this category is active for.
+     */
+    protected $round_first;
+    /**
+     * @var int The id of the last round this category is active for.
+     */
+    protected $round_last;
     /**
      * @var int The id of the moodle question category.
      */
@@ -49,7 +53,9 @@ class category extends abstract_model {
      */
     function __construct() {
         parent::__construct('challenge_categories', 0);
-        $this->level = 0;
+        $this->game = 0;
+        $this->round_first = 0;
+        $this->round_last = 0;
         $this->mdl_category = 0;
         $this->subcategories = true;
     }
@@ -66,63 +72,67 @@ class category extends abstract_model {
             $data = get_object_vars($data);
         }
         $this->id = isset($data['id']) ? $data['id'] : 0;
-        $this->level = $data['level'];
+        $this->game = $data['game'];
+        $this->round_first = $data['round_first'];
+        $this->round_last = isset($data['round_last']) ? $data['round_last'] : 0;
         $this->mdl_category = $data['mdl_category'];
         $this->subcategories = isset($data['subcategories']) ? ($data['subcategories'] == 1) : false;
     }
 
     /**
-     * Finds a random question id from this category (and its subcategories if allowed) and
-     * returns the moodle question definition for it.
-     *
-     * @return \question_definition
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @return int
      */
-    public function get_random_question(): \question_definition {
-        global $DB;
-        // build sql for category id(s)
-        if ($this->includes_subcategories()) {
-            $category_ids = \question_categorylist($this->get_mdl_category());
-        } else {
-            $category_ids = [$this->get_mdl_category()];
-        }
-        list($cat_sql, $cat_params) = $DB->get_in_or_equal($category_ids);
-        // build sql for question type(s)
-        list($qtype_sql, $qtype_params) = $DB->get_in_or_equal(MOD_CHALLENGE_VALID_QTYPES_DB);
-        // actual query
-        $sql = "
-            SELECT id
-              FROM {question}
-             WHERE category $cat_sql AND qtype $qtype_sql 
-        ";
+    public function get_game(): int {
+        return $this->game;
+    }
 
-        $params = \array_merge($cat_params, $qtype_params);
-        // Get all available questions.
-        $availableids = $DB->get_records_sql($sql, $params);
-        if ($availableids) {
-            // Shuffle here because SQL RAND() can't be used.
-            shuffle($availableids);
-            // Take the first one in the array.
-            $id = $availableids[0]->id;
-            return \question_bank::load_question($id, false);
-        } else {
-            throw new \dml_exception('not found');
-        }
+    /**
+     * @param int $game
+     */
+    public function set_game(int $game) {
+        $this->game = $game;
     }
 
     /**
      * @return int
      */
-    public function get_level(): int {
-        return $this->level;
+    public function get_round_first(): int {
+        return $this->round_first;
     }
 
     /**
-     * @param int $level
+     * @param int $round_first
      */
-    public function set_level(int $level) {
-        $this->level = $level;
+    public function set_round_first(int $round_first) {
+        $this->round_first = $round_first;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_round_last(): int {
+        return $this->round_last;
+    }
+
+    /**
+     * @param int $round_last
+     */
+    public function set_round_last(int $round_last) {
+        $this->round_last = $round_last;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_subcategories(): bool {
+        return $this->subcategories;
+    }
+
+    /**
+     * @param bool $subcategories
+     */
+    public function set_subcategories(bool $subcategories) {
+        $this->subcategories = $subcategories;
     }
 
     /**

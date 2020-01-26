@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class game
  *
  * @package    mod_challenge\external
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class game extends external_api {

@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class mdl_user_dto
  *
  * @package    mod_challenge\external\exporter
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mdl_user_dto extends exporter {

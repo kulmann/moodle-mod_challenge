@@ -23,8 +23,8 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
-use mod_challenge\external\exporter\tournament_question_dto;
-use mod_challenge\model\tournament_question;
+use mod_challenge\external\exporter\question_dto;
+use mod_challenge\model\_question;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -57,7 +57,7 @@ class tournament_request_question extends external_api {
      * @return external_single_structure
      */
     public static function request_returns() {
-        return tournament_question_dto::get_read_structure();
+        return question_dto::get_read_structure();
     }
 
     /**
@@ -102,7 +102,7 @@ class tournament_request_question extends external_api {
         // load question of the user or create a new one
         $question_of_user = self::get_question_owner_by_user(intval($USER->id), $questions);
         if ($question_of_user === null) {
-            $question_of_user = new tournament_question();
+            $question_of_user = new _question();
             $question_of_user->set_topic($topicid);
             $question_of_user->set_mdl_user($USER->id);
 
@@ -133,7 +133,7 @@ class tournament_request_question extends external_api {
         }
 
         // create export
-        $exporter = new tournament_question_dto($question_of_user, $tournament, $game, $ctx);
+        $exporter = new question_dto($question_of_user, $tournament, $game, $ctx);
         return $exporter->export($renderer);
     }
 
@@ -141,9 +141,9 @@ class tournament_request_question extends external_api {
      * Returns the question object that belongs to the given user, or null if none found.
      *
      * @param int $mdl_user
-     * @param tournament_question[] $questions
+     * @param _question[] $questions
      *
-     * @return tournament_question | null
+     * @return _question | null
      */
     private static function get_question_owner_by_user($mdl_user, $questions) {
         foreach ($questions as $question) {

@@ -23,7 +23,7 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
-use mod_challenge\external\exporter\tournament_question_dto;
+use mod_challenge\external\exporter\question_dto;
 use mod_challenge\util;
 use moodle_exception;
 use question_answer;
@@ -56,7 +56,7 @@ class question_submit_answer extends external_api {
      * @return external_single_structure
      */
     public static function request_returns() {
-        return tournament_question_dto::get_read_structure();
+        return question_dto::get_read_structure();
     }
 
     /**
@@ -131,7 +131,7 @@ class question_submit_answer extends external_api {
         $question->save();
 
         // create export
-        $exporter = new tournament_question_dto($question, $tournament, $game, $ctx);
+        $exporter = new question_dto($question, $tournament, $game, $ctx);
         return $exporter->export($renderer);
     }
 }

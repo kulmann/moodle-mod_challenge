@@ -18,7 +18,7 @@
  * This file defines available ajax calls for mod_challenge.
  *
  * @package    mod_challenge
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

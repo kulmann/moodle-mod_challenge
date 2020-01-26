@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class level_dto
  *
  * @package    mod_challenge\external\exporter
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class category_dto extends exporter {
@@ -56,9 +56,17 @@ class category_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'category id',
             ],
-            'level' => [
+            'game' => [
                 'type' => PARAM_INT,
-                'description' => 'level id',
+                'description' => 'game id',
+            ],
+            'round_first' => [
+                'type' => PARAM_INT,
+                'description' => 'id of the first round this category is used in',
+            ],
+            'round_last' => [
+                'type' => PARAM_INT,
+                'description' => 'id of the last round this category is used in',
             ],
             'mdl_category' => [
                 'type' => PARAM_INT,
@@ -78,11 +86,6 @@ class category_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        return [
-            'id' => $this->category->get_id(),
-            'level' => $this->category->get_level(),
-            'mdl_category' => $this->category->get_mdl_category(),
-            'subcategories' => $this->category->includes_subcategories(),
-        ];
+        return $this->category->to_array();
     }
 }

@@ -23,7 +23,7 @@ use external_function_parameters;
 use external_multiple_structure;
 use external_value;
 use invalid_parameter_exception;
-use mod_challenge\external\exporter\tournament_question_dto;
+use mod_challenge\external\exporter\question_dto;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -51,7 +51,7 @@ class tournament_get_questions extends external_api {
      */
     public static function request_returns() {
         return new external_multiple_structure(
-            tournament_question_dto::get_read_structure()
+            question_dto::get_read_structure()
         );
     }
 
@@ -87,7 +87,7 @@ class tournament_get_questions extends external_api {
         $questions = $tournament->get_questions();
         foreach ($questions as $question) {
             util::check_question_timeout($question, $game);
-            $exporter = new tournament_question_dto($question, $tournament, $game, $ctx);
+            $exporter = new question_dto($question, $tournament, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }
         return $result;

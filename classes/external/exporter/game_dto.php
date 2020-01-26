@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class game_dto
  *
  * @package    mod_challenge\external\exporter
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class game_dto extends exporter {
@@ -73,14 +73,6 @@ class game_dto extends exporter {
                 'type' => PARAM_TEXT,
                 'description' => 'activity title',
             ],
-            'mdl_user' => [
-                'type' => PARAM_INT,
-                'description' => 'the id of the currently active moodle user',
-            ],
-            'mdl_user_teacher' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not the logged in user has game editing capabilities',
-            ],
             'question_count' => [
                 'type' => PARAM_INT,
                 'description' => 'the number of questions per tournament round'
@@ -93,13 +85,42 @@ class game_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'the number of seconds until after the question is answered the game goes back to the level overview',
             ],
-            'level_tile_height_px' => [
-                'type' => PARAM_INT,
-                'description' => 'the height of the level tiles in pixels',
+            'round_duration_unit' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'the time unit for the round duration',
             ],
-            'level_tile_alpha' => [
+            'round_duration_value' => [
                 'type' => PARAM_INT,
-                'description' => 'the alpha of the level tiles overlay [0-100]',
+                'description' => 'the amount for round duration, use in combination with duration unit',
+            ],
+            'rounds' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of rounds for this game. 0 for infinite / stopping with course end.',
+            ],
+            'winner_mdl_user' => [
+                'type' => PARAM_INT,
+                'description' => 'the id of the moodle user who won this game',
+            ],
+            'winner_score' => [
+                'type' => PARAM_INT,
+                'description' => 'the score of the winning user',
+            ],
+            'state' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'state of this game',
+            ],
+            // custom (non-model) fields
+            'mdl_user' => [
+                'type' => PARAM_INT,
+                'description' => 'the id of the currently active moodle user',
+            ],
+            'mdl_user_teacher' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether or not the logged in user has game editing capabilities',
+            ],
+            'round_duration_seconds' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of seconds resulting from the round duration unit and value',
             ],
         ];
     }
@@ -111,16 +132,13 @@ class game_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        return [
-            'id' => $this->game->get_id(),
-            'name' => $this->game->get_name(),
-            'mdl_user' => $this->user->id,
-            'mdl_user_teacher' => util::user_has_capability('mod/challenge:manage', $this->ctx, $this->user->id),
-            'question_count' => $this->game->get_question_count(),
-            'question_duration' => $this->game->get_question_duration(),
-            'review_duration' => $this->game->get_review_duration(),
-            'level_tile_height_px' => $this->game->get_level_tile_height_px(),
-            'level_tile_alpha' => $this->game->get_level_tile_alpha(),
-        ];
+        return \array_merge(
+            $this->game->to_array(),
+            [
+                'mdl_user' => $this->user->id,
+                'mdl_user_teacher' => util::user_has_capability('mod/challenge:manage', $this->ctx, $this->user->id),
+                'round_duration_seconds' => $this->game->calculate_round_duration_seconds(),
+            ]
+        );
     }
 }

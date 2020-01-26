@@ -18,7 +18,7 @@ namespace mod_challenge\external\exporter;
 
 use context;
 use core\external\exporter;
-use mod_challenge\model\tournament_question;
+use mod_challenge\model\_question;
 use renderer_base;
 use function array_search;
 use function intval;
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class mdl_answer_dto
  *
  * @package    mod_challenge\external\exporter
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mdl_answer_dto extends exporter {
@@ -39,7 +39,7 @@ class mdl_answer_dto extends exporter {
      */
     protected $mdl_answer;
     /**
-     * @var tournament_question
+     * @var _question
      */
     protected $question;
 
@@ -47,12 +47,12 @@ class mdl_answer_dto extends exporter {
      * mdl_answer_dto constructor.
      *
      * @param \question_answer $mdl_answer
-     * @param tournament_question $question
+     * @param _question $question
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(\question_answer $mdl_answer, tournament_question $question, context $context) {
+    public function __construct(\question_answer $mdl_answer, _question $question, context $context) {
         $this->mdl_answer = $mdl_answer;
         $this->question = $question;
         parent::__construct([], ['context' => $context]);

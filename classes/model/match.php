@@ -22,10 +22,10 @@ defined('MOODLE_INTERNAL') || die();
  * Class tournament_match
  *
  * @package    mod_challenge\model
- * @copyright  2019 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tournament_match extends abstract_model {
+class match extends abstract_model {
 
     /**
      * @var int The timestamp of the creation of this match.
@@ -36,13 +36,9 @@ class tournament_match extends abstract_model {
      */
     protected $timemodified;
     /**
-     * @var int The id of the tournament instance this match belongs to.
+     * @var int The id of the round instance this match belongs to.
      */
-    protected $tournament;
-    /**
-     * @var int The step index within the tournament.
-     */
-    protected $step;
+    protected $round;
     /**
      * @var int The id of the first user.
      */
@@ -60,11 +56,10 @@ class tournament_match extends abstract_model {
      * tournament_match constructor.
      */
     function __construct() {
-        parent::__construct('challenge_tnmt_matches', 0);
+        parent::__construct('challenge_matches', 0);
         $this->timecreated = \time();
         $this->timemodified = \time();
-        $this->tournament = 0;
-        $this->step = 0;
+        $this->round = 0;
         $this->mdl_user_1 = 0;
         $this->mdl_user_2 = 0;
         $this->mdl_user_winner = 0;
@@ -84,8 +79,7 @@ class tournament_match extends abstract_model {
         $this->id = isset($data['id']) ? $data['id'] : 0;
         $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
-        $this->tournament = $data['tournament'];
-        $this->step = $data['step'];
+        $this->round = $data['round'];
         $this->mdl_user_1 = $data['mdl_user_1'];
         $this->mdl_user_2 = $data['mdl_user_2'];
         $this->mdl_user_winner = isset($data['mdl_user_winner']) ? $data['mdl_user_winner'] : 0;
@@ -95,15 +89,14 @@ class tournament_match extends abstract_model {
         global $DB;
         $sql = "
                 SELECT question.*
-                  FROM {challenge_tnmt_questions} question
-            INNER JOIN {challenge_tnmt_topics} topic ON question.topic = topic.id 
-                 WHERE topic.tournament = :tournament AND topic.step = :step AND (question.mdl_user = :user1 OR question.mdl_user = :user2)
+                  FROM {challenge_questions} question 
+                 WHERE question.match = :match AND (question.mdl_user = :user1 OR question.mdl_user = :user2)
         ";
-        $sql_conditions = ['tournament' => $this->get_tournament(), 'step' => $this->get_step(), 'user1' => $this->get_mdl_user_1(), 'user2' => $this->get_mdl_user_2()];
+        $sql_conditions = ['match' => $this->get_id(), 'user1' => $this->get_mdl_user_1(), 'user2' => $this->get_mdl_user_2()];
         $records = $DB->get_records_sql($sql, $sql_conditions);
         $result = [];
         foreach ($records as $record) {
-            $question = new tournament_question();
+            $question = new question();
             $question->apply($record);
             $result[] = $question;
         }
@@ -134,29 +127,15 @@ class tournament_match extends abstract_model {
     /**
      * @return int
      */
-    public function get_tournament(): int {
-        return $this->tournament;
+    public function get_round(): int {
+        return $this->round;
     }
 
     /**
-     * @param int $tournament
+     * @param int $round
      */
-    public function set_tournament(int $tournament) {
-        $this->tournament = $tournament;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_step(): int {
-        return $this->step;
-    }
-
-    /**
-     * @param int $step
-     */
-    public function set_step(int $step) {
-        $this->step = $step;
+    public function set_round(int $round) {
+        $this->round = $round;
     }
 
     /**

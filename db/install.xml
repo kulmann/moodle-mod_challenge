@@ -16,6 +16,7 @@
                 <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0"
                        SEQUENCE="false"/>
                 <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false"/>
+                <!-- question characteristics -->
                 <FIELD NAME="question_count" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="30" SEQUENCE="false"
                        COMMENT="The number of questions per round."/>
                 <FIELD NAME="question_duration" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="30" SEQUENCE="false"
@@ -24,8 +25,18 @@
                        COMMENT="The number of seconds the solution is displayed before the user is returned to the level selection."/>
                 <FIELD NAME="question_shuffle_answers" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1"
                        SEQUENCE="false"/>
-                <FIELD NAME="level_tile_height" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="2" SEQUENCE="false"/>
-                <FIELD NAME="level_tile_alpha" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="50" SEQUENCE="false"/>
+                <!-- round timing -->
+                <FIELD NAME="round_duration_unit" TYPE="char" LENGTH="10" NOTNULL="false" DEFAULT="days" SEQUENCE="false"
+                       COMMENT="time unit for defining the time distance from one round to the next, e.g. days"/>
+                <FIELD NAME="round_duration_value" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="7" SEQUENCE="false"
+                       COMMENT="time value for defining the time distance from one round to the next, e.g. 5 days"/>
+                <FIELD NAME="rounds" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="10" SEQUENCE="false"
+                       COMMENT="total number of rounds. 0 for infinite (e.g. when the course ends)"/>
+                <!-- winner tracking -->
+                <FIELD NAME="winner_mdl_user" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="winner_score" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="state" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" DEFAULT="edit"
+                       COMMENT="whether or not this game is already finished (all rounds done)" />
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -34,96 +45,57 @@
                 <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
             </INDEXES>
         </TABLE>
-        <TABLE NAME="challenge_levels"
-               COMMENT="One level is defined by [1,n] categories (see challenge_categories table).">
+        <TABLE NAME="challenge_rounds" COMMENT="Rounds are the steps of a game towards a final score.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
                 <FIELD NAME="game" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="state" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" DEFAULT="active"
-                       COMMENT="The state of the level out of [active, deleted]."/>
-                <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" DEFAULT=""/>
-                <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
-                       DEFAULT="0"/>
-                <FIELD NAME="image" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"
-                       COMMENT="The filename of the image of the level."/>
-                <FIELD NAME="bgcolor" TYPE="char" LENGTH="7" NOTNULL="false" SEQUENCE="false"
-                       COMMENT="The background color code for the level."/>
+                <FIELD NAME="number" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="challenge_categories" COMMENT="Each level consists of [1,n] categories.">
+        <TABLE NAME="challenge_categories" COMMENT="Categories get assigned to rounds / round sequences. Questions get chosen from those categories.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
-                <FIELD NAME="level" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="mdl_category" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="subcategories" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
-                       DEFAULT="1"
+                <FIELD NAME="game" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="round_first" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="id of the first round this category is used for."/>
+                <FIELD NAME="round_last" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="id of the last round this category is used for."/>
+                <FIELD NAME="mdl_category" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"
+                       COMMENT="the id of a moodle question category."/>
+                <FIELD NAME="subcategories" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="1"
                        COMMENT="Whether (1) or not (0) to include sub-categories for question search."/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="challenge_tournaments"
-               COMMENT="A tournament of a game consists of a player matches and a number of gamesessions.">
+        <TABLE NAME="challenge_matches" COMMENT="Matches are a combination of two players in a game">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0"
-                       SEQUENCE="false"/>
-                <FIELD NAME="game" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="state" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" DEFAULT="unpublished"
-                       COMMENT="The state of the tournament, out of [unpublished, progress, finished, dumped]."/>
-                <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" DEFAULT=""/>
-                <FIELD NAME="winner_mdl_user" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="winner_score" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-            </FIELDS>
-            <KEYS>
-                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-            </KEYS>
-        </TABLE>
-        <TABLE NAME="challenge_tnmt_matches"
-               COMMENT="Matches are a combination of two players in a tournament">
-            <FIELDS>
-                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
-                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0"
-                       SEQUENCE="false"/>
-                <FIELD NAME="tournament" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="step" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="round" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="mdl_user_winner" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
-                       DEFAULT="0"/>
+                <FIELD NAME="mdl_user_winner" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
             </KEYS>
         </TABLE>
-        <TABLE NAME="challenge_tnmt_topics"
-               COMMENT="Topics are level assignments for tournament rounds">
+        <TABLE NAME="challenge_questions" COMMENT="Questions that were picked for a match in a round.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0"
-                       SEQUENCE="false"/>
-                <FIELD NAME="tournament" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="step" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="level" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-            </FIELDS>
-            <KEYS>
-                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-            </KEYS>
-        </TABLE>
-        <TABLE NAME="challenge_tnmt_questions" COMMENT="Questions that were picked for a level.">
-            <FIELDS>
-                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
-                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0"
-                       SEQUENCE="false"/>
-                <FIELD NAME="topic" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="match" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="The match this question has been chosen in."/>
+                <FIELD NAME="number" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="The position of this question within the question set of the current match."/>
                 <FIELD NAME="mdl_user" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
                        COMMENT="Reference to a moodle question."/>
@@ -137,8 +109,7 @@
                        COMMENT="Whether (1) or not (0) the selected answer was correct."/>
                 <FIELD NAME="finished" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0"
                        COMMENT="Whether (1) or not (0) the user has has answered this question."/>
-                <FIELD NAME="timeremaining" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
-                       DEFAULT="-1"/>
+                <FIELD NAME="timeremaining" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="-1"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
