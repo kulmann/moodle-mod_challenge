@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/bank.php');
 
-class question_submit_answer extends external_api {
+class player_save_answer extends external_api {
 
     /**
      * Definition of parameters for {@see request}.

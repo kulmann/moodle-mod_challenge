@@ -18,35 +18,42 @@ namespace mod_challenge\external\exporter;
 
 use context;
 use core\external\exporter;
-use mod_challenge\model\category;
+use mod_challenge\model\game;
+use mod_challenge\model\round;
 use renderer_base;
+use function array_merge;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class category_dto
+ * Class round_dto
  *
  * @package    mod_challenge\external\exporter
  * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class category_dto extends exporter {
+class round_dto extends exporter {
 
     /**
-     * @var category
+     * @var round
      */
-    protected $category;
+    protected $round;
+    /**
+     * @var game
+     */
+    protected $game;
 
     /**
-     * category_dto constructor.
+     * round_dto constructor.
      *
-     * @param category $category
+     * @param round $round
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(category $category, context $context) {
-        $this->category = $category;
+    public function __construct(round $round, game $game, context $context) {
+        $this->round = $round;
+        $this->game = $game;
         parent::__construct([], ['context' => $context]);
     }
 
@@ -60,21 +67,21 @@ class category_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'game id',
             ],
-            'round_first' => [
+            'number' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the first round this category is used in',
+                'description' => 'number of this round within the game',
             ],
-            'round_last' => [
+            'timestart' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the last round this category is used in',
+                'description' => 'time when this round starts',
             ],
-            'mdl_category' => [
+            'timeend' => [
                 'type' => PARAM_INT,
-                'description' => 'moodle category id',
+                'description' => 'time when this round ends (calculated from start + duration)',
             ],
-            'subcategories' => [
+            'finished' => [
                 'type' => PARAM_BOOL,
-                'description' => 'whether or not to include sub categories',
+                'description' => 'whether or not this round is already finished (timeend < now)',
             ],
         ];
     }
@@ -86,6 +93,13 @@ class category_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        return $this->category->to_array();
+        $timeend = $this->round->get_timestart() + $this->game->calculate_round_duration_seconds();
+        return array_merge(
+            $this->round->to_array(),
+            [
+                'timeend' => $timeend,
+                'finished' => $timeend < time(),
+            ]
+        );
     }
 }

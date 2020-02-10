@@ -1,7 +1,7 @@
 <template lang="pug">
     .uk-card.uk-card-default
         .uk-card-body(v-if="data === null || categories === null")
-            loadingAlert(:message="strings.admin_level_loading")
+            loadingAlert(:message="strings.admin_round_loading")
         template(v-else)
             .uk-card-body
                 form.uk-form-stacked

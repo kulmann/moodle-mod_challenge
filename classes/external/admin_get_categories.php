@@ -21,16 +21,20 @@ use dml_exception;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
+use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
+use mod_challenge\external\exporter\bool_dto;
+use mod_challenge\external\exporter\category_dto;
 use mod_challenge\external\exporter\tournament_topic_dto;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-class tournament_get_topics extends external_api {
+class admin_get_categories extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -40,26 +44,20 @@ class tournament_get_topics extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'tournamentid' => new external_value(PARAM_INT, 'tournament id'),
         ]);
     }
 
     /**
-     * Definition of return type for {@see request}.
-     *
      * @return external_multiple_structure
      */
     public static function request_returns() {
-        return new external_multiple_structure(
-            tournament_topic_dto::get_read_structure()
-        );
+        return new external_multiple_structure(category_dto::get_read_structure());
     }
 
     /**
-     * Get all topics of a tournament.
+     * Get all categories of a game.
      *
      * @param int $coursemoduleid
-     * @param int $tournamentid
      *
      * @return array
      * @throws coding_exception
@@ -68,26 +66,24 @@ class tournament_get_topics extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid, $tournamentid) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'tournamentid' => $tournamentid];
+    public static function request($coursemoduleid) {
+        $params = ['coursemoduleid' => $coursemoduleid];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
+        $game = util::get_game($coursemodule);
+        $categories = $game->get_categories();
+
+        // construct result
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
-        $game = util::get_game($coursemodule);
-        $tournament = util::get_tournament($tournamentid);
-        util::validate_tournament($game, $tournament);
-
-        // collect export data
         $result = [];
-        $topics = $tournament->get_topics();
-        foreach ($topics as $topic) {
-            $exporter = new tournament_topic_dto($topic, $game, $ctx);
-            $result[] = $exporter->export($renderer);
+        foreach ($categories as $category) {
+            $category_dto = new category_dto($category, $ctx);
+            $result[] = $category_dto->export($renderer);
         }
         return $result;
     }

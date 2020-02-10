@@ -88,6 +88,14 @@ $string['admin_btn_confirm_publish'] = 'Confirm Publishing';
 $string['admin_btn_confirm_delete'] = 'Confirm Delete';
 $string['admin_btn_generate'] = 'Generate';
 $string['admin_avatar_alt'] = 'Picture of {$a}';
+/* admin: rounds */
+$string['admin_nav_rounds'] = 'Rounds';
+$string['admin_rounds_title'] = 'Manager rounds';
+$string['admin_rounds_intro'] = 'Description text about rounds...';
+$string['admin_round_delete_confirm'] = 'Do you really want to delete the round »{$a}«?';
+
+
+
 /* admin: levels */
 $string['admin_nav_levels'] = 'Topics';
 $string['admin_levels_title'] = 'Edit topics';
@@ -146,6 +154,10 @@ $string['admin_tournament_topics_lbl_step'] = 'Round';
 $string['admin_tournament_topics_lbl_levels'] = 'Available topics';
 $string['admin_tournament_topics_lbl_select'] = 'Please select a topic for round {$a}';
 $string['admin_tournament_topics_lbl_none'] = 'None';
+
+
+
+
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';

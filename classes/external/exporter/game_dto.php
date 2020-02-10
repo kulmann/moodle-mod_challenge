@@ -136,7 +136,7 @@ class game_dto extends exporter {
             $this->game->to_array(),
             [
                 'mdl_user' => $this->user->id,
-                'mdl_user_teacher' => util::user_has_capability('mod/challenge:manage', $this->ctx, $this->user->id),
+                'mdl_user_teacher' => util::user_has_capability(CAP_CHALLENGE_MANAGE, $this->ctx, $this->user->id),
                 'round_duration_seconds' => $this->game->calculate_round_duration_seconds(),
             ]
         );

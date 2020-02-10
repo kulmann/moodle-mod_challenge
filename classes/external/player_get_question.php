@@ -36,7 +36,7 @@ global $CFG;
 require_once($CFG->dirroot . '/lib/questionlib.php');
 require_once($CFG->dirroot . '/question/engine/bank.php');
 
-class tournament_request_question extends external_api {
+class player_get_question extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -47,7 +47,6 @@ class tournament_request_question extends external_api {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
             'matchid' => new external_value(PARAM_INT, 'match id'),
-            'topicid' => new external_value(PARAM_INT, 'topic id'),
         ]);
     }
 
@@ -65,7 +64,6 @@ class tournament_request_question extends external_api {
      *
      * @param int $coursemoduleid
      * @param int $matchid
-     * @param int $topicid
      *
      * @return stdClass
      * @throws coding_exception
@@ -74,8 +72,8 @@ class tournament_request_question extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid, $matchid, $topicid) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'matchid' => $matchid, 'topicid' => $topicid];
+    public static function request($coursemoduleid, $matchid) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'matchid' => $matchid];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
@@ -86,9 +84,6 @@ class tournament_request_question extends external_api {
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
         $match = util::get_match($matchid);
-        $topic = util::get_topic($topicid);
-        $tournament = util::get_tournament($topic->get_tournament());
-        util::validate_tournament($game, $tournament);
         if (intval($USER->id) !== $match->get_mdl_user_1() && intval($USER->id) !== $match->get_mdl_user_2()) {
             throw new invalid_parameter_exception("User is not allowed to fetch a question for this match.");
         }

@@ -6,21 +6,16 @@
         template(v-else)
             template(v-if="viewModeList")
                 ul.uk-tab.uk-margin-small-bottom
-                    li(:class="{'uk-active': viewMode === VIEW_MODE_TOURNAMENTS}")
-                        a(@click="setViewMode(VIEW_MODE_TOURNAMENTS)") {{  strings.admin_nav_tournaments }}
-                    li(:class="{'uk-active': viewMode === VIEW_MODE_LEVELS}")
-                        a(@click="setViewMode(VIEW_MODE_LEVELS)") {{  strings.admin_nav_levels }}
-                tournaments(v-if="viewMode === VIEW_MODE_TOURNAMENTS",
-                    :editableTournaments="editableTournaments",
-                    :activeTournaments="activeTournaments",
-                    :finishedTournaments="finishedTournaments"
+                    li(:class="{'uk-active': viewMode === VIEW_MODE_ROUNDS}")
+                        a(@click="setViewMode(VIEW_MODE_ROUNDS)") {{  strings.admin_nav_rounds }}
+                rounds-list(v-if="viewMode === VIEW_MODE_ROUNDS",
+                    :rounds="rounds",
+                    :categories="categories",
+                    :mdlCategories="mdlCategories",
+                    key="rounds"
                 )
-                levels(v-else-if="viewMode === VIEW_MODE_LEVELS", :levels="levels")
             template(v-else)
-                tournamentEdit(v-if="viewMode === VIEW_MODE_TOURNAMENT_EDIT", :tournament="tournamentForEditing")
-                matchesEdit(v-else-if="viewMode === VIEW_MODE_MATCHES_EDIT", :tournament="tournamentForEditing")
-                topicsEdit(v-else-if="viewMode === VIEW_MODE_TOPICS_EDIT", :tournament="tournamentForEditing")
-                levelEdit(v-else-if="viewMode === VIEW_MODE_LEVEL_EDIT", :level="levelForEditing", :levels="levels")
+                round-edit(v-if="viewMode === VIEW_MODE_ROUND_EDIT", :round="roundForEditing")
 </template>
 
 <script>
@@ -30,51 +25,37 @@
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import loadingAlert from '../helper/loading-alert';
     import failureAlert from "../helper/failure-alert";
-    import levels from './levels';
-    import levelEdit from "./level-edit";
-    import tournamentEdit from "./tournament-edit";
-    import tournaments from "./tournaments";
-    import matchesEdit from "./matches/matches-edit";
-    import topicsEdit from "./topics/topics-edit";
+    import RoundsList from "./rounds-list";
 
     export default {
         mixins: [mixins],
         data() {
             return {
                 VIEW_MODE_NONE: 'none',
-                VIEW_MODE_LEVELS: 'admin-level-list',
-                VIEW_MODE_LEVEL_EDIT: 'admin-level-edit',
-                VIEW_MODE_TOURNAMENTS: 'admin-tournament-list',
-                VIEW_MODE_TOURNAMENT_EDIT: 'admin-tournament-edit',
-                VIEW_MODE_MATCHES_EDIT: 'admin-matches-edit',
-                VIEW_MODE_TOPICS_EDIT: 'admin-topics-edit',
+                VIEW_MODE_ROUNDS: 'admin-round-list',
+                VIEW_MODE_ROUND_EDIT: 'admin-round-edit',
             }
         },
         computed: {
             ...mapState([
                 'strings',
-                'levels',
+                'rounds',
+            ]),
+            ...mapState('admin', [
+                'categories',
+                'mdlCategories'
             ]),
             ...mapGetters([
                 'isAdminUser',
                 'isInitialized'
-            ]),
-            ...mapState('admin', [
-                'editableTournaments',
-                'activeTournaments',
-                'finishedTournaments',
             ]),
             viewModeList() {
                 return _.endsWith(this.$route.name, '-list');
             },
             viewMode() {
                 const routes = [
-                    this.VIEW_MODE_LEVELS,
-                    this.VIEW_MODE_LEVEL_EDIT,
-                    this.VIEW_MODE_TOURNAMENTS,
-                    this.VIEW_MODE_TOURNAMENT_EDIT,
-                    this.VIEW_MODE_MATCHES_EDIT,
-                    this.VIEW_MODE_TOPICS_EDIT,
+                    this.VIEW_MODE_ROUNDS,
+                    this.VIEW_MODE_ROUND_EDIT,
                 ];
                 if (routes.includes(this.$route.name)) {
                     return this.$route.name;
@@ -82,22 +63,13 @@
                     return this.VIEW_MODE_NONE;
                 }
             },
-            levelForEditing() {
-                // try to find the given levelId in our loaded levels.
-                if (this.$route.params.hasOwnProperty('levelId') && !_.isUndefined(this.$route.params.levelId)) {
-                    let levelId = parseInt(this.$route.params.levelId);
-                    return _.find(this.levels, level => level.id === levelId);
+            roundForEditing() {
+                // try to find the given roundId in our loaded rounds.
+                if (this.$route.params.hasOwnProperty('roundId') && !_.isUndefined(this.$route.params.roundId)) {
+                    let roundId = parseInt(this.$route.params.roundId);
+                    return _.find(this.rounds, round => round.id === round);
                 }
-                // None found. Returning null will (correctly) result in creating a new level.
-                return null;
-            },
-            tournamentForEditing() {
-                // try to find the given tournamentId in our loaded tournaments.
-                if (this.$route.params.hasOwnProperty('tournamentId') && !_.isUndefined(this.$route.params.tournamentId)) {
-                    let tournamentId = parseInt(this.$route.params.tournamentId);
-                    return _.find(this.editableTournaments, tournament => tournament.id === tournamentId);
-                }
-                // None found. Returning null will (correctly) result in creating a new tournament.
+                // None found. Returning null will (correctly) result in creating a new round.
                 return null;
             },
         },
@@ -105,11 +77,8 @@
             setViewMode(viewMode) {
                 if (viewMode !== this.viewMode) {
                     switch (viewMode) {
-                        case this.VIEW_MODE_TOURNAMENTS:
-                            this.$router.push({name: 'admin-tournament-list'});
-                            break;
-                        case this.VIEW_MODE_LEVELS:
-                            this.$router.push({name: 'admin-level-list'});
+                        case this.VIEW_MODE_ROUNDS:
+                            this.$router.push({name: 'admin-round-list'});
                             break;
                         default: // do nothing
                     }
@@ -118,19 +87,14 @@
         },
         mounted() {
             if (this.viewMode === this.VIEW_MODE_NONE) {
-                this.setViewMode(this.VIEW_MODE_TOURNAMENTS);
+                this.setViewMode(this.VIEW_MODE_ROUNDS);
             }
         },
         components: {
+            RoundsList,
             VkGrid,
             failureAlert,
             loadingAlert,
-            levels,
-            levelEdit,
-            matchesEdit,
-            topicsEdit,
-            tournamentEdit,
-            tournaments
         },
     }
 </script>

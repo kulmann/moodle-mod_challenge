@@ -174,24 +174,48 @@ class game extends abstract_model {
     }
 
     /**
-     * Loads all tournaments of this game.
+     * Loads all rounds of this game.
      *
-     * @return tournament[]
+     * @return round[]
      * @throws dml_exception
      */
-    public function get_tournaments() {
+    public function get_rounds() {
         global $DB;
-        $sql_params = ['game' => $this->get_id(), 'state_dumped' => tournament::STATE_DUMPED];
-        $records = $DB->get_records_sql("SELECT * 
-                    FROM {challenge_tournaments}
-                    WHERE game = :game  
-                        AND state <> :state_dumped
-                    ORDER BY timecreated DESC", $sql_params);
+        $sql_params = ['game' => $this->get_id()];
+        $sql = "SELECT * 
+                FROM {challenge_rounds}
+                WHERE game = :game
+                ORDER BY timestart DESC";
+        $records = $DB->get_records_sql($sql, $sql_params);
         $result = [];
-        foreach ($records as $tournament_data) {
-            $tournament = new tournament();
-            $tournament->apply($tournament_data);
-            $result[] = $tournament;
+        foreach ($records as $round_data) {
+            $round = new round();
+            $round->apply($round_data);
+            $result[] = $round;
+        }
+        return $result;
+    }
+
+    /**
+     * Loads all categories of this game.
+     *
+     * @return category[]
+     * @throws dml_exception
+     */
+    public function get_categories() {
+        global $DB;
+        $sql_params = ['game' => $this->get_id()];
+        $sql = "SELECT cat.*
+                FROM {challenge_categories} cat
+                INNER JOIN {challenge_rounds} rnd ON cat.round_first = rnd.id 
+                WHERE cat.game = :game
+                ORDER BY rnd.number ASC, cat.id ASC";
+        $records = $DB->get_records_sql($sql, $sql_params);
+        $result = [];
+        foreach ($records as $category_data) {
+            $category = new category();
+            $category->apply($category_data);
+            $result[] = $category;
         }
         return $result;
     }
@@ -315,7 +339,7 @@ class game extends abstract_model {
      * @return int
      */
     private function determine_round_duration_factor(): int {
-        switch($this->round_duration_unit) {
+        switch ($this->round_duration_unit) {
             case MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS:
                 return 60 * 60;
             case MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS:
@@ -329,7 +353,7 @@ class game extends abstract_model {
     /**
      * @return int
      */
-    public function get_rounds(): int {
+    public function get_number_of_rounds(): int {
         return $this->rounds;
     }
 

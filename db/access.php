@@ -24,8 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+const CAP_CHALLENGE_ADD_INSTANCE = 'mod/challenge:addinstance';
+const CAP_CHALLENGE_MANAGE = 'mod/challenge:manage';
+const CAP_CHALLENGE_VIEW = 'mod/challenge:view';
+
 $capabilities = [
-    'mod/challenge:addinstance' => [
+    CAP_CHALLENGE_ADD_INSTANCE => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -33,7 +37,7 @@ $capabilities = [
             'manager' => CAP_ALLOW
         ),
     ],
-    'mod/challenge:manage' => [
+    CAP_CHALLENGE_MANAGE => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -45,7 +49,7 @@ $capabilities = [
             'manager' => CAP_ALLOW
         )
     ],
-    'mod/challenge:view' => [
+    CAP_CHALLENGE_VIEW => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

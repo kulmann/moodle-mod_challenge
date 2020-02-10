@@ -64,23 +64,14 @@ function init(coursemoduleid, contextid) {
             name: 'admin-screen',
             meta: {title: 'admin_screen_title'},
             children: [{
-                path: 'levels',
-                name: 'admin-level-list',
+                path: '/',
+                redirect: {name: 'rounds'},
             }, {
-                path: 'level/:levelId?',
-                name: 'admin-level-edit',
+                path: 'rounds',
+                name: 'admin-round-list',
             }, {
-                path: 'tournaments',
-                name: 'admin-tournament-list',
-            }, {
-                path: 'tournament/:tournamentId?',
-                name: 'admin-tournament-edit',
-            }, {
-                path: 'tournament/:tournamentId/matches',
-                name: 'admin-matches-edit',
-            }, {
-                path: 'tournament/:tournamentId/topics',
-                name: 'admin-topics-edit',
+                path: 'round/:roundId?',
+                name: 'admin-round-edit',
             }]
         }, {
             path: '*',

@@ -13,7 +13,7 @@ export default {
         contextID: 0,
         strings: {},
         game: null,
-        levels: [],
+        rounds: [],
         mdlUsers: [],
     },
     mutations: {
@@ -38,8 +38,8 @@ export default {
         setGame(state, game) {
             state.game = game;
         },
-        setLevels(state, levels) {
-            state.levels = levels;
+        setRounds(state, rounds) {
+            state.rounds = rounds;
         },
         setMdlUsers(state, mdlUsers) {
             state.mdlUsers = mdlUsers;
@@ -59,8 +59,16 @@ export default {
                 return state.player && state.player.initialized;
             }
         },
-        getLevel: state => levelId => {
-            return _.first(_.filter(state.levels, level => level.id === levelId));
+        getFinishedRounds: state => {
+            return state.rounds
+                .filter(r => r.finished)
+                .sort((r1, r2) => r1.timestart < r2.timestart ? -1 : 1);
+        },
+        getCurrentRound: state => {
+            const unfinishedRounds = state.rounds
+                .filter(r => !r.finished)
+                .sort((r1, r2) => r1.timestart < r2.timestart ? -1 : 1);
+            return _.first(unfinishedRounds);
         },
         getMdlUser: state => (mdlUserId) => {
             return _.first(_.filter(state.mdlUsers, user => user.id === mdlUserId));
@@ -79,7 +87,7 @@ export default {
                     return Promise.all([
                         context.dispatch('loadComponentStrings'),
                         context.dispatch('fetchGame'),
-                        context.dispatch('fetchLevels'),
+                        context.dispatch('fetchRounds'),
                         context.dispatch('fetchMdlUsers'),
                     ]).then(() => {
                         context.commit('setInitialized', true);
@@ -144,19 +152,18 @@ export default {
          * @returns {Promise<void>}
          */
         async fetchGame(context) {
-            const game = await ajax('mod_challenge_get_game');
+            const game = await ajax('mod_challenge_main_get_game');
             context.commit('setGame', game);
         },
         /**
-         * Fetches levels, including information on whether or not a level is finished.
-         * Should not be called directly. Will be called automatically in fetchGameSession.
+         * Fetches all existing rounds of the activity.
          *
          * @param context
          * @returns {Promise<void>}
          */
-        async fetchLevels(context) {
-            const levels = await ajax('mod_challenge_get_levels', {});
-            context.commit('setLevels', levels);
+        async fetchRounds(context) {
+            const rounds = await ajax('mod_challenge_main_get_rounds');
+            context.commit('setRounds', rounds);
         },
         /**
          * Fetches all non-teacher moodle users that have access to this course.
@@ -166,7 +173,7 @@ export default {
          * @returns {Promise<void>}
          */
         async fetchMdlUsers(context) {
-            const mdlUsers = await ajax('mod_challenge_get_mdl_users');
+            const mdlUsers = await ajax('mod_challenge_main_get_mdl_users');
             context.commit('setMdlUsers', mdlUsers);
         }
     }

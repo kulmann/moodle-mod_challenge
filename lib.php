@@ -31,6 +31,7 @@
 
 use mod_challenge\model\tournament_gamesession;
 use mod_challenge\model\level;
+use mod_challenge\util;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -197,7 +198,7 @@ function challenge_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
     require_login($course, true, $cm);
 
     // Check the relevant capabilities - these may vary depending on the filearea being accessed.
-    if (!has_capability('mod/challenge:view', $context)) {
+    if (!util::user_has_capability(CAP_CHALLENGE_VIEW, $context)) {
         return false;
     }
 

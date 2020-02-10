@@ -33,7 +33,7 @@ use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-class tournament_save_topics extends external_api {
+class admin_save_round extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -43,10 +43,15 @@ class tournament_save_topics extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'tournamentid' => new external_value(PARAM_INT, 'tournament id'),
-            'topics' => new external_multiple_structure(new external_function_parameters([
-                'level' => new external_value(PARAM_INT, 'level id'),
-                'step' => new external_value(PARAM_INT, 'step index'),
+            'round' => new external_multiple_structure(new external_function_parameters([
+                'id' => new external_value(PARAM_INT, 'round id'),
+                'name' => new external_value(PARAM_NOTAGS, 'round name'),
+            ])),
+            'categories' => new external_multiple_structure(new external_function_parameters([
+                // TODO: describe category data
+            ])),
+            'matches' => new external_multiple_structure(new external_function_parameters([
+                // TODO: describe match data
             ]))
         ]);
     }
@@ -62,8 +67,9 @@ class tournament_save_topics extends external_api {
      * Save all topics of a tournament.
      *
      * @param int $coursemoduleid
-     * @param int $tournamentid
-     * @param array $topics
+     * @param array $round
+     * @param array $categories
+     * @param array $matches
      *
      * @return stdClass
      * @throws coding_exception
@@ -72,24 +78,22 @@ class tournament_save_topics extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid, $tournamentid, $topics) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'tournamentid' => $tournamentid, 'topics' => $topics];
+    public static function request($coursemoduleid, $round, $categories, $matches) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'round' => $round, 'categories' => $categories, 'matches' => $matches];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
-        self::validate_context($coursemodule->context);
-        global $PAGE;
-        $renderer = $PAGE->get_renderer('core');
-        $ctx = $coursemodule->context;
+        self::validate_context(($ctx = $coursemodule->context));
+        util::require_user_has_capability(CAP_CHALLENGE_MANAGE, $ctx);
         $game = util::get_game($coursemodule);
-        $tournament = util::get_tournament($tournamentid);
-        util::validate_tournament($game, $tournament);
+        // TODO: load and validate
 
         // create new topics
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core');
         try {
-            $tournament->clear_topics();
-            $tournament->create_topics($topics);
+            // TODO: implement all the saving...
         } catch (\invalid_state_exception $e) {
             $exporter = new bool_dto(false, $ctx);
             return $exporter->export($renderer);

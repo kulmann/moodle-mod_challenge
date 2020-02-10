@@ -88,6 +88,14 @@ $string['admin_btn_confirm_publish'] = 'Wirklich Veröffentlichen';
 $string['admin_btn_confirm_delete'] = 'Wirklich Löschen';
 $string['admin_btn_generate'] = 'Generieren';
 $string['admin_avatar_alt'] = 'Foto von {$a}';
+/* admin: rounds */
+$string['admin_nav_rounds'] = 'Runden';
+$string['admin_rounds_title'] = 'Spielrunden verwalten';
+$string['admin_rounds_intro'] = 'Erklärungstext über Spielrunden...';
+$string['admin_round_delete_confirm'] = 'Möchten Sie die Runde »{$a}« wirklich löschen?';
+
+
+
 /* admin: levels */
 $string['admin_nav_levels'] = 'Themengebiete';
 $string['admin_levels_title'] = 'Themengebiet bearbeiten';
@@ -146,6 +154,11 @@ $string['admin_tournament_topics_lbl_step'] = 'Runde';
 $string['admin_tournament_topics_lbl_levels'] = 'Verfügbare Themengebiete';
 $string['admin_tournament_topics_lbl_select'] = 'Bitte Themengebiet für Runde {$a} auswählen';
 $string['admin_tournament_topics_lbl_none'] = 'Keins';
+
+
+
+
+
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';

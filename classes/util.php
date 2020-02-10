@@ -21,11 +21,11 @@ use coding_exception;
 use context;
 use dml_exception;
 use invalid_parameter_exception;
-use mod_challenge\model\game;
-use mod_challenge\model\level;
-use mod_challenge\model\tournament;
 use mod_challenge\model\_match;
 use mod_challenge\model\_question;
+use mod_challenge\model\game;
+use mod_challenge\model\match;
+use mod_challenge\model\question;
 use mod_challenge\model\round;
 use required_capability_exception;
 
@@ -63,58 +63,29 @@ class util {
      * Checks that the question belongs to the given user.
      *
      * @param int $mdl_user_id
-     * @param _question $question
+     * @param question $question
      *
      * @return void
      * @throws invalid_parameter_exception
      */
-    public static function validate_question($mdl_user_id, _question $question) {
+    public static function validate_question($mdl_user_id, question $question) {
         if ($mdl_user_id !== $question->get_mdl_user()) {
             throw new invalid_parameter_exception("question " . $question->get_id() . " doesn't belong to given moodle user $mdl_user_id ");
         }
     }
 
     /**
-     * Checks that the level belongs to the given $game.
+     * Checks that the round belongs to the given $game.
      *
      * @param game $game
-     * @param level $level
+     * @param round $round
      *
      * @return void
      * @throws invalid_parameter_exception
      */
-    public static function validate_level(game $game, level $level) {
-        if ($game->get_id() !== $level->get_game()) {
-            throw new invalid_parameter_exception("level " . $level->get_id() . " doesn't belong to given game");
-        }
-    }
-
-    /**
-     * Checks that the tournament belongs to the given $game.
-     *
-     * @param game $game
-     * @param tournament $tournament
-     *
-     * @return void
-     * @throws invalid_parameter_exception
-     */
-    public static function validate_tournament(game $game, tournament $tournament) {
-        if ($game->get_id() !== $tournament->get_game()) {
-            throw new invalid_parameter_exception("tournament " . $tournament->get_id() . " doesn't belong to given game");
-        }
-    }
-
-    /**
-     * Checks that the given $state is a valid tournament state.
-     *
-     * @param string $state
-     *
-     * @return void
-     * @throws invalid_parameter_exception
-     */
-    public static function validate_tournament_state($state) {
-        if (!\in_array($state, tournament::STATES)) {
-            throw new invalid_parameter_exception("tournament state $state is not allowed.");
+    public static function validate_round(game $game, round $round) {
+        if ($game->get_id() !== $round->get_game()) {
+            throw new invalid_parameter_exception("level " . $round->get_id() . " doesn't belong to given game");
         }
     }
 
@@ -133,17 +104,17 @@ class util {
     }
 
     /**
-     * Gets the tournament instance for the given $tournamentid from the database.
+     * Gets the round instance for the given $roundid from the database.
      *
-     * @param int $tournamentid
+     * @param int $roundid
      *
-     * @return tournament
+     * @return round
      * @throws dml_exception
      */
-    public static function get_tournament($tournamentid): tournament {
-        $tournament = new tournament();
-        $tournament->load_data_by_id($tournamentid);
-        return $tournament;
+    public static function get_round($roundid): round {
+        $round = new round();
+        $round->load_data_by_id($roundid);
+        return $round;
     }
 
     /**
@@ -151,41 +122,13 @@ class util {
      *
      * @param int $matchid
      *
-     * @return _match
+     * @return match
      * @throws dml_exception
      */
-    public static function get_match($matchid): _match {
-        $match = new _match();
+    public static function get_match($matchid): match {
+        $match = new match();
         $match->load_data_by_id($matchid);
         return $match;
-    }
-
-    /**
-     * Gets the topic instance for the given $topicid from the database.
-     *
-     * @param int $topicid
-     *
-     * @return round
-     * @throws dml_exception
-     */
-    public static function get_topic($topicid): round {
-        $topic = new round();
-        $topic->load_data_by_id($topicid);
-        return $topic;
-    }
-
-    /**
-     * Loads a level by its id.
-     *
-     * @param int $levelid
-     *
-     * @return level
-     * @throws dml_exception
-     */
-    public static function get_level($levelid): level {
-        $level = new level();
-        $level->load_data_by_id($levelid);
-        return $level;
     }
 
     /**
@@ -193,11 +136,11 @@ class util {
      *
      * @param int $questionid
      *
-     * @return _question
+     * @return question
      * @throws dml_exception
      */
-    public static function get_question($questionid): _question {
-        $question = new _question();
+    public static function get_question($questionid): question {
+        $question = new question();
         $question->load_data_by_id($questionid);
         return $question;
     }
@@ -205,11 +148,11 @@ class util {
     /**
      * Checks if the question is already timed out and sets the question data accordingly.
      *
-     * @param _question $question
+     * @param question $question
      * @param game $game
      * @throws dml_exception
      */
-    public static function check_question_timeout(_question $question, game $game) {
+    public static function check_question_timeout(question $question, game $game) {
         if (!$question->is_finished() && $question->get_timecreated() + $game->get_question_duration() < \time()) {
             $question->set_mdl_answer_given(0);
             $question->set_finished(true);
@@ -223,18 +166,18 @@ class util {
     /**
      * Checks if the given match is done, i.e. if it is not marked as finished, we determine (and persist) the winner, if there is one.
      *
-     * @param _match $match
+     * @param match $match
      * @param game $game
      *
      * @throws dml_exception
      */
-    public static function check_match_winner(_match $match, game $game) {
+    public static function check_match_winner(match $match, game $game) {
         // load all questions related to this match and check if they timed out
         if (!$match->is_finished()) {
             $questions = $match->get_questions();
             // check if user 1 answered enough questions
             $user1 = $match->get_mdl_user_1();
-            $questions_user1 = \array_filter($questions, function(_question $question) use ($user1) {
+            $questions_user1 = \array_filter($questions, function(question $question) use ($user1) {
                 return $question->get_mdl_user() === $user1;
             });
             $answer_count_user1 = \count($questions_user1);
@@ -243,7 +186,7 @@ class util {
             }
             // check if user 2 answered enough questions
             $user2 = $match->get_mdl_user_2();
-            $questions_user2 = \array_filter($questions, function(_question $question) use ($user2) {
+            $questions_user2 = \array_filter($questions, function(question $question) use ($user2) {
                 return $question->get_mdl_user() === $user2;
             });
             $answer_count_user2 = \count($questions_user2);
@@ -251,10 +194,10 @@ class util {
                 return;
             }
             // check which user won
-            $win_count_user1 = \count(\array_filter($questions_user1, function(_question $question) {
+            $win_count_user1 = \count(\array_filter($questions_user1, function(question $question) {
                 return $question->is_correct();
             }));
-            $win_count_user2 = \count(\array_filter($questions_user2, function(_question $question) {
+            $win_count_user2 = \count(\array_filter($questions_user2, function(question $question) {
                 return $question->is_correct();
             }));
             if ($win_count_user1 > $win_count_user2) {
@@ -269,10 +212,10 @@ class util {
             }
             if ($win_count_user1 === $win_count_user2) {
                 // tie breaking rule is the earlier participation
-                $datetime_sum_user1 = \array_sum(\array_map(function(_question $question) {
+                $datetime_sum_user1 = \array_sum(\array_map(function(question $question) {
                     return $question->get_timecreated();
                 }, $questions_user1));
-                $datetime_sum_user2 = \array_sum(\array_map(function(_question $question) {
+                $datetime_sum_user2 = \array_sum(\array_map(function(question $question) {
                     return $question->get_timecreated();
                 }, $questions_user2));
                 $match->set_mdl_user_winner(($datetime_sum_user1 < $datetime_sum_user2) ? $user1 : $user2);
