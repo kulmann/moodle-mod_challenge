@@ -33,8 +33,8 @@
                 <FIELD NAME="rounds" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="10" SEQUENCE="false"
                        COMMENT="total number of rounds. 0 for infinite (e.g. when the course ends)"/>
                 <!-- winner tracking -->
-                <FIELD NAME="winner_mdl_user" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
-                <FIELD NAME="winner_score" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="winner_mdl_user" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="winner_score" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="state" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" DEFAULT="edit"
                        COMMENT="whether or not this game is already finished (all rounds done)" />
             </FIELDS>

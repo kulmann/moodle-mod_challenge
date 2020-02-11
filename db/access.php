@@ -23,13 +23,11 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-const CAP_CHALLENGE_ADD_INSTANCE = 'mod/challenge:addinstance';
-const CAP_CHALLENGE_MANAGE = 'mod/challenge:manage';
-const CAP_CHALLENGE_VIEW = 'mod/challenge:view';
+global $CFG;
+require_once($CFG->dirroot . "/mod/challenge/lib.php");
 
 $capabilities = [
-    CAP_CHALLENGE_ADD_INSTANCE => [
+    MOD_CHALLENGE_CAP_ADD_INSTANCE => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -37,7 +35,7 @@ $capabilities = [
             'manager' => CAP_ALLOW
         ),
     ],
-    CAP_CHALLENGE_MANAGE => [
+    MOD_CHALLENGE_CAP_MANAGE => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -49,7 +47,7 @@ $capabilities = [
             'manager' => CAP_ALLOW
         )
     ],
-    CAP_CHALLENGE_VIEW => [
+    MOD_CHALLENGE_CAP_VIEW => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

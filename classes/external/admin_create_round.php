@@ -20,24 +20,19 @@ use coding_exception;
 use dml_exception;
 use external_api;
 use external_function_parameters;
-use external_multiple_structure;
+use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
-use mod_challenge\external\exporter\mdl_user_dto;
+use mod_challenge\external\exporter\bool_dto;
+use mod_challenge\model\round;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Class main_get_mdl_users
- *
- * @package    mod_challenge\external
- * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class main_get_mdl_users extends external_api {
+class admin_create_round extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -51,20 +46,18 @@ class main_get_mdl_users extends external_api {
     }
 
     /**
-     * Definition of return type for {@see request}.
-     *
-     * @return external_multiple_structure
+     * @return external_single_structure
      */
     public static function request_returns() {
-        return new external_multiple_structure(mdl_user_dto::get_read_structure());
+        return bool_dto::get_read_structure();
     }
 
     /**
-     * Gets the moodle users which are available for this game.
+     * Creates a new round for the given game.
      *
      * @param int $coursemoduleid
      *
-     * @return array
+     * @return stdClass
      * @throws coding_exception
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -77,24 +70,22 @@ class main_get_mdl_users extends external_api {
 
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
-        self::validate_context($coursemodule->context);
-
-        global $PAGE, $USER;
-        $renderer = $PAGE->get_renderer('core');
-        $ctx = $coursemodule->context;
+        self::validate_context(($ctx = $coursemodule->context));
+        util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
         $game = util::get_game($coursemodule);
+        $rounds = $game->get_rounds();
 
-        // get the users and transform to output
-        $mdl_users = $game->get_mdl_users($course->id);
-        $result = [];
-        foreach($mdl_users as $mdl_user) {
-            if (util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $mdl_user->id)) {
-                // skip teachers
-                continue;
-            }
-            $exporter = new mdl_user_dto($mdl_user, $ctx);
-            $result[] = $exporter->export($renderer);
-        }
-        return $result;
+        // create a new round
+        $round = new round();
+        $round->set_game($game->get_id());
+        $round->set_number(\count($rounds) + 1);
+        $round->set_timestart(0);
+        $round->save();
+
+        // return success response
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core');
+        $exporter = new bool_dto(true, $ctx);
+        return $exporter->export($renderer);
     }
 }

@@ -92,7 +92,9 @@ $string['admin_avatar_alt'] = 'Picture of {$a}';
 $string['admin_nav_rounds'] = 'Rounds';
 $string['admin_rounds_title'] = 'Manager rounds';
 $string['admin_rounds_intro'] = 'Description text about rounds...';
-$string['admin_round_delete_confirm'] = 'Do you really want to delete the round »{$a}«?';
+$string['admin_round_delete_confirm'] = 'Do you really want to delete round {$a}?';
+$string['admin_round_title_edit'] = 'Edit round {$a}';
+$string['admin_round_msg_saving'] = 'Saving the round, please wait';
 
 
 

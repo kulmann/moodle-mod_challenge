@@ -21,11 +21,9 @@ use coding_exception;
 use context;
 use dml_exception;
 use invalid_parameter_exception;
-use mod_challenge\model\_match;
-use mod_challenge\model\_question;
-use mod_challenge\model\game;
 use mod_challenge\model\match;
 use mod_challenge\model\question;
+use mod_challenge\model\game;
 use mod_challenge\model\round;
 use required_capability_exception;
 

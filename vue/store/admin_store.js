@@ -5,7 +5,7 @@ export default {
     state: {
         initialized: false,
         categories: [],
-        mdlCategories: null,
+        mdlCategories: [],
     },
     mutations: {
         setAdminInitialized(state, initialized) {
@@ -15,7 +15,7 @@ export default {
             state.categories = categories;
         },
         setMdlCategories(state, mdl_categories) {
-            state.mdl_categories = mdl_categories;
+            state.mdlCategories = mdl_categories;
         },
     },
     actions: {
@@ -58,10 +58,21 @@ export default {
          *
          * @param context
          * @param payload
-         * @returns {Promise<void>}
+         * @returns {Promise<boolean>}
          */
         async saveRound(context, payload) {
             const result = await ajax('mod_challenge_admin_save_round', payload);
+            await context.dispatch('fetchRounds', null, {root: true});// fetch in main store (root)
+            return result.result;
+        },
+        /**
+         * Creates a next round for this game.
+         *
+         * @param context
+         * @returns {Promise<boolean>}
+         */
+        async createRound(context) {
+            const result = await ajax('mod_challenge_admin_create_round');
             await context.dispatch('fetchRounds', null, {root: true});// fetch in main store (root)
             return result.result;
         },
@@ -70,7 +81,7 @@ export default {
          *
          * @param context
          * @param payload
-         * @returns {Promise<*>}
+         * @returns {Promise<boolean>}
          */
         async deleteRound(context, payload) {
             const result = await ajax('mod_challenge_admin_delete_round', payload);

@@ -35,6 +35,11 @@ use mod_challenge\util;
 
 defined('MOODLE_INTERNAL') || die();
 
+// capabilities
+define('MOD_CHALLENGE_CAP_ADD_INSTANCE', 'mod/challenge:addinstance');
+define('MOD_CHALLENGE_CAP_MANAGE', 'mod/challenge:manage');
+define('MOD_CHALLENGE_CAP_VIEW', 'mod/challenge:view');
+
 // implemented question types
 define('MOD_CHALLENGE_QTYPE_SINGLE_CHOICE_DB', 'multichoice');
 define('MOD_CHALLENGE_VALID_QTYPES_DB', [
@@ -198,7 +203,7 @@ function challenge_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
     require_login($course, true, $cm);
 
     // Check the relevant capabilities - these may vary depending on the filearea being accessed.
-    if (!util::user_has_capability(CAP_CHALLENGE_VIEW, $context)) {
+    if (!util::user_has_capability(MOD_CHALLENGE_CAP_VIEW, $context)) {
         return false;
     }
 

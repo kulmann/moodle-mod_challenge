@@ -4,35 +4,34 @@
             h3 {{ strings.admin_rounds_title }}
         .uk-card-body
             p {{ strings.admin_rounds_intro }}
-            btnAdd(@click="createRound")
             table.uk-table.uk-table-small.uk-table-striped
                 tbody
                     template(v-for="round in rounds")
                         tr.uk-text-nowrap(:key="round.number")
                             td.uk-table-shrink.uk-text-center.uk-text-middle
                                 b {{ round.number }}
-                            td.uk-table-auto.uk-text-left.uk-text-middle {{ round.name }}
+                            td.uk-table-expand.uk-text-left.uk-text-middle &nbsp;
                             td.actions.uk-table-shrink.uk-preserve-width
-                                button.btn.btn-default(@click="editRound(round)")
+                                button.btn.btn-default(@click="goToEditRound(round)")
                                     v-icon(name="regular/edit")
-                                button.btn.btn-default(@click="deleteRoundAsk(round)")
+                                button.btn.btn-default(@click="deleteRoundAsk(round)", :disabled="isRoundDeleteLocked(round)")
                                     v-icon(name="trash")
                         tr(v-if="deleteConfirmationRoundId === round.id")
-                            td(colspan="3")
-                                confirmationPanel(:message="stringParams(strings.admin_round_delete_confirm, round.name)",
+                            td(colspan="3").uk-table-expand
+                                confirmationPanel(:message="stringParams(strings.admin_round_delete_confirm, round.number)",
                                     :labelSubmit="strings.admin_btn_confirm_delete",
                                     @onSubmit="deleteRoundConfirm(round)",
                                     @onCancel="deleteRoundCancel()")
-            btnAdd(@click="createRound")
+            btnAdd(@click="createRound()")
 </template>
 
 <script>
     import {mapActions, mapState} from 'vuex';
-    import mixins from '../../mixins';
-    import infoAlert from '../helper/info-alert';
-    import btnAdd from './btn-add';
+    import mixins from '../../../mixins';
+    import infoAlert from '../../helper/info-alert';
+    import btnAdd from '../btn-add';
     import VkGrid from "vuikit/src/library/grid/components/grid";
-    import ConfirmationPanel from "../helper/confirmation-panel";
+    import ConfirmationPanel from "../../helper/confirmation-panel";
 
     export default {
         mixins: [mixins],
@@ -59,17 +58,19 @@
             ...mapState([
                 'contextID',
                 'strings',
+                'now',
             ])
         },
         methods: {
             ...mapActions({
+                createRound: 'admin/createRound',
                 deleteRound: 'admin/deleteRound',
             }),
-            createRound() {
-                this.$router.push({name: 'admin-round-edit'});
-            },
-            editRound(round) {
+            goToEditRound(round) {
                 this.$router.push({name: 'admin-round-edit', params: {roundId: round.id}});
+            },
+            isRoundDeleteLocked(round) {
+                return round.timestart !== 0 && round.timestart <= (this.now.getTime() / 1000);
             },
             deleteRoundAsk(round) {
                 this.deleteConfirmationRoundId = round.id;

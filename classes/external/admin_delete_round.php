@@ -72,14 +72,22 @@ class admin_delete_round extends external_api {
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context(($ctx = $coursemodule->context));
-        util::require_user_has_capability(CAP_CHALLENGE_MANAGE, $ctx);
+        util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
         $game = util::get_game($coursemodule);
         $round = util::get_round($roundid);
         util::validate_round($game, $round);
 
-        // create new topics
+        // start renderer
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
+
+        // make sure that the round is not started, yet
+        if ($round->get_timestart() !== 0 && $round->get_timestart() <= time()) {
+            $exporter = new bool_dto(false, $ctx);
+            return $exporter->export($renderer);
+        }
+
+        // delete round
         try {
             // TODO: fix start dates and numbers of following rounds
             // TODO: delete categories directly added on this round

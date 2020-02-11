@@ -5,8 +5,7 @@
         template(v-else)
             .uk-card-body
                 form.uk-form-stacked
-                    h3(v-if="editing") {{ strings.admin_level_title_edit | stringParams(data.position + 1) }}
-                    h3(v-else) {{ strings.admin_level_title_add | stringParams(data.position + 1) }}
+                    h3 {{ strings.admin_round_title_edit | stringParams(data.number) }}
 
                     vk-grid(matched).uk-grid-divider
                         div.uk-width-1-2
@@ -51,41 +50,46 @@
                 button.btn.btn-primary(@click="save()", :disabled="saving")
                     v-icon(name="save").uk-margin-small-right
                     span {{ strings.admin_btn_save }}
-                button.btn.btn-default(@click="goToLevelList()", :disabled="saving").uk-margin-small-left
+                button.btn.btn-default(@click="goToRoundList()", :disabled="saving").uk-margin-small-left
                     v-icon(name="ban").uk-margin-small-right
                     span {{ strings.admin_btn_cancel }}
                 .uk-alert.uk-alert-primary.uk-text-center(uk-alert, v-if="saving")
                     p
-                        span {{ strings.admin_level_msg_saving }}
+                        span {{ strings.admin_round_msg_saving }}
                         loadingIcon
 
 </template>
 
 <script>
     import {mapActions, mapState} from 'vuex';
-    import mixins from '../../mixins';
+    import mixins from '../../../mixins';
     import _ from 'lodash';
-    import loadingAlert from "../helper/loading-alert";
-    import btnAdd from './btn-add';
+    import constants from '../../../constants';
+    import btnAdd from '../btn-add';
+    import loadingAlert from "../../helper/loading-alert";
+    import loadingIcon from "../../helper/loading-icon";
     import VkNotification from "vuikit/src/library/notification/components/notification";
-    import Level from "../helper/level";
-    import PictureInput from 'vue-picture-input';
-    import loadingIcon from "../helper/loading-icon";
 
     export default {
         mixins: [mixins],
         props: {
-            level: Object,
-            levels: Array,
+            round: {
+                type: Object,
+                required: true
+            },
+            categories: {
+                type: Array,
+                required: true
+            },
+            mdlCategories: {
+                type: Array,
+                required: true
+            }
         },
         data() {
             return {
                 data: null,
-                categories: null,
                 saving: false,
-                imageBase64: null,
-                imageMimetype: null,
-                imageContent: null,
             }
         },
         computed: {
@@ -94,66 +98,27 @@
                 'game',
             ]),
             ...mapState('admin', [
-                'levelCategories',
-                'mdl_categories'
+                'rounds'
             ]),
-            levelPreview() {
-                let preview = _.clone(this.data);
-                if (this.imageBase64) {
-                    preview.imageurl = this.imageBase64;
-                }
-                return preview;
-            },
-            editing() {
-                return this.level !== null && this.categories !== null;
-            },
-            selectedCategories() {
-                return _.filter(this.categories, function (category) {
-                    return !!category.mdl_category;
-                });
-            },
         },
         methods: {
             ...mapActions({
-                fetchMdlCategories: 'admin/fetchMdlCategories',
-                fetchLevelCategories: 'admin/fetchLevelCategories',
-                saveLevel: 'admin/saveLevel',
+                saveRound: 'admin/saveRound',
             }),
-            initLevelData(level) {
-                if (level === null) {
+            initRoundData(round) {
+                if (round === null) {
                     this.data = {
                         id: null,
-                        position: this.levels.length,
                         game: this.game.id,
+                        number: this.rounds.length + 1,
                         name: '',
-                        bgcolor: '',
-                        image: '',
-                        imageurl: '',
-                        imgmimetype: null,
-                        imgcontent: null,
-                        tile_height_px: this.game.level_tile_height_px,
                     };
-                    this.categories = [];
                 } else {
-                    this.data = level;
-                    this.fetchLevelCategories({
-                        levelid: level.id,
-                    });
+                    this.data = round;
                 }
             },
-            removeCategory(index) {
-                this.categories.splice(index, 1);
-            },
-            createCategory() {
-                this.categories.push({
-                    id: null,
-                    level: this.data.id,
-                    mdl_category: null,
-                    subcategories: true,
-                });
-            },
-            goToLevelList() {
-                this.$router.push({name: 'admin-level-list'});
+            goToRoundList() {
+                this.$router.push({name: constants.ROUTE_ADMIN_ROUNDS});
             },
             save() {
                 let categories = _.map(this.selectedCategories, function (category) {
@@ -197,23 +162,21 @@
         },
         mounted() {
             this.fetchMdlCategories();
-            this.initLevelData(this.level);
+            this.initRoundData(this.round);
         },
         watch: {
-            level: function (level) {
-                this.initLevelData(level);
+            round: function (round) {
+                this.initRoundData(round);
             },
-            levelCategories: function (levelCategories) {
-                this.categories = levelCategories;
+            categories: function (categories) {
+                this.categories = categories;
             },
         },
         components: {
-            Level,
-            loadingIcon,
-            loadingAlert,
             btnAdd,
+            loadingAlert,
+            loadingIcon,
             VkNotification,
-            PictureInput,
         },
     }
 </script>

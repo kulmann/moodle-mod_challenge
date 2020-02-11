@@ -92,7 +92,9 @@ $string['admin_avatar_alt'] = 'Foto von {$a}';
 $string['admin_nav_rounds'] = 'Runden';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
 $string['admin_rounds_intro'] = 'Erklärungstext über Spielrunden...';
-$string['admin_round_delete_confirm'] = 'Möchten Sie die Runde »{$a}« wirklich löschen?';
+$string['admin_round_delete_confirm'] = 'Möchten Sie die Runde {$a} wirklich löschen?';
+$string['admin_round_title_edit'] = 'Runde {$a} bearbeiten';
+$string['admin_round_msg_saving'] = 'Die Runde wird gespeichert, bitte warten';
 
 
 

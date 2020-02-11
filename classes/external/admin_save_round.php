@@ -25,7 +25,6 @@ use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\bool_dto;
-use mod_challenge\external\exporter\tournament_topic_dto;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -85,7 +84,7 @@ class admin_save_round extends external_api {
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context(($ctx = $coursemodule->context));
-        util::require_user_has_capability(CAP_CHALLENGE_MANAGE, $ctx);
+        util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
         $game = util::get_game($coursemodule);
         // TODO: load and validate
 

@@ -24,6 +24,13 @@
 
 $functions = [
     // ADMIN FUNCTIONS
+    'mod_challenge_admin_create_round' => [
+        'classname' => 'mod_challenge\external\admin_create_round',
+        'methodname' => 'request',
+        'description' => 'Creates a round for the given game.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'mod_challenge_admin_delete_round' => [
         'classname' => 'mod_challenge\external\admin_delete_round',
         'methodname' => 'request',

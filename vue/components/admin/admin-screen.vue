@@ -15,7 +15,11 @@
                     key="rounds"
                 )
             template(v-else)
-                round-edit(v-if="viewMode === VIEW_MODE_ROUND_EDIT", :round="roundForEditing")
+                round-edit(v-if="viewMode === VIEW_MODE_ROUND_EDIT",
+                    :round="roundForEditing",
+                    :categories="categories",
+                    :mdlCategories="mdlCategories"
+                )
 </template>
 
 <script>

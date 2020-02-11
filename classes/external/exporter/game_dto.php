@@ -122,6 +122,10 @@ class game_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'the number of seconds resulting from the round duration unit and value',
             ],
+            'cap' => [
+                'type' => PARAM_NOTAGS,
+                'description' => 'capability check string'
+            ]
         ];
     }
 
@@ -136,8 +140,9 @@ class game_dto extends exporter {
             $this->game->to_array(),
             [
                 'mdl_user' => $this->user->id,
-                'mdl_user_teacher' => util::user_has_capability(CAP_CHALLENGE_MANAGE, $this->ctx, $this->user->id),
+                'mdl_user_teacher' => util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $this->ctx, $this->user->id),
                 'round_duration_seconds' => $this->game->calculate_round_duration_seconds(),
+                'cap' => MOD_CHALLENGE_CAP_MANAGE
             ]
         );
     }
