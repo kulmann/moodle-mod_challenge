@@ -185,7 +185,7 @@ class game extends abstract_model {
         $sql = "SELECT * 
                 FROM {challenge_rounds}
                 WHERE game = :game
-                ORDER BY timestart DESC";
+                ORDER BY number ASC";
         $records = $DB->get_records_sql($sql, $sql_params);
         $result = [];
         foreach ($records as $round_data) {

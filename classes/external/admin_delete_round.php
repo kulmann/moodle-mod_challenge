@@ -89,14 +89,27 @@ class admin_delete_round extends external_api {
 
         // delete round
         try {
-            // TODO: fix start dates and numbers of following rounds
-            // TODO: delete categories directly added on this round
-            // TODO: fix ending round id of categories ending on this round to the previous round
             $round->delete();
         } catch (dml_exception $e) {
             $exporter = new bool_dto(false, $ctx);
             return $exporter->export($renderer);
         }
+
+        // fix numbers of following rounds
+        $rounds = $game->get_rounds();
+        $number = 1;
+        foreach ($rounds as $round) {
+            if ($round->get_number() !== $number) {
+                $round->set_number($number);
+                $round->save();
+            }
+            $number++;
+        }
+
+        // TODO: delete categories directly added on this round
+        // TODO: fix ending round id of categories ending on this round to the previous round
+
+        // return success response
         $exporter = new bool_dto(true, $ctx);
         return $exporter->export($renderer);
     }
