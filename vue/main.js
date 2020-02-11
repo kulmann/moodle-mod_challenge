@@ -11,6 +11,7 @@ import adminScreen from './components/admin/admin-screen';
 import gameScreen from './components/game/game-screen';
 import adminStore from "./store/admin_store";
 import playerStore from "./store/player_store";
+import constants from "./constants";
 
 function init(coursemoduleid, contextid) {
     // We need to overwrite the variable for lazy loading.
@@ -65,13 +66,13 @@ function init(coursemoduleid, contextid) {
             meta: {title: 'admin_screen_title'},
             children: [{
                 path: '/',
-                redirect: {name: 'rounds'},
+                redirect: {name: constants.ROUTE_ADMIN_ROUNDS},
             }, {
                 path: 'rounds',
-                name: 'admin-round-list',
+                name: constants.ROUTE_ADMIN_ROUNDS,
             }, {
                 path: 'round/:roundId?',
-                name: 'admin-round-edit',
+                name: constants.ROUTE_ADMIN_ROUND_EDIT,
             }]
         }, {
             path: '*',

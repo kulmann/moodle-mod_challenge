@@ -25,15 +25,18 @@
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import loadingAlert from '../helper/loading-alert';
     import failureAlert from "../helper/failure-alert";
-    import RoundsList from "./rounds-list";
+    import RoundsList from "./rounds/rounds-list";
+    import RoundEdit from "./rounds/round-edit";
+
+    import constants from "../../constants";
 
     export default {
         mixins: [mixins],
         data() {
             return {
-                VIEW_MODE_NONE: 'none',
-                VIEW_MODE_ROUNDS: 'admin-round-list',
-                VIEW_MODE_ROUND_EDIT: 'admin-round-edit',
+                VIEW_MODE_NONE: constants.ROUTE_UNKNOWN,
+                VIEW_MODE_ROUNDS: constants.ROUTE_ADMIN_ROUNDS,
+                VIEW_MODE_ROUND_EDIT: constants.ROUTE_ADMIN_ROUND_EDIT,
             }
         },
         computed: {
@@ -92,6 +95,7 @@
         },
         components: {
             RoundsList,
+            RoundEdit,
             VkGrid,
             failureAlert,
             loadingAlert,
