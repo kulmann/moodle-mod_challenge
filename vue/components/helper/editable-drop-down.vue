@@ -31,7 +31,8 @@
 
 <script>
 	import Mixins from '../../mixins';
-	import _ from 'lodash';
+	import isArray from 'lodash/isArray';
+	import isNil from 'lodash/isNil';
 
 	export default {
 		name: 'EditableDropDown',
@@ -70,7 +71,7 @@
 		},
 		computed: {
 			internalValueStr () {
-				if (this.internalValue !== null && _.isArray(this.internalValue)) {
+				if (this.internalValue !== null && isArray(this.internalValue)) {
 					return this.getJoinedPretty(this.internalValue, ', ', ' and ');
 				} else {
 					return this.internalValue;
@@ -82,7 +83,7 @@
 		},
 		methods: {
 			isItemSelected (item) {
-				if (this.internalValue !== null && _.isArray(this.internalValue)) {
+				if (this.internalValue !== null && isArray(this.internalValue)) {
 					return this.internalValue.includes(item);
 				} else {
 					return this.internalValue === item;
@@ -98,7 +99,7 @@
 			},
 			onChange () {
 				let result = this.internalValue;
-				if (!_.isNil(this.submitAdditions)) {
+				if (!isNil(this.submitAdditions)) {
 					result = {
 						value: this.internalValue
 					};
@@ -110,7 +111,7 @@
 				this.$emit('input', result);
 			},
 			resetInternalValue () {
-				this.internalValue = _.isNil(this.value) ? this.placeholder : this.value;
+				this.internalValue = isNil(this.value) ? this.placeholder : this.value;
 			},
 			selectNone () {
 				this.internalValue = [];

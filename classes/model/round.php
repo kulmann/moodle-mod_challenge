@@ -40,6 +40,10 @@ class round extends abstract_model {
      * PLEASE NOTE: The end of it has to be calculated with the round duration from the game instance.
      */
     protected $timestart;
+    /**
+     * @var string The name of the round.
+     */
+    protected $name;
 
     /**
      * round constructor.
@@ -49,6 +53,7 @@ class round extends abstract_model {
         $this->game = 0;
         $this->number = 0;
         $this->timestart = 0;
+        $this->name = '';
     }
 
     /**
@@ -66,6 +71,7 @@ class round extends abstract_model {
         $this->game = $data['game'];
         $this->number = isset($data['number']) ? $data['number'] : 0;
         $this->timestart = isset($data['timestart']) ? $data['timestart'] : 0;
+        $this->name = isset($data['name']) ? $data['name'] : '';
     }
 
     /**
@@ -108,5 +114,19 @@ class round extends abstract_model {
      */
     public function set_timestart(int $timestart) {
         $this->timestart = $timestart;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_name(): string {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function set_name(string $name): void {
+        $this->name = $name;
     }
 }

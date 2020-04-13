@@ -27,6 +27,8 @@
 
 <script>
     import {mapActions, mapState} from 'vuex';
+    import map from 'lodash/map';
+    import forEach from 'lodash/forEach';
     import mixins from '../../../mixins';
     import loadingAlert from "../../helper/loading-alert";
     import btnAdd from '../btn-add';
@@ -70,7 +72,7 @@
             initData(tournament) {
                 this.fetchMatches({tournamentid: tournament.id}).then(matches => {
                     // collect matches
-                    this.matches = _.map(matches, match => {
+                    this.matches = map(matches, match => {
                         return {
                             mdl_user_1: match.mdl_user_1,
                             mdl_user_2: match.mdl_user_2,
@@ -78,11 +80,11 @@
                     });
                     // collect participants
                     let participantIds = [];
-                    _.forEach(this.matches, match => {
+                    forEach(this.matches, match => {
                         participantIds.push(match.mdl_user_1);
                         participantIds.push(match.mdl_user_2);
                     });
-                    this.participants = _.filter(this.mdlUsers, user => participantIds.includes(user.id));
+                    this.participants = this.mdlUsers.filter(user => participantIds.includes(user.id));
                 });
             },
             clearMatches() {

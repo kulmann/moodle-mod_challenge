@@ -1,4 +1,6 @@
-import _ from 'lodash';
+import first from 'lodash/first';
+import sortBy from 'lodash/sortBy';
+import forEach from 'lodash/forEach';
 import {ajax} from "./index";
 
 export default {
@@ -26,13 +28,13 @@ export default {
     },
     getters: {
         getTournamentById: state => id => {
-            const active = _.filter(state.activeTournaments, t => t.id === id);
+            const active = state.activeTournaments.filter(t => t.id === id);
             if (active.length > 0) {
-                return _.first(active);
+                return first(active);
             }
-            const finished = _.filter(state.finishedTournaments, t => t.id === id);
+            const finished = state.finishedTournaments.filter(t => t.id === id);
             if (finished.length > 0) {
-                return _.first(finished);
+                return first(finished);
             }
             return null;
         }
@@ -58,9 +60,9 @@ export default {
          */
         async fetchUserTournaments(context) {
             const userTournaments = await ajax('mod_challenge_get_user_tournaments');
-            _.forEach(['finished', 'progress'], state => {
+            forEach(['finished', 'progress'], state => {
                 context.commit('setTournaments', {
-                    tournaments: _.filter(userTournaments, t => t.state === state),
+                    tournaments: userTournaments.filter(t => t.state === state),
                     state,
                 });
             });
@@ -137,7 +139,7 @@ export default {
          */
         async fetchMdlAnswers(context, payload) {
             const answers = await ajax('mod_challenge_get_mdl_answers', payload);
-            return _.sortBy(answers, function (answer) {
+            return sortBy(answers, function (answer) {
                 return answer.label;
             });
         },

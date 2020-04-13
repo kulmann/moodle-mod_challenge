@@ -21,6 +21,7 @@ use coding_exception;
 use context;
 use dml_exception;
 use invalid_parameter_exception;
+use mod_challenge\model\category;
 use mod_challenge\model\match;
 use mod_challenge\model\question;
 use mod_challenge\model\game;
@@ -83,7 +84,22 @@ class util {
      */
     public static function validate_round(game $game, round $round) {
         if ($game->get_id() !== $round->get_game()) {
-            throw new invalid_parameter_exception("level " . $round->get_id() . " doesn't belong to given game");
+            throw new invalid_parameter_exception("round " . $round->get_id() . " doesn't belong to given game");
+        }
+    }
+
+    /**
+     * Checks that the category belongs to the given $game.
+     *
+     * @param game $game
+     * @param category $category
+     *
+     * @return void
+     * @throws invalid_parameter_exception
+     */
+    public static function validate_category(game $game, category $category) {
+        if ($game->get_id() !== $category->get_game()) {
+            throw new invalid_parameter_exception("category " . $category->get_id() . " doesn't belong to given game");
         }
     }
 
@@ -113,6 +129,20 @@ class util {
         $round = new round();
         $round->load_data_by_id($roundid);
         return $round;
+    }
+
+    /**
+     * Gets the category instance for the given $categoryid from the database.
+     *
+     * @param int $categoryid
+     *
+     * @return category
+     * @throws dml_exception
+     */
+    public static function get_category($categoryid): category {
+        $category = new category();
+        $category->load_data_by_id($categoryid);
+        return $category;
     }
 
     /**

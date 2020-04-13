@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import replace from 'lodash/replace';
+import forEach from 'lodash/forEach';
 
 export default {
     filters: {
@@ -12,10 +13,10 @@ export default {
 function stringParamsInternal(translation, params) {
     let tmp = translation;
     if (translation.includes('{$a}')) {
-        return _.replace(tmp, '{$a}', params);
+        return replace(tmp, '{$a}', params);
     } else if (translation.includes('{$a->')) {
-        _.forEach(params, function (value, key) {
-            tmp = _.replace(tmp, '{$a->' + key + '}', value);
+        forEach(params, function (value, key) {
+            tmp = replace(tmp, '{$a->' + key + '}', value);
         });
         return tmp;
     }

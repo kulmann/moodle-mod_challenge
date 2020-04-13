@@ -10,7 +10,7 @@
                         tr.uk-text-nowrap(:key="round.number")
                             td.uk-table-shrink.uk-text-center.uk-text-middle
                                 b {{ round.number }}
-                            td.uk-table-expand.uk-text-left.uk-text-middle &nbsp;
+                            td.uk-table-expand.uk-text-left.uk-text-middle {{ round.name }}
                             td.actions.uk-table-shrink.uk-preserve-width
                                 button.btn.btn-default(@click="goToEditRound(round)")
                                     v-icon(name="regular/edit")
@@ -22,7 +22,7 @@
                                     :labelSubmit="strings.admin_btn_confirm_delete",
                                     @onSubmit="deleteRoundConfirm(round)",
                                     @onCancel="deleteRoundCancel()")
-            btnAdd(@click="createRound()")
+            btnAdd(@click="goToCreateRound")
 </template>
 
 <script>
@@ -63,9 +63,11 @@
         },
         methods: {
             ...mapActions({
-                createRound: 'admin/createRound',
                 deleteRound: 'admin/deleteRound',
             }),
+            goToCreateRound() {
+                this.$router.push({name: 'admin-round-edit', params: {roundId: 0}});
+            },
             goToEditRound(round) {
                 this.$router.push({name: 'admin-round-edit', params: {roundId: round.id}});
             },

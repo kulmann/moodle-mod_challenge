@@ -18,7 +18,7 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import find from 'lodash/find';
     import {mapActions, mapState} from 'vuex';
     import mixins from '../../../mixins';
     import VkGrid from "vuikit/src/library/grid/components/grid";
@@ -42,7 +42,7 @@
                 'strings'
             ]),
             correctAnswerId() {
-                let correct = _.find(this.mdl_answers, function (mdl_answer) {
+                let correct = find(this.mdl_answers, function (mdl_answer) {
                     return mdl_answer.fraction === 1;
                 });
                 return correct ? correct.id : null;
@@ -56,7 +56,7 @@
             level() {
                 if (this.question) {
                     let levelId = this.question.level;
-                    return _.find(this.levels, function (level) {
+                    return find(this.levels, function (level) {
                         return level.id === levelId;
                     });
                 } else {

@@ -1,6 +1,6 @@
 import moodleAjax from 'core/ajax';
 import moodleStorage from 'core/localstorage';
-import _ from 'lodash';
+import first from 'lodash/first';
 import $ from 'jquery';
 import {ajax} from "./index";
 
@@ -68,10 +68,10 @@ export default {
             const unfinishedRounds = state.rounds
                 .filter(r => !r.finished)
                 .sort((r1, r2) => r1.timestart < r2.timestart ? -1 : 1);
-            return _.first(unfinishedRounds);
+            return first(unfinishedRounds);
         },
         getMdlUser: state => (mdlUserId) => {
-            return _.first(_.filter(state.mdlUsers, user => user.id === mdlUserId));
+            return first(state.mdlUsers.filter(user => user.id === mdlUserId));
         }
     },
     actions: {

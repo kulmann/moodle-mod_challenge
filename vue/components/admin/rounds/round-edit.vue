@@ -4,46 +4,26 @@
             loadingAlert(:message="strings.admin_round_loading")
         template(v-else)
             .uk-card-body
-                form.uk-form-stacked
-                    h3 {{ strings.admin_round_title_edit | stringParams(data.number) }}
+                form.uk-form-stacked(@submit.prevent="save")
+                    h3 {{ strings['admin_round_edit_title_' + (data.id ? 'edit' : 'add')] | stringParams(data.number) }}
+                    p {{ strings.admin_round_edit_description }}
 
-                    vk-grid(matched).uk-grid-divider
-                        div.uk-width-1-2
-                            .uk-margin-small
-                                label.uk-form-label {{ strings.admin_level_lbl_name }}
-                                .uk-form-controls
-                                    input.uk-input(v-model="data.name", :placeholder="strings.admin_level_lbl_name")
-                            .uk-margin-small
-                                label.uk-form-label {{ strings.admin_level_lbl_bgcolor }}
-                                .uk-form-controls
-                                    input.uk-input(v-model="data.bgcolor", :placeholder="strings.admin_level_lbl_bgcolor")
-                                    i(v-html="strings.admin_level_lbl_bgcolor_help")
-                            .uk-margin-small
-                                label.uk-form-label {{ strings.admin_level_lbl_image }}
-                                .uk-form-controls
-                                    picture-input(:width="500",
-                                        :height="300",
-                                        :removable="true",
-                                        button-class="btn btn-primary",
-                                        removeButtonClass="btn btn-danger",
-                                        :customStrings="{drag: strings.admin_level_lbl_image_drag, change: strings.admin_level_lbl_image_change, remove: strings.admin_level_lbl_image_remove}",
-                                        :prefill="data.imageurl",
-                                        @change="onImageSelected",
-                                        @remove="onImageRemoved")
-                        div.uk-width-1-2
-                            level(:level="levelPreview", :strings="strings", :game="game")
+                    .uk-margin-small
+                        label.uk-form-label {{ strings.admin_round_lbl_name }}
+                        .uk-form-controls
+                            input.uk-input(v-model="data.name", required)
 
-                    h3.uk-margin-large-top {{ strings.admin_level_lbl_categories }}
-                    .uk-margin-small(v-for="(category, index) in categories", :key="index")
-                        label.uk-form-label {{ strings.admin_level_lbl_category | stringParams(index + 1) }}
+                    h3 {{ strings.admin_round_categories_title }}
+                    .uk-margin-small(v-for="(category, index) in activeCategories", :key="index")
+                        label.uk-form-label {{ strings.admin_round_lbl_category | stringParams(index + 1) }}
                         .uk-form-controls
                             .uk-flex
-                                select.uk-select(v-model="category.mdl_category")
-                                    option(:disabled="true", value="") {{ strings.admin_level_lbl_category_please_select }}
-                                    option(v-for="mdl_category in mdl_categories", :key="mdl_category.category_id",
+                                select.uk-select(v-model="category.mdl_category", :disabled="!!category.id")
+                                    option(:disabled="true", value="") {{ strings.admin_round_lbl_category_please_select }}
+                                    option(v-for="mdl_category in mdlCategories", :key="mdl_category.category_id",
                                         v-bind:value="mdl_category.category_id", :disabled="!mdl_category.category_id",
                                         v-html="mdl_category.category_name")
-                                button.btn.btn-default(type="button", @click="removeCategory(index)")
+                                button.btn.btn-default(type="button", @click="removeCategory(category)")
                                     v-icon(name="trash")
                     btnAdd(@click="createCategory", align="left")
             .uk-card-footer.uk-text-right
@@ -63,7 +43,10 @@
 <script>
     import {mapActions, mapState} from 'vuex';
     import mixins from '../../../mixins';
-    import _ from 'lodash';
+    import isNil from 'lodash/isNil';
+    import map from 'lodash/map';
+    import concat from 'lodash/concat';
+    import find from 'lodash/find';
     import constants from '../../../constants';
     import btnAdd from '../btn-add';
     import loadingAlert from "../../helper/loading-alert";
@@ -75,7 +58,7 @@
         props: {
             round: {
                 type: Object,
-                required: true
+                required: false
             },
             categories: {
                 type: Array,
@@ -84,29 +67,53 @@
             mdlCategories: {
                 type: Array,
                 required: true
+            },
+            rounds: {
+                type: Array,
+                required: true
             }
         },
         data() {
             return {
                 data: null,
                 saving: false,
+                categoryChanges: {
+                    deleted: [],
+                    added: []
+                }
             }
         },
         computed: {
             ...mapState([
                 'strings',
-                'game',
+                'game'
             ]),
-            ...mapState('admin', [
-                'rounds'
-            ]),
+            roundCategories() {
+                if (this.data.id === null) {
+                    // new rounds don't have any already saved categories
+                    return [];
+                }
+                return this.categories.filter(category => {
+                    const firstRound = find(this.rounds, round => round.id === category.round_first);
+                    const lastRound = category.round_last === 0 ? null : find(this.rounds, round => round.id === category.round_last);
+                    return firstRound.number <= this.data.number && (lastRound === null ? true : lastRound.number >= this.data.number);
+                });
+            },
+            activeCategories() {
+                const categories = this.roundCategories.filter(category => {
+                    return this.categoryChanges.deleted.findIndex(c => c.id === category.id) === -1;
+                });
+                categories.push(...this.categoryChanges.added);
+                return categories;
+            }
         },
         methods: {
             ...mapActions({
                 saveRound: 'admin/saveRound',
+                fetchMdlCategories: 'admin/fetchMdlCategories'
             }),
             initRoundData(round) {
-                if (round === null) {
+                if (isNil(round)) {
                     this.data = {
                         id: null,
                         game: this.game.id,
@@ -117,47 +124,39 @@
                     this.data = round;
                 }
             },
+            createCategory() {
+                this.categoryChanges.added = concat(this.categoryChanges.added, [{
+                    id: null,
+                    mdl_category: null
+                }]);
+            },
+            removeCategory(category) {
+                if (category.id) {
+                    this.categoryChanges.deleted = concat(this.categoryChanges.deleted, [category]);
+                } else {
+                    this.categoryChanges.added = this.categoryChanges.added.filter(c => c !== category);
+                }
+            },
             goToRoundList() {
                 this.$router.push({name: constants.ROUTE_ADMIN_ROUNDS});
             },
             save() {
-                let categories = _.map(this.selectedCategories, function (category) {
-                    return {
-                        categoryid: category.id,
-                        mdlcategory: category.mdl_category,
-                        subcategories: category.subcategories,
-                    };
-                });
+                const addedCategories = map(this.categoryChanges.added, transformCategoryToDTO);
+                const deletedCategories = map(this.categoryChanges.deleted, transformCategoryToDTO);
                 let result = {
-                    levelid: (this.data.id || 0),
+                    roundid: (this.data.id || 0),
                     name: this.data.name,
-                    bgcolor: this.data.bgcolor,
-                    categories: categories,
-                    image: this.data.image,
-                    imgmimetype: (this.imageMimetype ? this.imageMimetype : ''),
-                    imgcontent: (this.imageContent ? this.imageContent : ''),
+                    addedcategories: addedCategories,
+                    deletedcategories: deletedCategories
                 };
                 this.saving = true;
-                this.saveLevel(result)
+                this.saveRound(result)
                     .then((successful) => {
                         this.saving = false;
                         if (successful) {
-                            this.goToLevelList();
+                            this.goToRoundList();
                         }
                     });
-            },
-            onImageSelected(image) {
-                this.imageBase64 = image;
-                let result = image.split(',');
-                this.imageMimetype = result[0].replace('data:', '').replace(';base64', '');
-                this.imageContent = result[1];
-            },
-            onImageRemoved() {
-                this.imageBase64 = null;
-                this.imageMimetype = null;
-                this.imageContent = null;
-                this.data.image = null;
-                this.data.imageurl = null;
             }
         },
         mounted() {
@@ -178,5 +177,13 @@
             loadingIcon,
             VkNotification,
         },
+    }
+
+    function transformCategoryToDTO(category) {
+        return {
+            categoryid: category.id,
+            mdlcategory: category.mdl_category,
+            subcategories: category.subcategories || true,
+        };
     }
 </script>

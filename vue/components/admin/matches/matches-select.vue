@@ -27,7 +27,8 @@
                                     span {{ getMdlUser(match.mdl_user_2).firstname + ' ' + getMdlUser(match.mdl_user_2).lastname }}
 </template>
 <script>
-    import _ from 'lodash';
+    import map from 'lodash/map';
+    import shuffle from 'lodash/shuffle';
     import {mapState, mapGetters, mapActions} from 'vuex';
     import failureAlert from "../../helper/failure-alert";
     import UserAvatar from "../../helper/user-avatar";
@@ -57,7 +58,7 @@
         },
         methods: {
             generateMatches() {
-                let mdlUserIds = _.shuffle(_.map(this.participants, p => p.id));
+                let mdlUserIds = shuffle(map(this.participants, p => p.id));
                 let matches = [];
                 while (mdlUserIds.length > 1) {
                     matches.push({

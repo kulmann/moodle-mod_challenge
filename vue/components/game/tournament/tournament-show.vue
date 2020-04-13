@@ -24,6 +24,8 @@
 <script>
     import Mixins from '../../../mixins';
     import {mapActions, mapGetters, mapState} from 'vuex';
+    import sortBy from 'lodash/sortBy';
+    import forEach from 'lodash/forEach';
     import failureAlert from "../../helper/failure-alert";
     import matchTopics from "./match/match-topics";
     import LoadingAlert from "../../helper/loading-alert";
@@ -92,7 +94,7 @@
                 return this.fetchMatches({
                     tournamentid: this.tournamentId
                 }).then(matches => {
-                    this.matches = _.sortBy(matches, 'step');
+                    this.matches = sortBy(matches, 'step');
                     this.matchIndex = this.matches.length - 1;
                 });
             },
@@ -101,7 +103,7 @@
                     tournamentid: this.tournamentId
                 }).then(topics => {
                     let map = {};
-                    _.forEach(topics, topic => {
+                    forEach(topics, topic => {
                         if (!map.hasOwnProperty(topic.step)) {
                             map[topic.step] = [];
                         }

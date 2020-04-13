@@ -14,7 +14,8 @@
 </template>
 
 <script>
-    import _ from 'lodash';
+    import cloneDeep from 'lodash/cloneDeep';
+    import first from 'lodash/first';
     import Mixins from '../../../../mixins';
     import {mapGetters, mapState, mapActions} from 'vuex';
     import level from "../../../helper/level";
@@ -58,7 +59,7 @@
                 return this.getStyleByQuestion(this.rightQuestion);
             },
             level() {
-                let level = _.cloneDeep(this.getLevel(this.topic.level));
+                let level = cloneDeep(this.getLevel(this.topic.level));
                 level.finished = this.isQuestionAnswered;
                 level.seen = false;
                 return level;
@@ -75,9 +76,9 @@
                 fetchMdlQuestion: 'player/fetchMdlQuestion',
             }),
             getQuestionByUser(mdlUserId) {
-                const questions = _.filter(this.questions, q => (q.topic === this.topic.id && q.mdl_user === mdlUserId));
+                const questions = this.questions.filter(q => (q.topic === this.topic.id && q.mdl_user === mdlUserId));
                 if (questions.length > 0) {
-                    return _.first(questions);
+                    return first(questions);
                 }
                 return null;
             },

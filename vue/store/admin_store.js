@@ -63,17 +63,7 @@ export default {
         async saveRound(context, payload) {
             const result = await ajax('mod_challenge_admin_save_round', payload);
             await context.dispatch('fetchRounds', null, {root: true});// fetch in main store (root)
-            return result.result;
-        },
-        /**
-         * Creates a next round for this game.
-         *
-         * @param context
-         * @returns {Promise<boolean>}
-         */
-        async createRound(context) {
-            const result = await ajax('mod_challenge_admin_create_round');
-            await context.dispatch('fetchRounds', null, {root: true});// fetch in main store (root)
+            await context.dispatch('fetchCategories');
             return result.result;
         },
         /**

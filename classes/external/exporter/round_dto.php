@@ -47,6 +47,7 @@ class round_dto extends exporter {
      * round_dto constructor.
      *
      * @param round $round
+     * @param game $game
      * @param context $context
      *
      * @throws \coding_exception
@@ -74,6 +75,10 @@ class round_dto extends exporter {
             'timestart' => [
                 'type' => PARAM_INT,
                 'description' => 'time when this round starts',
+            ],
+            'name' => [
+                'type' => PARAM_NOTAGS,
+                'description' => 'the round name',
             ],
             'timeend' => [
                 'type' => PARAM_INT,

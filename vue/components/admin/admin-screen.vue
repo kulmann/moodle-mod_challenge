@@ -18,14 +18,17 @@
                 round-edit(v-if="viewMode === VIEW_MODE_ROUND_EDIT",
                     :round="roundForEditing",
                     :categories="categories",
-                    :mdlCategories="mdlCategories"
+                    :mdlCategories="mdlCategories",
+                    :rounds="rounds"
                 )
 </template>
 
 <script>
     import mixins from '../../mixins';
     import {mapState, mapGetters} from 'vuex';
-    import _ from 'lodash';
+    import endsWith from 'lodash/endsWith';
+    import isNil from 'lodash/isNil';
+    import find from 'lodash/find';
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import loadingAlert from '../helper/loading-alert';
     import failureAlert from "../helper/failure-alert";
@@ -57,7 +60,7 @@
                 'isInitialized'
             ]),
             viewModeList() {
-                return _.endsWith(this.$route.name, '-list');
+                return endsWith(this.$route.name, '-list');
             },
             viewMode() {
                 const routes = [
@@ -72,9 +75,9 @@
             },
             roundForEditing() {
                 // try to find the given roundId in our loaded rounds.
-                if (this.$route.params.hasOwnProperty('roundId') && !_.isUndefined(this.$route.params.roundId)) {
+                if (!isNil(this.$route.params.roundId)) {
                     let roundId = parseInt(this.$route.params.roundId);
-                    return _.find(this.rounds, round => round.id === round);
+                    return find(this.rounds, round => round.id === roundId);
                 }
                 // None found. Returning null will (correctly) result in creating a new round.
                 return null;

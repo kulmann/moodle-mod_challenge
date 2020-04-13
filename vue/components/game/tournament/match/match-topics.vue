@@ -25,7 +25,6 @@
 </template>
 
 <script>
-    import _ from 'lodash';
     import {mapGetters, mapState} from 'vuex';
     import topicRow from "./topic-row";
     import userAvatar from "../../../helper/user-avatar";
@@ -52,7 +51,7 @@
                 return index === this.topics.length - 1;
             },
             getQuestionsByTopic(topicId) {
-                return _.filter(this.questions, q => q.topic === topicId);
+                return this.questions.filter(q => q.topic === topicId);
             },
         },
         components: {userAvatar, topicRow}

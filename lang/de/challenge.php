@@ -93,11 +93,17 @@ $string['admin_nav_rounds'] = 'Runden';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
 $string['admin_rounds_intro'] = 'Erklärungstext über Spielrunden...';
 $string['admin_round_delete_confirm'] = 'Möchten Sie die Runde {$a} wirklich löschen?';
-$string['admin_round_title_edit'] = 'Runde {$a} bearbeiten';
+$string['admin_round_edit_title_edit'] = 'Runde {$a} bearbeiten';
+$string['admin_round_edit_title_add'] = 'Runde {$a} hinzufügen';
+$string['admin_round_edit_description'] = 'Fügen Sie neue Fragenkategorien hinzu, die von dieser Runde an verwendet werden sollen. Sie können auch Fragenkategorien entfernen - sie werden dann ab dieser Runde nicht mehr verwendet. Bitte beachten Sie, dass bereits gespeicherte Kategorien nicht verändert, sondern nur gelöscht werden können.';
+$string['admin_round_lbl_name'] = 'Name';
+$string['admin_round_categories_title'] = 'Fragenkategorien bearbeiten';
 $string['admin_round_msg_saving'] = 'Die Runde wird gespeichert, bitte warten';
+$string['admin_round_lbl_category'] = 'Kategorie {$a}';
+$string['admin_round_lbl_category_please_select'] = 'Kategorie auswählen';
 
 
-
+/* DEPRECATED */
 /* admin: levels */
 $string['admin_nav_levels'] = 'Themengebiete';
 $string['admin_levels_title'] = 'Themengebiet bearbeiten';

@@ -93,11 +93,18 @@ $string['admin_nav_rounds'] = 'Rounds';
 $string['admin_rounds_title'] = 'Manager rounds';
 $string['admin_rounds_intro'] = 'Description text about rounds...';
 $string['admin_round_delete_confirm'] = 'Do you really want to delete round {$a}?';
-$string['admin_round_title_edit'] = 'Edit round {$a}';
+$string['admin_round_edit_title_edit'] = 'Edit round {$a}';
+$string['admin_round_edit_title_add'] = 'Create round {$a}';
+$string['admin_round_edit_title'] = 'Edit round {$a}';
+$string['admin_round_edit_description'] = 'Add new question categories so that they are included from this round onwards. You can delete question categories as well - they will be excluded for this and following rounds. Please be aware that already saved categories can not be changed anymore, but only be removed.';
+$string['admin_round_lbl_name'] = 'Name';
+$string['admin_round_categories_title'] = 'Edit question categories';
+$string['admin_round_lbl_category'] = 'Category {$a}';
+$string['admin_round_lbl_category_please_select'] = 'Select category';
 $string['admin_round_msg_saving'] = 'Saving the round, please wait';
 
 
-
+/* DEPRECATED */
 /* admin: levels */
 $string['admin_nav_levels'] = 'Topics';
 $string['admin_levels_title'] = 'Edit topics';

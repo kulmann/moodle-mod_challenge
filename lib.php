@@ -40,12 +40,6 @@ define('MOD_CHALLENGE_CAP_ADD_INSTANCE', 'mod/challenge:addinstance');
 define('MOD_CHALLENGE_CAP_MANAGE', 'mod/challenge:manage');
 define('MOD_CHALLENGE_CAP_VIEW', 'mod/challenge:view');
 
-// implemented question types
-define('MOD_CHALLENGE_QTYPE_SINGLE_CHOICE_DB', 'multichoice');
-define('MOD_CHALLENGE_VALID_QTYPES_DB', [
-    MOD_CHALLENGE_QTYPE_SINGLE_CHOICE_DB,
-]);
-
 // round duration units
 define('MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS', 'hours');
 define('MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS', 'days');
@@ -67,8 +61,8 @@ define('MOD_CHALLENGE_ROUND_DURATION_UNITS', [
 function challenge_supports($feature) {
     switch ($feature) {
         case FEATURE_SHOW_DESCRIPTION:
-        case FEATURE_BACKUP_MOODLE2:
         case FEATURE_MOD_INTRO:
+        case FEATURE_USES_QUESTIONS:
             return true;
         default:
             return null;
