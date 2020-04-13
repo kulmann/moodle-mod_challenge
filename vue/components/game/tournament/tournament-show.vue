@@ -22,7 +22,7 @@
 </template>
 
 <script>
-    import Mixins from '../../../mixins';
+    import langMixins from '../../../mixins/lang-mixins';
     import {mapActions, mapGetters, mapState} from 'vuex';
     import sortBy from 'lodash/sortBy';
     import forEach from 'lodash/forEach';
@@ -31,7 +31,7 @@
     import LoadingAlert from "../../helper/loading-alert";
 
     export default {
-        mixins: [Mixins],
+        mixins: [langMixins],
         data() {
             return {
                 loading: true,

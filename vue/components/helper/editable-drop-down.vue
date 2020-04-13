@@ -30,13 +30,13 @@
 </template>
 
 <script>
-	import Mixins from '../../mixins';
+    import langMixins from '../../mixins/lang-mixins';
 	import isArray from 'lodash/isArray';
 	import isNil from 'lodash/isNil';
 
 	export default {
 		name: 'EditableDropDown',
-		mixins: [Mixins],
+		mixins: [langMixins],
 		props: {
 			mode: {
 				type: String,

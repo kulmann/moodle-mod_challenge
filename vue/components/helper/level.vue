@@ -12,11 +12,11 @@
 </template>
 
 <script>
-    import mixins from '../../mixins';
+    import langMixins from '../../mixins/lang-mixins';
     import {mapState} from 'vuex';
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         props: {
             level: Object,
             game: Object,

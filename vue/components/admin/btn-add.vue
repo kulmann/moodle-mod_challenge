@@ -7,10 +7,10 @@
 
 <script>
     import {mapState} from 'vuex';
-    import mixins from '../../mixins';
+    import langMixins from '../../mixins/lang-mixins';
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         props: {
             align: String
         },

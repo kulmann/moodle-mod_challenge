@@ -13,6 +13,7 @@
   "dependencies": {
     "@vuikit/theme": "^0.8.1",
     "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "range-inclusive": "^1.0.2",
     "vue": "^2.6.10",
     "vue-awesome": "^3.5.2",

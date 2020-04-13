@@ -78,6 +78,11 @@ $string['course_reset_include_topics'] = 'Reset topics etc. (Everything will be 
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Loading Quiz Challenge...';
 
+/* formatting */
+$string['format_date_time'] = 'DD.MM.YYYY, hh:mm';
+$string['format_date'] = 'DD.MM.YYYY';
+$string['format_time'] = 'hh:mm';
+
 /* admin screen in vue app */
 $string['admin_screen_title'] = 'Edit game content';
 $string['admin_not_allowed'] = 'You have insufficient permissions to view this page.';
@@ -92,6 +97,12 @@ $string['admin_avatar_alt'] = 'Picture of {$a}';
 $string['admin_nav_rounds'] = 'Rounds';
 $string['admin_rounds_title'] = 'Manager rounds';
 $string['admin_rounds_intro'] = 'Description text about rounds...';
+$string['admin_rounds_list_th_no'] = 'No.';
+$string['admin_rounds_list_th_name'] = 'Name';
+$string['admin_rounds_list_th_timing'] = 'Timing';
+$string['admin_rounds_list_th_actions'] = 'Actions';
+$string['admin_rounds_list_timing_open'] = 'open';
+$string['admin_rounds_list_timing_range'] = 'From {$a->start} until {$a->end}';
 $string['admin_round_delete_confirm'] = 'Do you really want to delete round {$a}?';
 $string['admin_round_edit_title_edit'] = 'Edit round {$a}';
 $string['admin_round_edit_title_add'] = 'Create round {$a}';

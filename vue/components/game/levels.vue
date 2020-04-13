@@ -6,11 +6,11 @@
 
 <script>
     import {mapActions, mapState} from 'vuex';
-    import mixins from '../../mixins';
+    import langMixins from '../../mixins/lang-mixins';
     import Level from "../helper/level";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         computed: {
             ...mapState([
                 'strings',

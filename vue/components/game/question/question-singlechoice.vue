@@ -20,12 +20,12 @@
 <script>
     import find from 'lodash/find';
     import {mapActions, mapState} from 'vuex';
-    import mixins from '../../../mixins';
+    import langMixins from '../../../mixins/lang-mixins';
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import questionTimer from "./question-timer";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         props: {
             game: Object,
             question: Object,

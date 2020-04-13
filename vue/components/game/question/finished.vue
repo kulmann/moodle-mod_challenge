@@ -8,11 +8,11 @@
 
 <script>
     import {mapState} from 'vuex';
-    import mixins from '../../../mixins';
+    import langMixins from '../../../mixins/lang-mixins';
     import {GAME_PROGRESS} from "../../../constants";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         computed: {
             ...mapState([
                 'strings',

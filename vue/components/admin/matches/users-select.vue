@@ -11,15 +11,15 @@
 </template>
 
 <script>
-    import {mapActions, mapState} from 'vuex';
-    import mixins from '../../../mixins';
+    import {mapState} from 'vuex';
+    import langMixins from '../../../mixins/lang-mixins';
     import loadingAlert from "../../helper/loading-alert";
     import btnAdd from '../btn-add';
     import loadingIcon from "../../helper/loading-icon";
     import userAvatar from "../../helper/user-avatar";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         props: {
             tournament: Object,
             value: Array,

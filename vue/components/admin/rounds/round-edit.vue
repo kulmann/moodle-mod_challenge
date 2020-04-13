@@ -42,7 +42,7 @@
 
 <script>
     import {mapActions, mapState} from 'vuex';
-    import mixins from '../../../mixins';
+    import langMixins from '../../../mixins/lang-mixins';
     import isNil from 'lodash/isNil';
     import map from 'lodash/map';
     import concat from 'lodash/concat';
@@ -54,7 +54,7 @@
     import VkNotification from "vuikit/src/library/notification/components/notification";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         props: {
             round: {
                 type: Object,

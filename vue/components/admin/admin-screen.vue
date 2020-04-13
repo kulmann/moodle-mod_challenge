@@ -24,7 +24,7 @@
 </template>
 
 <script>
-    import mixins from '../../mixins';
+    import langMixins from '../../mixins/lang-mixins';
     import {mapState, mapGetters} from 'vuex';
     import endsWith from 'lodash/endsWith';
     import isNil from 'lodash/isNil';
@@ -38,7 +38,7 @@
     import constants from "../../constants";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         data() {
             return {
                 VIEW_MODE_NONE: constants.ROUTE_UNKNOWN,

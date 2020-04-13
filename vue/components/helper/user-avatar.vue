@@ -6,11 +6,11 @@
 </template>
 
 <script>
-    import Mixins from '../../mixins';
+    import langMixins from '../../mixins/lang-mixins';
     import {mapState} from "vuex";
 
     export default {
-        mixins: [Mixins],
+        mixins: [langMixins],
         props: {
             size: {
                 type: Number,

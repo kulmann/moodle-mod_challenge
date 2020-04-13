@@ -5,19 +5,26 @@
         .uk-card-body
             p {{ strings.admin_rounds_intro }}
             table.uk-table.uk-table-small.uk-table-striped
+                thead
+                    tr
+                        th.uk-table-shrink {{ strings.admin_rounds_list_th_no }}
+                        th.uk-table-expand {{ strings.admin_rounds_list_th_name }}
+                        th.uk-table-shrink {{ strings.admin_rounds_list_th_timing }}
+                        th.uk-table-shrink {{ strings.admin_rounds_list_th_actions }}
                 tbody
                     template(v-for="round in rounds")
                         tr.uk-text-nowrap(:key="round.number")
-                            td.uk-table-shrink.uk-text-center.uk-text-middle
+                            td.uk-text-center.uk-text-middle
                                 b {{ round.number }}
-                            td.uk-table-expand.uk-text-left.uk-text-middle {{ round.name }}
-                            td.actions.uk-table-shrink.uk-preserve-width
+                            td.uk-text-left.uk-text-middle {{ round.name }}
+                            td.uk-text-left.uk-text-middle {{ getRoundTiming(round) }}
+                            td.actions.uk-preserve-width
                                 button.btn.btn-default(@click="goToEditRound(round)")
                                     v-icon(name="regular/edit")
                                 button.btn.btn-default(@click="deleteRoundAsk(round)", :disabled="isRoundDeleteLocked(round)")
                                     v-icon(name="trash")
                         tr(v-if="deleteConfirmationRoundId === round.id")
-                            td(colspan="3").uk-table-expand
+                            td(:colspan="4").uk-table-expand
                                 confirmationPanel(:message="stringParams(strings.admin_round_delete_confirm, round.number)",
                                     :labelSubmit="strings.admin_btn_confirm_delete",
                                     @onSubmit="deleteRoundConfirm(round)",
@@ -27,14 +34,15 @@
 
 <script>
     import {mapActions, mapState} from 'vuex';
-    import mixins from '../../../mixins';
+    import LangMixins from '../../../mixins/lang-mixins';
+    import TimeMixins from '../../../mixins/time-mixins';
     import infoAlert from '../../helper/info-alert';
     import btnAdd from '../btn-add';
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import ConfirmationPanel from "../../helper/confirmation-panel";
 
     export default {
-        mixins: [mixins],
+        mixins: [LangMixins, TimeMixins],
         props: {
             rounds: {
                 type: Array,
@@ -83,6 +91,16 @@
             },
             deleteRoundCancel() {
                 this.deleteConfirmationRoundId = null;
+            },
+            getRoundTiming(round) {
+                if (round.timestart === 0) {
+                    return this.strings.admin_rounds_list_timing_open;
+                }
+                const params = {
+                    start: this.formDateTime(round.timestart),
+                    end: (this.formDate(round.timestart) === this.formDate(round.timeend)) ? this.formTime(round.timeend) : this.formDateTime(round.timeend)
+                };
+                return this.stringParams(this.strings.admin_rounds_list_timing_range, params);
             }
         },
         components: {

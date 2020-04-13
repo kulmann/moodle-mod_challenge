@@ -5,12 +5,12 @@
 </template>
 
 <script>
-    import mixins from "../mixins";
+    import langMixins from '../mixins/lang-mixins';
     import {mapGetters} from "vuex";
     import loadingAlert from "./helper/loading-alert";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         computed: mapGetters([
             'isAdminUser',
             'isInitialized',

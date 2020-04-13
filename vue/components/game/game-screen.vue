@@ -10,7 +10,7 @@
 </template>
 
 <script>
-    import mixins from '../../mixins';
+    import langMixins from '../../mixins/lang-mixins';
     import {mapGetters, mapState} from 'vuex';
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import loadingAlert from '../helper/loading-alert';
@@ -20,7 +20,7 @@
     import question from "./question/question";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         data() {
             return {
                 VIEW_MODE_NONE: 'none',

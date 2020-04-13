@@ -9,14 +9,14 @@
 <script>
     import {mapState, mapActions} from 'vuex';
     import finished from './finished';
-    import mixins from '../../../mixins';
+    import langMixins from '../../../mixins/lang-mixins';
     import questionActions from './question-actions';
     import questionError from './question-error';
     import questionSingleChoice from './question-singlechoice';
     import loadingAlert from '../../helper/loading-alert';
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         data () {
             return {
                 question: null,

@@ -16,13 +16,13 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep';
     import first from 'lodash/first';
-    import Mixins from '../../../../mixins';
+    import langMixins from '../../../../mixins/lang-mixins';
     import {mapGetters, mapState, mapActions} from 'vuex';
     import level from "../../../helper/level";
     import LoadingIcon from "../../../helper/loading-icon";
 
     export default {
-        mixins: [Mixins],
+        mixins: [langMixins],
         props: {
             index: Number,
             match: Object,

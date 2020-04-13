@@ -78,6 +78,11 @@ $string['course_reset_include_topics'] = 'Eingestellte Themen etc. zurücksetzen
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';
 
+/* formatting */
+$string['format_date_time'] = 'DD.MM.YYYY, hh:mm';
+$string['format_date'] = 'DD.MM.YYYY';
+$string['format_time'] = 'hh:mm';
+
 /* admin screen in vue app */
 $string['admin_screen_title'] = 'Spiel-Inhalte bearbeiten';
 $string['admin_not_allowed'] = 'Sie haben nicht die nötigen Zugriffsrechte, um diese Seite zu betrachten.';
@@ -92,6 +97,12 @@ $string['admin_avatar_alt'] = 'Foto von {$a}';
 $string['admin_nav_rounds'] = 'Runden';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
 $string['admin_rounds_intro'] = 'Erklärungstext über Spielrunden...';
+$string['admin_rounds_list_th_no'] = 'Nr.';
+$string['admin_rounds_list_th_name'] = 'Name';
+$string['admin_rounds_list_th_timing'] = 'Zeit';
+$string['admin_rounds_list_th_actions'] = 'Aktionen';
+$string['admin_rounds_list_timing_open'] = 'offen';
+$string['admin_rounds_list_timing_range'] = 'Von {$a->start} bis {$a->end}';
 $string['admin_round_delete_confirm'] = 'Möchten Sie die Runde {$a} wirklich löschen?';
 $string['admin_round_edit_title_edit'] = 'Runde {$a} bearbeiten';
 $string['admin_round_edit_title_add'] = 'Runde {$a} hinzufügen';

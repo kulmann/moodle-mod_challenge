@@ -29,7 +29,7 @@
     import {mapActions, mapState} from 'vuex';
     import map from 'lodash/map';
     import forEach from 'lodash/forEach';
-    import mixins from '../../../mixins';
+    import langMixins from '../../../mixins/lang-mixins';
     import loadingAlert from "../../helper/loading-alert";
     import btnAdd from '../btn-add';
     import loadingIcon from "../../helper/loading-icon";
@@ -37,7 +37,7 @@
     import matchesSelect from "./matches-select";
 
     export default {
-        mixins: [mixins],
+        mixins: [langMixins],
         props: {
             tournament: Object,
         },
