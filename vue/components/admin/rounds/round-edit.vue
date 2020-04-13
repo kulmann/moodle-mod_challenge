@@ -6,7 +6,6 @@
             .uk-card-body
                 form.uk-form-stacked(@submit.prevent="save")
                     h3 {{ strings['admin_round_edit_title_' + (data.id ? 'edit' : 'add')] | stringParams(data.number) }}
-                    p {{ strings.admin_round_edit_description }}
 
                     .uk-margin-small
                         label.uk-form-label {{ strings.admin_round_lbl_name }}
@@ -14,8 +13,9 @@
                             input.uk-input(v-model="data.name", required)
 
                     h3 {{ strings.admin_round_categories_title }}
+                    p {{ strings.admin_round_edit_description }}
                     .uk-margin-small(v-for="(category, index) in activeCategories", :key="index")
-                        label.uk-form-label {{ strings.admin_round_lbl_category | stringParams(index + 1) }}
+                        label.uk-form-label {{ getCategoryLabel(category, index) }}
                         .uk-form-controls
                             .uk-flex
                                 select.uk-select(v-model="category.mdl_category", :disabled="!!category.id")
@@ -94,8 +94,8 @@
                     return [];
                 }
                 return this.categories.filter(category => {
-                    const firstRound = find(this.rounds, round => round.id === category.round_first);
-                    const lastRound = category.round_last === 0 ? null : find(this.rounds, round => round.id === category.round_last);
+                    const firstRound = this.getRoundById(category.round_first);
+                    const lastRound = category.round_last === 0 ? null : this.getRoundById(category.round_last);
                     return firstRound.number <= this.data.number && (lastRound === null ? true : lastRound.number >= this.data.number);
                 });
             },
@@ -123,6 +123,27 @@
                 } else {
                     this.data = round;
                 }
+            },
+            getRoundById(roundId) {
+                return find(this.rounds, round => round.id === roundId);
+            },
+            getCategoryLabel(category, index) {
+                if (category.id === null) {
+                    return this.stringParams(this.strings.admin_round_lbl_category_new, index + 1);
+                }
+                const roundFirst = this.getRoundById(category.round_first);
+                if (category.round_last === 0) {
+                    return this.stringParams(this.strings.admin_round_lbl_category_open, {number: index + 1, round_first_number: roundFirst.number});
+                }
+                if (category.round_first === category.round_last) {
+                    return this.stringParams(this.strings.admin_round_lbl_category_closed_same, {number: index + 1, round_first_number: roundFirst.number});
+                }
+                const roundLast = this.getRoundById(category.round_last);
+                return this.stringParams(this.strings.admin_round_lbl_category_closed_range, {
+                    number: index + 1,
+                    round_first_number: roundFirst.number,
+                    round_last_number: roundLast.number
+                });
             },
             createCategory() {
                 this.categoryChanges.added = concat(this.categoryChanges.added, [{
