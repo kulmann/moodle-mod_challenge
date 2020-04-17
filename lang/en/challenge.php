@@ -91,6 +91,8 @@ $string['admin_btn_cancel'] = 'Cancel';
 $string['admin_btn_add'] = 'Add';
 $string['admin_btn_confirm_publish'] = 'Confirm Publishing';
 $string['admin_btn_confirm_delete'] = 'Confirm Delete';
+$string['admin_btn_confirm_start'] = 'Confirm Start';
+$string['admin_btn_confirm_stop'] = 'Confirm Stop';
 $string['admin_btn_generate'] = 'Generate';
 $string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: rounds */
@@ -105,6 +107,8 @@ $string['admin_rounds_list_timing_open'] = 'open';
 $string['admin_rounds_list_timing_from'] = 'From {$a}';
 $string['admin_rounds_list_timing_to'] = 'Until {$a}';
 $string['admin_round_delete_confirm'] = 'Do you really want to delete round {$a}?';
+$string['admin_round_start_confirm'] = 'Do you really want to start round {$a}?';
+$string['admin_round_stop_confirm'] = 'Do you really want to stop round {$a} ahead of it\'s regular expiration?';
 $string['admin_round_edit_title_edit'] = 'Edit round {$a}';
 $string['admin_round_edit_title_add'] = 'Create round {$a}';
 $string['admin_round_edit_title'] = 'Edit round {$a}';

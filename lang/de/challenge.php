@@ -91,6 +91,8 @@ $string['admin_btn_cancel'] = 'Abbrechen';
 $string['admin_btn_add'] = 'Hinzufügen';
 $string['admin_btn_confirm_publish'] = 'Wirklich Veröffentlichen';
 $string['admin_btn_confirm_delete'] = 'Wirklich Löschen';
+$string['admin_btn_confirm_start'] = 'Wirklich Starten';
+$string['admin_btn_confirm_stop'] = 'Wirklich Stoppen';
 $string['admin_btn_generate'] = 'Generieren';
 $string['admin_avatar_alt'] = 'Foto von {$a}';
 /* admin: rounds */
@@ -105,6 +107,8 @@ $string['admin_rounds_list_timing_open'] = 'offen';
 $string['admin_rounds_list_timing_from'] = 'Von {$a}';
 $string['admin_rounds_list_timing_to'] = 'Bis {$a}';
 $string['admin_round_delete_confirm'] = 'Möchten Sie die Runde {$a} wirklich löschen?';
+$string['admin_round_start_confirm'] = 'Möchten Sie die Runde {$a} wirklich starten?';
+$string['admin_round_stop_confirm'] = 'Möchten Sie die Runde {$a} wirklich vorzeitig beenden?';
 $string['admin_round_edit_title_edit'] = 'Runde {$a} bearbeiten';
 $string['admin_round_edit_title_add'] = 'Runde {$a} hinzufügen';
 $string['admin_round_edit_description'] = 'Fügen Sie neue Fragenkategorien hinzu, die von dieser Runde an und in allen Folgerunden verwendet werden sollen. Sie können auch Fragenkategorien entfernen - diese werden dann ab dieser Runde nicht mehr verwendet. In vorherigen Runden bleiben Sie unverändert bestehen. Bitte beachten Sie, dass bereits gespeicherte Kategorien nicht verändert, sondern nur entfernt werden können.';

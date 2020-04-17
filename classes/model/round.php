@@ -27,6 +27,17 @@ defined('MOODLE_INTERNAL') || die();
  */
 class round extends abstract_model {
 
+    const STATE_PENDING = "pending";
+    const STATE_ACTIVE = "active";
+    const STATE_DELETED = "deleted";
+    const STATE_FINISHED = "finished";
+    const VALID_STATES = [
+        self::STATE_PENDING,
+        self::STATE_ACTIVE,
+        self::STATE_DELETED,
+        self::STATE_FINISHED,
+    ];
+
     /**
      * @var int The id of the game instance this round belongs to.
      */
@@ -37,9 +48,16 @@ class round extends abstract_model {
     protected $number;
     /**
      * @var int The timestamp of when this round will start.
-     * PLEASE NOTE: The end of it has to be calculated with the round duration from the game instance.
      */
     protected $timestart;
+    /**
+     * @var int The timestamp of when this round will end.
+     */
+    protected $timeend;
+    /**
+     * @var string Current state of the round. Defaults to `pending`.
+     */
+    protected $state;
     /**
      * @var string The name of the round.
      */
@@ -53,6 +71,8 @@ class round extends abstract_model {
         $this->game = 0;
         $this->number = 0;
         $this->timestart = 0;
+        $this->timeend = 0;
+        $this->state = self::STATE_PENDING;
         $this->name = '';
     }
 
@@ -71,6 +91,8 @@ class round extends abstract_model {
         $this->game = $data['game'];
         $this->number = isset($data['number']) ? $data['number'] : 0;
         $this->timestart = isset($data['timestart']) ? $data['timestart'] : 0;
+        $this->timeend = isset($data['timeend']) ? $data['timeend'] : 0;
+        $this->state = isset($data['state']) ? $data['state'] : self::STATE_PENDING;
         $this->name = isset($data['name']) ? $data['name'] : '';
     }
 
@@ -114,6 +136,36 @@ class round extends abstract_model {
      */
     public function set_timestart(int $timestart) {
         $this->timestart = $timestart;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_timeend(): int {
+        return $this->timeend;
+    }
+
+    /**
+     * @param int $timeend
+     */
+    public function set_timeend(int $timeend): void {
+        $this->timeend = $timeend;
+    }
+
+    /**
+     * @return string
+     */
+    public function get_state(): string {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     */
+    public function set_state(string $state): void {
+        if (in_array($state, self::VALID_STATES)) {
+            $this->state = $state;
+        }
     }
 
     /**

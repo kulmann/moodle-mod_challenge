@@ -197,6 +197,84 @@ class game extends abstract_model {
     }
 
     /**
+     * Loads the upcoming round, if there is any.
+     *
+     * @return round
+     * @throws dml_exception
+     */
+    public function get_upcoming_round() {
+        // rounds are sorted. Return first round without start time or with start time in the future
+        $rounds = $this->get_rounds();
+        foreach ($rounds as $round) {
+            if ($round->get_timestart() === 0 || $round->get_timestart() > \time()) {
+                return $round;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Loads the current round, if there is any.
+     *
+     * @return round
+     * @throws dml_exception
+     */
+    public function get_current_round() {
+        // rounds are sorted. Return first round with start time <= now and end time >= now.
+        $rounds = $this->get_rounds();
+        foreach ($rounds as $round) {
+            if ($round->get_timestart() <= time() && $round->get_timeend() >= time()) {
+                return $round;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Creates or selects the upcoming round and starts it, i.e.
+     * - set start and end date
+     * - set state to active
+     * - select participants
+     * - create matches
+     *
+     * @return round The upcoming round
+     * @throws dml_exception
+     */
+    public function start_upcoming_round() {
+        // get or create upcoming round
+        $upcoming_round = $this->get_upcoming_round();
+        if ($upcoming_round === null) {
+            $rounds = $this->get_rounds();
+            $upcoming_round = new round();
+            $upcoming_round->set_game($this->get_id());
+            $upcoming_round->set_number(count($rounds) + 1);
+        }
+        $upcoming_round->set_timestart(time());
+        $upcoming_round->set_timeend(time() + $this->calculate_round_duration_seconds());
+        $upcoming_round->set_state(round::STATE_ACTIVE);
+        $upcoming_round->save();
+
+        // get participants
+        // TODO: restrict participants. for now pick all.
+        $mdl_users = $this->get_mdl_users($this->get_course());
+        \shuffle($mdl_users);
+
+        // create matches
+        $matches = [];
+        while(count($mdl_users) > 1) {
+            $mdl_user_1 = array_shift($mdl_users);
+            $mdl_user_2 = array_shift($mdl_users);
+            $match = new match();
+            $match->set_mdl_user_1($mdl_user_1->id);
+            $match->set_mdl_user_2($mdl_user_2->id);
+            $match->set_round($upcoming_round->get_id());
+            $match->save();
+            $matches[] = $match;
+        }
+        return $upcoming_round;
+    }
+
+    /**
      * Loads all categories of this game.
      *
      * @return category[]

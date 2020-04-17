@@ -79,6 +79,30 @@ export default {
             return result.result;
         },
         /**
+         * Starts the given round.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async startRound(context, payload) {
+            const result = await ajax('mod_challenge_admin_start_round', payload);
+            await context.dispatch('fetchRounds', null, {root: true});// fetch in main store (root)
+            return result.result;
+        },
+        /**
+         * Stops the given round.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async stopRound(context, payload) {
+            const result = await ajax('mod_challenge_admin_stop_round', payload);
+            await context.dispatch('fetchRounds', null, {root: true});// fetch in main store (root)
+            return result.result;
+        },
+        /**
          * Fetches the matches of the given round.
          *
          * @param context

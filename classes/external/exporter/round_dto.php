@@ -76,17 +76,17 @@ class round_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'time when this round starts',
             ],
+            'timeend' => [
+                'type' => PARAM_INT,
+                'description' => 'time when this round ends',
+            ],
+            'state' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'the state of this round. defaults to pending. has to be out of ' . implode(', ', round::VALID_STATES),
+            ],
             'name' => [
                 'type' => PARAM_NOTAGS,
                 'description' => 'the round name',
-            ],
-            'timeend' => [
-                'type' => PARAM_INT,
-                'description' => 'time when this round ends (calculated from start + duration)',
-            ],
-            'finished' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not this round is already finished (timeend < now)',
             ],
         ];
     }
@@ -98,13 +98,6 @@ class round_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        $timeend = $this->round->get_timestart() + $this->game->calculate_round_duration_seconds();
-        return array_merge(
-            $this->round->to_array(),
-            [
-                'timeend' => $timeend,
-                'finished' => $timeend < time(),
-            ]
-        );
+        return $this->round->to_array();
     }
 }

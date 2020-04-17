@@ -52,6 +52,20 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
+    'mod_challenge_admin_start_round' => [
+        'classname' => 'mod_challenge\external\admin_start_round',
+        'methodname' => 'request',
+        'description' => 'Starts the given round.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'mod_challenge_admin_stop_round' => [
+        'classname' => 'mod_challenge\external\admin_stop_round',
+        'methodname' => 'request',
+        'description' => 'Stops the given round.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     // GENERIC (ADMIN AND PLAYER) FUNCTIONS
     'mod_challenge_main_get_game' => [
         'classname' => 'mod_challenge\external\main_get_game',
