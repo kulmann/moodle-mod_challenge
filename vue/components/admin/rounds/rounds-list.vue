@@ -17,7 +17,12 @@
                             td.uk-text-center.uk-text-middle
                                 b {{ round.number }}
                             td.uk-text-left.uk-text-middle {{ round.name }}
-                            td.uk-text-left.uk-text-middle {{ getRoundTiming(round) }}
+                            td.uk-text-left.uk-text-middle
+                                span(v-if="isRoundScheduled(round)")
+                                    span {{ getRoundTimingFrom(round) }}
+                                    br
+                                    span {{ getRoundTimingTo(round) }}
+                                span(v-else) -
                             td.actions.uk-preserve-width
                                 button.btn.btn-default(@click="goToEditRound(round)")
                                     v-icon(name="regular/edit")
@@ -92,15 +97,14 @@
             deleteRoundCancel() {
                 this.deleteConfirmationRoundId = null;
             },
-            getRoundTiming(round) {
-                if (round.timestart === 0) {
-                    return this.strings.admin_rounds_list_timing_open;
-                }
-                const params = {
-                    start: this.formDateTime(round.timestart),
-                    end: (this.formDate(round.timestart) === this.formDate(round.timeend)) ? this.formTime(round.timeend) : this.formDateTime(round.timeend)
-                };
-                return this.stringParams(this.strings.admin_rounds_list_timing_range, params);
+            isRoundScheduled(round) {
+                return round.timestart !== 0;
+            },
+            getRoundTimingFrom(round) {
+                return this.stringParams(this.strings.admin_rounds_list_timing_from, this.formDateTime(round.timestart));
+            },
+            getRoundTimingTo(round) {
+                return this.stringParams(this.strings.admin_rounds_list_timing_to, this.formDateTime(round.timeend));
             }
         },
         components: {
