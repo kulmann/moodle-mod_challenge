@@ -5,6 +5,7 @@ import last from 'lodash/last';
 import $ from 'jquery';
 import {ajax} from "./index";
 import {ROUND_ACTIVE, ROUND_FINISHED} from "../constants";
+import sortBy from "lodash/sortBy";
 
 export default {
     state: {
@@ -189,7 +190,32 @@ export default {
         async fetchMdlUsers(context) {
             const mdlUsers = await ajax('mod_challenge_main_get_mdl_users');
             context.commit('setMdlUsers', mdlUsers);
-        }
+        },
+        /**
+         * Fetches the moodle question for the currently loaded question.
+         *
+         * @param context
+         *
+         * @param payload
+         * @returns {Promise<void>}
+         */
+        async fetchMdlQuestion(context, payload) {
+            return await ajax('mod_challenge_main_get_mdl_question', payload);
+        },
+        /**
+         * Fetches the moodle answers for the currently loaded question.
+         *
+         * @param context
+         *
+         * @param payload
+         * @returns {Promise<void>}
+         */
+        async fetchMdlAnswers(context, payload) {
+            const answers = await ajax('mod_challenge_main_get_mdl_answers', payload);
+            return sortBy(answers, function (answer) {
+                return answer.label;
+            });
+        },
     }
 };
 

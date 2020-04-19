@@ -203,12 +203,3 @@ $string['game_match_lbl_open'] = 'open';
 $string['game_match_lbl_won'] = 'won';
 $string['game_match_lbl_lost'] = 'lost';
 $string['game_match_lbl_question'] = 'Answer Question {$a}';
-
-
-
-/* DEPRECATED */
-$string['game_tournaments_active_title'] = 'Active tournaments';
-$string['game_tournaments_active_none'] = 'You are not participating in any tournaments, yet.';
-$string['game_tournaments_finished_title'] = 'Finished tournaments';
-$string['game_tournaments_finished_none'] = 'You have not finished any tournaments, yet.';
-$string['game_tournaments_list_name'] = 'Name';

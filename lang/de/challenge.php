@@ -204,12 +204,3 @@ $string['game_match_lbl_open'] = 'offen';
 $string['game_match_lbl_won'] = 'gewonnen';
 $string['game_match_lbl_lost'] = 'verloren';
 $string['game_match_lbl_question'] = 'Frage {$a} beantworten';
-
-
-
-/* DEPRECATED */
-$string['game_tournaments_active_title'] = 'Aktive Turniere';
-$string['game_tournaments_active_none'] = 'Sie nehmen derzeit an keinen Turnieren teil.';
-$string['game_tournaments_finished_title'] = 'Beendete Turniere';
-$string['game_tournaments_finished_none'] = 'Sie haben noch kein Turnier beendet.';
-$string['game_tournaments_list_name'] = 'Name';

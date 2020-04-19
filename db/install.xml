@@ -96,7 +96,7 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
-                <FIELD NAME="match" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
+                <FIELD NAME="matchid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
                        COMMENT="The match this question has been chosen in."/>
                 <FIELD NAME="number" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"
                        COMMENT="The position of this question within the question set of the current match."/>

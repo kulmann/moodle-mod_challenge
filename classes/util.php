@@ -68,7 +68,7 @@ class util {
      * @throws invalid_parameter_exception
      */
     public static function validate_question($mdl_user_id, question $question) {
-        if ($mdl_user_id !== $question->get_mdl_user()) {
+        if (!$question->is_mdl_user_1($mdl_user_id) && !$question->is_mdl_user_2($mdl_user_id)) {
             throw new invalid_parameter_exception("question " . $question->get_id() . " doesn't belong to given moodle user $mdl_user_id ");
         }
     }
@@ -195,15 +195,22 @@ class util {
      *
      * @param question $question
      * @param game $game
+     * @param int $userid The id of the logged in moodle user.
      * @throws dml_exception
      */
-    public static function check_question_timeout(question $question, game $game) {
-        if (!$question->is_finished() && $question->get_timecreated() + $game->get_question_duration() < \time()) {
-            $question->set_mdl_answer_given(0);
-            $question->set_finished(true);
-            $question->set_correct(false);
-            $question->set_score(0);
-            $question->set_timeremaining(0);
+    public static function check_question_timeout(question $question, game $game, int $userid) {
+        if (!$question->is_finished_by($userid) && $question->get_timestart($userid) + $game->get_question_duration() < \time()) {
+            if ($question->is_mdl_user_1($userid)) {
+                $question->set_mdl_user_1_answer(0);
+                $question->set_mdl_user_1_finished(true);
+                $question->set_mdl_user_1_correct(false);
+                $question->set_mdl_user_1_score(0);
+            } else {
+                $question->set_mdl_user_2_answer(0);
+                $question->set_mdl_user_2_finished(true);
+                $question->set_mdl_user_2_correct(false);
+                $question->set_mdl_user_2_score(0);
+            }
             $question->save();
         }
     }

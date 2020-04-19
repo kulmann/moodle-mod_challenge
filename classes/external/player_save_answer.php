@@ -86,12 +86,10 @@ class player_save_answer extends external_api {
         $game = util::get_game($coursemodule);
         $question = util::get_question($questionid);
         util::validate_question(intval($USER->id), $question);
-        $topic = util::get_topic($question->get_topic());
-        $tournament = util::get_tournament($topic->get_tournament());
-        util::validate_tournament($game, $tournament);
+        $match = util::get_match($question->get_matchid());
 
         // some validations
-        if ($question->is_finished()) {
+        if ($question->is_finished_by(intval($USER->id))) {
             throw new moodle_exception('question has already been answered.');
         }
         $mdl_question = $question->get_mdl_question_ref();
@@ -111,27 +109,30 @@ class player_save_answer extends external_api {
         }
         $correct_mdl_answer = array_pop($correct_mdl_answers);
         assert($correct_mdl_answer instanceof question_answer);
-        $question->set_mdl_answer_given($mdlanswerid);
-        $question->set_finished(true);
-        if ($mdlanswerid == 0) {
-            $question->set_correct(false);
-            $question->set_timeremaining(0);
+        $answered_correct = intval($correct_mdl_answer->id) === $mdlanswerid;
+        if ($question->is_mdl_user_1(intval($USER->id))) {
+            $question->set_mdl_user_1_answer($mdlanswerid);
+            $question->set_mdl_user_1_finished(true);
+            $question->set_mdl_user_1_correct($answered_correct);
+            if ($answered_correct) {
+                $time_taken = (time() - $question->get_mdl_user_1_timestart());
+                $time_available = $game->get_question_duration();
+                $question->set_mdl_user_1_score(max(0, min($time_available, ($time_available - $time_taken))));
+            }
         } else {
-            $question->set_correct($correct_mdl_answer->id == $mdlanswerid);
-            $time_taken = (\time() - $question->get_timecreated());
-            $time_available = $game->get_question_duration();
-            $time_remaining = \max(0, ($time_available - $time_taken));
-            $question->set_timeremaining($time_remaining);
-        }
-        if ($question->is_correct()) {
-            $max_points = $game->get_question_duration();
-            $points = \min($time_remaining, $max_points);
-            $question->set_score($points);
+            $question->set_mdl_user_2_answer($mdlanswerid);
+            $question->set_mdl_user_2_finished(true);
+            $question->set_mdl_user_2_correct($answered_correct);
+            if ($answered_correct) {
+                $time_taken = (time() - $question->get_mdl_user_2_timestart());
+                $time_available = $game->get_question_duration();
+                $question->set_mdl_user_2_score(max(0, min($time_available, ($time_available - $time_taken))));
+            }
         }
         $question->save();
 
         // create export
-        $exporter = new question_dto($question, $tournament, $game, $ctx);
+        $exporter = new question_dto($question, $match, $game, $ctx);
         return $exporter->export($renderer);
     }
 }

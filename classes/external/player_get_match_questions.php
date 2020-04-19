@@ -75,7 +75,7 @@ class player_get_match_questions extends external_api {
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
-        global $PAGE;
+        global $PAGE, $USER;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
@@ -86,7 +86,7 @@ class player_get_match_questions extends external_api {
         $result = [];
         $questions = $match->get_questions();
         foreach ($questions as $question) {
-            util::check_question_timeout($question, $game);
+            util::check_question_timeout($question, $game, intval($USER->id));
             $exporter = new question_dto($question, $match, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }

@@ -105,7 +105,7 @@ class player_request_match_question extends external_api {
         if ($question === null) {
             // create question
             $question = new question();
-            $question->set_match($matchid);
+            $question->set_matchid($matchid);
             $question->set_number($number);
 
             // assign moodle user

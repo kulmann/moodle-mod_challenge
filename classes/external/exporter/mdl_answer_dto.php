@@ -18,7 +18,7 @@ namespace mod_challenge\external\exporter;
 
 use context;
 use core\external\exporter;
-use mod_challenge\model\_question;
+use mod_challenge\model\question;
 use renderer_base;
 use function array_search;
 use function intval;
@@ -39,7 +39,7 @@ class mdl_answer_dto extends exporter {
      */
     protected $mdl_answer;
     /**
-     * @var _question
+     * @var question
      */
     protected $question;
 
@@ -47,12 +47,12 @@ class mdl_answer_dto extends exporter {
      * mdl_answer_dto constructor.
      *
      * @param \question_answer $mdl_answer
-     * @param _question $question
+     * @param question $question
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(\question_answer $mdl_answer, _question $question, context $context) {
+    public function __construct(\question_answer $mdl_answer, question $question, context $context) {
         $this->mdl_answer = $mdl_answer;
         $this->question = $question;
         parent::__construct([], ['context' => $context]);

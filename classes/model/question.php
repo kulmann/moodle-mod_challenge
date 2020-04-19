@@ -45,7 +45,7 @@ class question extends abstract_model {
     /**
      * @var int The id of the associated match.
      */
-    protected $match;
+    protected $matchid;
     /**
      * @var int The position within the question set of the match.
      */
@@ -122,7 +122,7 @@ class question extends abstract_model {
         parent::__construct('challenge_questions', 0);
         $this->timecreated = \time();
         $this->timemodified = \time();
-        $this->match = 0;
+        $this->matchid = 0;
         $this->number = 0;
         $this->mdl_question = 0;
         $this->mdl_answers_order = '';
@@ -155,7 +155,7 @@ class question extends abstract_model {
         $this->id = isset($data['id']) ? $data['id'] : 0;
         $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
-        $this->match = $data['match'];
+        $this->matchid = $data['matchid'];
         $this->number = $data['number'];
         $this->mdl_question = $data['mdl_question'];
         $this->mdl_answers_order = $data['mdl_answers_order'];
@@ -203,6 +203,58 @@ class question extends abstract_model {
     }
 
     /**
+     * Checks if the given moodle user has finished this question.
+     *
+     * @param int $mdl_user_id
+     * @return bool
+     */
+    public function is_finished_by($mdl_user_id): bool {
+        if ($this->is_mdl_user_1($mdl_user_id)) {
+            return $this->mdl_user_1_finished;
+        } elseif ($this->is_mdl_user_2($mdl_user_id)) {
+            return $this->mdl_user_2_finished;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Gets the question start time of the given user.
+     *
+     * @param int $mdl_user_id
+     * @return int
+     */
+    public function get_timestart($mdl_user_id): int {
+        if ($this->is_mdl_user_1($mdl_user_id)) {
+            return $this->get_mdl_user_1_timestart();
+        } elseif($this->is_mdl_user_2($mdl_user_id)) {
+            return $this->get_mdl_user_2_timestart();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Checks if the given moodle user is the first match user.
+     *
+     * @param int $mdl_user_id
+     * @return bool
+     */
+    public function is_mdl_user_1($mdl_user_id): bool {
+        return $this->get_mdl_user_1() === $mdl_user_id;
+    }
+
+    /**
+     * Checks if the given moodle user is the second match user.
+     *
+     * @param int $mdl_user_id
+     * @return bool
+     */
+    public function is_mdl_user_2($mdl_user_id): bool {
+        return $this->get_mdl_user_2() === $mdl_user_id;
+    }
+
+    /**
      * @return int
      */
     public function get_timecreated(): int {
@@ -226,15 +278,15 @@ class question extends abstract_model {
     /**
      * @return int
      */
-    public function get_match(): int {
-        return $this->match;
+    public function get_matchid(): int {
+        return $this->matchid;
     }
 
     /**
-     * @param int $match
+     * @param int $matchid
      */
-    public function set_match(int $match) {
-        $this->match = $match;
+    public function set_matchid(int $matchid) {
+        $this->matchid = $matchid;
     }
 
     /**

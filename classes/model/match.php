@@ -90,10 +90,10 @@ class match extends abstract_model {
         $sql = "
                 SELECT question.*
                   FROM {challenge_questions} question 
-                 WHERE question.match = :match
+                 WHERE question.matchid = :matchid
               ORDER BY question.number ASC
         ";
-        $sql_conditions = ['match' => $this->get_id()];
+        $sql_conditions = ['matchid' => $this->get_id()];
         $records = $DB->get_records_sql($sql, $sql_conditions);
         $result = [];
         foreach ($records as $record) {
@@ -115,9 +115,9 @@ class match extends abstract_model {
         global $DB;
         $sql = "SELECT question.*
                   FROM {challenge_questions} question
-                 WHERE question.match = :match AND question.number = :number
+                 WHERE question.matchid = :matchid AND question.number = :number
         ";
-        $sql_conditions = ['match' => $this->get_id(), 'number' => $number];
+        $sql_conditions = ['matchid' => $this->get_id(), 'number' => $number];
         $record = $DB->get_record_sql($sql, $sql_conditions);
         if ($record !== false) {
             $question = new question();

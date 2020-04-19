@@ -78,32 +78,7 @@ export default {
          * @returns {Promise<void>}
          */
         async submitAnswer(context, payload) {
-            return await ajax('mod_challenge_player_submit_question_answer', payload);
-        },
-        /**
-         * Fetches the moodle question for the currently loaded question.
-         *
-         * @param context
-         *
-         * @param payload
-         * @returns {Promise<void>}
-         */
-        async fetchMdlQuestion(context, payload) {
-            return await ajax('mod_challenge_player_get_mdl_question', payload);
-        },
-        /**
-         * Fetches the moodle answers for the currently loaded question.
-         *
-         * @param context
-         *
-         * @param payload
-         * @returns {Promise<void>}
-         */
-        async fetchMdlAnswers(context, payload) {
-            const answers = await ajax('mod_challenge_player_get_mdl_answers', payload);
-            return sortBy(answers, function (answer) {
-                return answer.label;
-            });
-        },
+            return await ajax('mod_challenge_player_save_answer', payload);
+        }
     }
 }

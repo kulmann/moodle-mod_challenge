@@ -78,7 +78,7 @@ class question_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'timestamp when this question was modified',
             ],
-            'match' => [
+            'matchid' => [
                 'type' => PARAM_INT,
                 'description' => 'id of the match this question was chosen from',
             ],
@@ -89,10 +89,6 @@ class question_dto extends exporter {
             'mdl_question' => [
                 'type' => PARAM_INT,
                 'description' => 'id of the moodle question instance',
-            ],
-            'mdl_answers_order' => [
-                'type' => PARAM_ALPHA,
-                'description' => 'ids of the moodle answers of this question with fixed order'
             ],
             'mdl_user_winner' => [
                 'type' => PARAM_INT,

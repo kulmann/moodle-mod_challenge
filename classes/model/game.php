@@ -310,14 +310,14 @@ class game extends abstract_model {
         $round_ids = array_map(function(round $round) {
             return $round->get_id();
         }, $this->get_rounds());
-        $round_index = indexOf($round_id, $round_ids);
+        $round_index = array_search($round_id, $round_ids);
         $result = [];
         foreach($this->get_categories() as $category) {
-            $round_index_first = indexOf($category->get_round_first(), $round_ids);
+            $round_index_first = array_search($category->get_round_first(), $round_ids);
             if ($round_index < $round_index_first) {
                 continue;
             }
-            $round_index_last = $category->get_round_last() ? indexOf($category->get_round_last(), $round_ids) : PHP_INT_MAX;
+            $round_index_last = $category->get_round_last() ? array_search($category->get_round_last(), $round_ids) : PHP_INT_MAX;
             if ($round_index > $round_index_last) {
                 continue;
             }
