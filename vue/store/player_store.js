@@ -1,101 +1,63 @@
-import first from 'lodash/first';
 import sortBy from 'lodash/sortBy';
-import forEach from 'lodash/forEach';
+import first from 'lodash/first';
 import {ajax} from "./index";
 
 export default {
     namespaced: true,
     state: {
         initialized: false,
-        finishedTournaments: [],
-        activeTournaments: [],
+        matches: []
     },
     mutations: {
         setPlayerInitialized(state, initialized) {
             state.initialized = initialized;
         },
-        setTournaments(state, payload) {
-            switch (payload.state) {
-                case 'finished':
-                    state.finishedTournaments = payload.tournaments;
-                    break;
-                case 'progress':
-                    state.activeTournaments = payload.tournaments;
-                    break;
-                default: // change nothing
-            }
-        },
+        setMatches(state, matches) {
+            state.matches = matches;
+        }
     },
     getters: {
-        getTournamentById: state => id => {
-            const active = state.activeTournaments.filter(t => t.id === id);
-            if (active.length > 0) {
-                return first(active);
-            }
-            const finished = state.finishedTournaments.filter(t => t.id === id);
-            if (finished.length > 0) {
-                return first(finished);
+        getMatchById: state => id => {
+            return first(state.matches.filter(m => m.id === id));
+        },
+        getCurrentMatch: (state, getters, rootState, rootGetters) => {
+            const currentRound = rootGetters.getCurrentRound;
+            if (currentRound) {
+                return first(state.matches.filter(m => m.round === currentRound.id));
             }
             return null;
         }
     },
     actions: {
         /**
-         * Initializes everything (gameSession, gameMode, current question, etc).
+         * Initializes everything (current round, current match, etc).
          *
          * @param context
          */
         async initPlayer(context) {
-            context.dispatch('fetchUserTournaments').then(() => {
-                context.commit('setPlayerInitialized', true);
-            });
+            await context.dispatch('fetchMatches', {});
+            context.commit('setPlayerInitialized', true);
         },
         /**
-         * Fetches the current game session from the server. If none exists, a new one will be created, so this
-         * always returns a valid game session.
-         *
-         * @param context
-         *
-         * @returns {Promise<void>}
-         */
-        async fetchUserTournaments(context) {
-            const userTournaments = await ajax('mod_challenge_get_user_tournaments');
-            forEach(['finished', 'progress'], state => {
-                context.commit('setTournaments', {
-                    tournaments: userTournaments.filter(t => t.state === state),
-                    state,
-                });
-            });
-        },
-        /**
-         * Fetches the matches of a tournament.
+         * Fetches the matches of a player
          *
          * @param context
          * @param payload
          * @returns {Promise<void>}
          */
         async fetchMatches(context, payload) {
-            return await ajax('mod_challenge_get_user_tournament_matches', payload);
+            const result = await ajax('mod_challenge_player_get_matches', payload);
+            context.commit('setMatches', result);
         },
         /**
-         * Fetches all questions.
-         *
-         * @param context
-         * @param payload
-         * @returns {Promise<void>}
-         */
-        async fetchQuestions(context, payload) {
-            return await ajax('mod_challenge_tournament_get_questions', payload);
-        },
-        /**
-         * Fetches the topics of a tournament.
+         * Fetches the questions of a match.
          *
          * @param context
          * @param payload
          * @returns {Promise<*>}
          */
-        async fetchTopics(context, payload) {
-            return await ajax('mod_challenge_tournament_get_topics', payload);
+        async fetchMatchQuestions(context, payload) {
+            return await ajax('mod_challenge_player_get_match_questions', payload);
         },
         /**
          * Requests a question by topic id and fetches the chosen question.
@@ -104,8 +66,8 @@ export default {
          * @param payload
          * @returns {Promise<*>}
          */
-        async requestQuestionByTopic(context, payload) {
-            return await ajax('mod_challenge_tournament_request_question', payload);
+        async requestQuestionForMatch(context, payload) {
+            return await ajax('mod_challenge_player_request_match_question', payload);
         },
         /**
          * Submit an answer to the currently loaded question.
@@ -116,7 +78,7 @@ export default {
          * @returns {Promise<void>}
          */
         async submitAnswer(context, payload) {
-            return await ajax('mod_challenge_question_submit_answer', payload);
+            return await ajax('mod_challenge_player_submit_question_answer', payload);
         },
         /**
          * Fetches the moodle question for the currently loaded question.
@@ -127,7 +89,7 @@ export default {
          * @returns {Promise<void>}
          */
         async fetchMdlQuestion(context, payload) {
-            return await ajax('mod_challenge_get_mdl_question', payload);
+            return await ajax('mod_challenge_player_get_mdl_question', payload);
         },
         /**
          * Fetches the moodle answers for the currently loaded question.
@@ -138,7 +100,7 @@ export default {
          * @returns {Promise<void>}
          */
         async fetchMdlAnswers(context, payload) {
-            const answers = await ajax('mod_challenge_get_mdl_answers', payload);
+            const answers = await ajax('mod_challenge_player_get_mdl_answers', payload);
             return sortBy(answers, function (answer) {
                 return answer.label;
             });

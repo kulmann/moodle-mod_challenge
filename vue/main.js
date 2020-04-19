@@ -50,13 +50,13 @@ function init(coursemoduleid, contextid) {
             name: 'game-screen',
             meta: {title: 'game_screen_title'},
             children: [{
-                path: 'tournaments',
-                name: 'player-tournament-list',
+                path: 'matches',
+                name: 'player-matches-list',
             }, {
-                path: 'tournament/:tournamentId',
-                name: 'player-tournament-show',
+                path: 'matches/:forcedMatchId',
+                name: 'player-match-show',
             }, {
-                path: 'question/:matchId/:topicId',
+                path: 'question/:forcedMatchId/:questionNumber',
                 name: 'player-question-play',
             }]
         }, {

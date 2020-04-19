@@ -1,8 +1,10 @@
 import moodleAjax from 'core/ajax';
 import moodleStorage from 'core/localstorage';
 import first from 'lodash/first';
+import last from 'lodash/last';
 import $ from 'jquery';
 import {ajax} from "./index";
+import {ROUND_ACTIVE, ROUND_FINISHED} from "../constants";
 
 export default {
     state: {
@@ -61,14 +63,26 @@ export default {
         },
         getFinishedRounds: state => {
             return state.rounds
-                .filter(r => r.finished)
+                .filter(r => r.state === ROUND_FINISHED)
                 .sort((r1, r2) => r1.timestart < r2.timestart ? -1 : 1);
         },
+        /**
+         * Current round is either the active one or the most recent finished one.
+         * If no round has ever been started, we're returning undefined.
+         *
+         * @param state
+         * @returns {*}
+         */
         getCurrentRound: state => {
-            const unfinishedRounds = state.rounds
-                .filter(r => !r.finished)
-                .sort((r1, r2) => r1.timestart < r2.timestart ? -1 : 1);
-            return first(unfinishedRounds);
+            const activeRound = state.rounds.filter(r => r.state === ROUND_ACTIVE);
+            if (activeRound.length === 1) {
+                return first(activeRound);
+            }
+            const finishedRounds = this.getFinishedRounds(state);
+            return last(finishedRounds);
+        },
+        getRoundById: state => roundId => {
+            return first(state.rounds.filter(round => round.id === roundId));
         },
         getMdlUser: state => (mdlUserId) => {
             return first(state.mdlUsers.filter(user => user.id === mdlUserId));

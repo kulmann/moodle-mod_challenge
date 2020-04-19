@@ -4,8 +4,7 @@
         loadingAlert(v-if="!isInitialized", message="Loading Game").uk-text-center
         failureAlert(v-else-if="isAdminUser", :message="strings.game_not_allowed").uk-text-center
         template(v-else)
-            tournaments(v-if="viewMode === VIEW_MODE_TOURNAMENTS")
-            tournamentShow(v-else-if="viewMode === VIEW_MODE_TOURNAMENT_SHOW")
+            matches(v-if="viewMode === VIEW_MODE_MATCHES_LIST", :rounds="rounds", :matches="matches")
             question(v-else-if="viewMode === VIEW_MODE_QUESTION_PLAY")
 </template>
 
@@ -15,8 +14,7 @@
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import loadingAlert from '../helper/loading-alert';
     import infoAlert from "../helper/info-alert";
-    import tournaments from "./tournaments/tournaments";
-    import tournamentShow from "./tournament/tournament-show";
+    import matches from "./matches/matches";
     import question from "./question/question";
 
     export default {
@@ -24,23 +22,26 @@
         data() {
             return {
                 VIEW_MODE_NONE: 'none',
-                VIEW_MODE_TOURNAMENTS: 'player-tournament-list',
-                VIEW_MODE_TOURNAMENT_SHOW: 'player-tournament-show',
+                VIEW_MODE_MATCHES_LIST: 'player-matches-list',
                 VIEW_MODE_QUESTION_PLAY: 'player-question-play',
             }
         },
         computed: {
             ...mapState([
                 'strings',
+                'rounds'
             ]),
             ...mapGetters([
                 'isAdminUser',
-                'isInitialized'
+                'isInitialized',
+                'getCurrentRound'
+            ]),
+            ...mapState('player', [
+                'matches'
             ]),
             viewMode() {
                 const viewModes = [
-                    this.VIEW_MODE_TOURNAMENTS,
-                    this.VIEW_MODE_TOURNAMENT_SHOW,
+                    this.VIEW_MODE_MATCHES_LIST,
                     this.VIEW_MODE_QUESTION_PLAY,
                 ];
                 const viewMode = this.$route.name;
@@ -53,13 +54,12 @@
         },
         mounted() {
             if (this.viewMode === this.VIEW_MODE_NONE) {
-                this.$router.push({name: this.VIEW_MODE_TOURNAMENTS});
+                this.$router.push({name: this.VIEW_MODE_MATCHES_LIST});
             }
         },
         components: {
             question,
-            tournaments,
-            tournamentShow,
+            matches,
             infoAlert,
             loadingAlert,
             VkGrid

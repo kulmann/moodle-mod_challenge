@@ -252,6 +252,7 @@ class game extends abstract_model {
         $upcoming_round->set_timestart(time());
         $upcoming_round->set_timeend(time() + $this->calculate_round_duration_seconds());
         $upcoming_round->set_state(round::STATE_ACTIVE);
+        $upcoming_round->set_questions($this->get_question_count());
         $upcoming_round->save();
 
         // get participants
@@ -299,34 +300,60 @@ class game extends abstract_model {
     }
 
     /**
-     * Loads all tournaments of this game where the given user is involved in a match.
+     * Gets all categories that are active for the given $round_id.
+     *
+     * @param int $round_id
+     * @return category[]
+     * @throws dml_exception
+     */
+    public function get_categories_by_round($round_id) {
+        $round_ids = array_map(function(round $round) {
+            return $round->get_id();
+        }, $this->get_rounds());
+        $round_index = indexOf($round_id, $round_ids);
+        $result = [];
+        foreach($this->get_categories() as $category) {
+            $round_index_first = indexOf($category->get_round_first(), $round_ids);
+            if ($round_index < $round_index_first) {
+                continue;
+            }
+            $round_index_last = $category->get_round_last() ? indexOf($category->get_round_last(), $round_ids) : PHP_INT_MAX;
+            if ($round_index > $round_index_last) {
+                continue;
+            }
+            $result[] = $category;
+        }
+        return $result;
+    }
+
+    /**
+     * Loads all matches of this game the given user is involved in.
      *
      * @param int $mdl_user_id
      *
      * @return tournament[]
      * @throws dml_exception
      */
-    public function get_user_tournaments($mdl_user_id) {
+    public function get_user_matches($mdl_user_id) {
         global $DB;
         $sql_params = [
             'game' => $this->get_id(),
+            'state_deleted' => round::STATE_DELETED,
             'user_1' => $mdl_user_id,
-            'user_2' => $mdl_user_id,
-            'state_unpublished' => tournament::STATE_UNPUBLISHED,
-            'state_dumped' => tournament::STATE_DUMPED
+            'user_2' => $mdl_user_id
         ];
-        $records = $DB->get_records_sql("SELECT t.* 
-                    FROM {challenge_tournaments} t
-                    INNER JOIN {challenge_tnmt_matches} m ON t.id=m.tournament
-                    WHERE t.game = :game 
+        $records = $DB->get_records_sql("SELECT m.* 
+                    FROM {challenge_matches} m
+                    INNER JOIN {challenge_rounds} r ON m.round=r.id 
+                    WHERE r.game = :game 
+                        AND r.state <> :state_deleted
                         AND (m.mdl_user_1 = :user_1 OR m.mdl_user_2 = :user_2) 
-                        AND t.state <> :state_unpublished AND t.state <> :state_dumped
                     ORDER BY m.timecreated DESC", $sql_params);
         $result = [];
-        foreach ($records as $tournament_data) {
-            $tournament = new tournament();
-            $tournament->apply($tournament_data);
-            $result[] = $tournament;
+        foreach ($records as $match_data) {
+            $match = new match();
+            $match->apply($match_data);
+            $result[] = $match;
         }
         return $result;
     }

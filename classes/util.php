@@ -89,6 +89,23 @@ class util {
     }
 
     /**
+     * Checks that the match belongs to the given $round.
+     *
+     * @param game $game
+     * @param match $match
+     *
+     * @throws invalid_parameter_exception
+     */
+    public static function validate_match(game $game, match $match) {
+        try {
+            $round = self::get_round($match->get_round());
+        } catch(dml_exception $e) {
+            throw new invalid_parameter_exception("match " . $match->get_id() . " doesn't belong to given game");
+        }
+        self::validate_round($game, $round);
+    }
+
+    /**
      * Checks that the category belongs to the given $game.
      *
      * @param game $game

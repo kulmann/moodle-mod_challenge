@@ -88,6 +88,10 @@ class round_dto extends exporter {
                 'type' => PARAM_NOTAGS,
                 'description' => 'the round name',
             ],
+            'questions' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of questions for this round. when round is started, this gets applied from the current value from the game.'
+            ]
         ];
     }
 

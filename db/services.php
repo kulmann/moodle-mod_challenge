@@ -103,17 +103,24 @@ $functions = [
         'ajax' => true,
     ],
     // PLAYER FUNCTIONS
-    'mod_challenge_player_get_question' => [
-        'classname' => 'mod_challenge\external\player_get_question',
+    'mod_challenge_player_get_match_questions' => [
+        'classname' => 'mod_challenge\external\player_get_match_questions',
         'methodname' => 'request',
-        'description' => 'Retrieves a new or existing question entity for the current match.',
+        'description' => 'Retrieves all questions of a match for the current user.',
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_player_get_questions' => [
-        'classname' => 'mod_challenge\external\player_get_questions',
+    'mod_challenge_player_get_matches' => [
+        'classname' => 'mod_challenge\external\player_get_matches',
         'methodname' => 'request',
-        'description' => 'Retrieves all questions of a game for the current user.',
+        'description' => 'Retrieves all matches of a game the logged in user is involved in.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+    'mod_challenge_player_request_match_question' => [
+        'classname' => 'mod_challenge\external\player_request_match_question',
+        'methodname' => 'request',
+        'description' => 'Retrieves a new or existing question entity for the current match.',
         'type' => 'write',
         'ajax' => true,
     ],

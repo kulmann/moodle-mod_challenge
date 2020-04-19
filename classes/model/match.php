@@ -90,9 +90,10 @@ class match extends abstract_model {
         $sql = "
                 SELECT question.*
                   FROM {challenge_questions} question 
-                 WHERE question.match = :match AND (question.mdl_user = :user1 OR question.mdl_user = :user2)
+                 WHERE question.match = :match
+              ORDER BY question.number ASC
         ";
-        $sql_conditions = ['match' => $this->get_id(), 'user1' => $this->get_mdl_user_1(), 'user2' => $this->get_mdl_user_2()];
+        $sql_conditions = ['match' => $this->get_id()];
         $records = $DB->get_records_sql($sql, $sql_conditions);
         $result = [];
         foreach ($records as $record) {
@@ -101,6 +102,29 @@ class match extends abstract_model {
             $result[] = $question;
         }
         return $result;
+    }
+
+    /**
+     * Gets the question for the given number of this match, or returns null if it doesn't exist, yet.
+     *
+     * @param int $number
+     * @return question|null
+     * @throws \dml_exception
+     */
+    public function get_question_by_number($number) {
+        global $DB;
+        $sql = "SELECT question.*
+                  FROM {challenge_questions} question
+                 WHERE question.match = :match AND question.number = :number
+        ";
+        $sql_conditions = ['match' => $this->get_id(), 'number' => $number];
+        $record = $DB->get_record_sql($sql, $sql_conditions);
+        if ($record !== false) {
+            $question = new question();
+            $question->apply($record);
+            return $question;
+        }
+        return null;
     }
 
     /**

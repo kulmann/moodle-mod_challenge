@@ -195,16 +195,21 @@ $string['game_loading_question'] = 'Frage wird geladen';
 $string['game_btn_continue'] = 'Weiter';
 $string['game_btn_show'] = 'Zeigen';
 $string['game_btn_answer'] = 'Beantworten';
+$string['game_match_step'] = 'Runde {$a->step} / {$a->total}';
+$string['game_match_loading'] = 'Match-Daten werden geladen';
+$string['game_match_show_error'] = 'Bei der Anzeige des ausgewählten Matches ist etwas schiefgelaufen.';
+$string['game_match_versus'] = 'gegen';
+$string['game_match_step'] = 'Runde {$a->step} / {$a->total}';
+$string['game_match_lbl_open'] = 'offen';
+$string['game_match_lbl_won'] = 'gewonnen';
+$string['game_match_lbl_lost'] = 'verloren';
+$string['game_match_lbl_question'] = 'Frage {$a} beantworten';
+
+
+
+/* DEPRECATED */
 $string['game_tournaments_active_title'] = 'Aktive Turniere';
 $string['game_tournaments_active_none'] = 'Sie nehmen derzeit an keinen Turnieren teil.';
 $string['game_tournaments_finished_title'] = 'Beendete Turniere';
 $string['game_tournaments_finished_none'] = 'Sie haben noch kein Turnier beendet.';
 $string['game_tournaments_list_name'] = 'Name';
-$string['game_tournament_match_loading'] = 'Match-Daten werden geladen';
-$string['game_tournament_match_show_error'] = 'Bei der Anzeige des ausgewählten Matches ist etwas schiefgelaufen.';
-$string['game_tournament_match_versus'] = 'gegen';
-$string['game_tournament_match_step'] = 'Runde {$a->step} / {$a->total}';
-$string['game_tournament_match_lbl_open'] = 'offen';
-$string['game_tournament_match_lbl_won'] = 'gewonnen';
-$string['game_tournament_match_lbl_lost'] = 'verloren';
-$string['game_tournament_match_lbl_question'] = 'Frage {$a} beantworten';

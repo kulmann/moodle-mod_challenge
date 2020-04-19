@@ -195,16 +195,20 @@ $string['game_loading_question'] = 'Loading question details';
 $string['game_btn_continue'] = 'Continue';
 $string['game_btn_show'] = 'Show';
 $string['game_btn_answer'] = 'Answer';
+$string['game_match_loading'] = 'Loading match data';
+$string['game_match_show_error'] = 'Something went wrong trying to show the selected match.';
+$string['game_match_versus'] = 'versus';
+$string['game_match_step'] = 'Round {$a->step} / {$a->total}';
+$string['game_match_lbl_open'] = 'open';
+$string['game_match_lbl_won'] = 'won';
+$string['game_match_lbl_lost'] = 'lost';
+$string['game_match_lbl_question'] = 'Answer Question {$a}';
+
+
+
+/* DEPRECATED */
 $string['game_tournaments_active_title'] = 'Active tournaments';
 $string['game_tournaments_active_none'] = 'You are not participating in any tournaments, yet.';
 $string['game_tournaments_finished_title'] = 'Finished tournaments';
 $string['game_tournaments_finished_none'] = 'You have not finished any tournaments, yet.';
 $string['game_tournaments_list_name'] = 'Name';
-$string['game_tournament_match_loading'] = 'Loading match data';
-$string['game_tournament_match_show_error'] = 'Something went wrong trying to show the selected match.';
-$string['game_tournament_match_versus'] = 'versus';
-$string['game_tournament_match_step'] = 'Round {$a->step} / {$a->total}';
-$string['game_tournament_match_lbl_open'] = 'open';
-$string['game_tournament_match_lbl_won'] = 'won';
-$string['game_tournament_match_lbl_lost'] = 'lost';
-$string['game_tournament_match_lbl_question'] = 'Answer Question {$a}';

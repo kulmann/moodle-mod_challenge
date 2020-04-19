@@ -86,33 +86,65 @@ class question_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'position within the question set of the match',
             ],
-            'mdl_user' => [
-                'type' => PARAM_INT,
-                'description' => 'id of the moodle user this question was chosen for',
-            ],
             'mdl_question' => [
                 'type' => PARAM_INT,
                 'description' => 'id of the moodle question instance',
             ],
-            'mdl_answer_given' => [
-                'type' => PARAM_INT,
-                'description' => 'id of the moodle answer the user has chosen',
+            'mdl_answers_order' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'ids of the moodle answers of this question with fixed order'
             ],
-            'score' => [
+            'mdl_user_winner' => [
                 'type' => PARAM_INT,
-                'description' => 'score the user has reached by answering this question',
+                'description' => 'id of the moodle user who won this question',
             ],
-            'correct' => [
+            'mdl_user_1' => [
+                'type' => PARAM_INT,
+                'description' => 'id of the first moodle user this question was chosen for',
+            ],
+            'mdl_user_1_timestart' => [
+                'type' => PARAM_INT,
+                'description' => 'timestamp of when the first moodle user started this question',
+            ],
+            'mdl_user_1_answer' => [
+                'type' => PARAM_INT,
+                'description' => 'id of the moodle answer the first user has chosen',
+            ],
+            'mdl_user_1_score' => [
+                'type' => PARAM_INT,
+                'description' => 'score the first user has reached by answering this question',
+            ],
+            'mdl_user_1_correct' => [
                 'type' => PARAM_BOOL,
-                'description' => 'whether or not the question was answered correctly',
+                'description' => 'whether or not the question was answered correctly by the first user',
             ],
-            'finished' => [
+            'mdl_user_1_finished' => [
                 'type' => PARAM_BOOL,
-                'description' => 'whether or not the question was answered at all',
+                'description' => 'whether or not the question was answered at all by the first user',
             ],
-            'timeremaining' => [
+            'mdl_user_2' => [
                 'type' => PARAM_INT,
-                'description' => 'the time the user had left at the time of answering this question.',
+                'description' => 'id of the second moodle user this question was chosen for',
+            ],
+            'mdl_user_2_timestart' => [
+                'type' => PARAM_INT,
+                'description' => 'timestamp of when the second moodle user started this question',
+            ],
+            'mdl_user_2_answer' => [
+                'type' => PARAM_INT,
+                'description' => 'id of the moodle answer the second user has chosen',
+            ],
+            'mdl_user_2_score' => [
+                'type' => PARAM_INT,
+                'description' => 'score the second user has reached by answering this question',
+            ],
+            'mdl_user_2_correct' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether or not the question was answered correctly by the second user',
+            ],
+            'mdl_user_2_finished' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether or not the question was answered at all by the second user',
             ],
             // custom (non-model) fields
             'mdl_question_id' => [

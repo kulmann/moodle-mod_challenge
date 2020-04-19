@@ -16,7 +16,13 @@
 
 namespace mod_challenge\model;
 
+use coding_exception;
+use function question_categorylist;
+
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/lib/questionlib.php');
 
 /**
  * Class category
@@ -77,6 +83,20 @@ class category extends abstract_model {
         $this->round_last = isset($data['round_last']) ? $data['round_last'] : 0;
         $this->mdl_category = $data['mdl_category'];
         $this->subcategories = isset($data['subcategories']) ? ($data['subcategories'] == 1) : false;
+    }
+
+    /**
+     * Collects all category ids as array.
+     *
+     * @return int[]
+     * @throws coding_exception
+     */
+    public function get_mdl_category_ids() {
+        if ($this->includes_subcategories()) {
+            return question_categorylist($this->get_mdl_category());
+        } else {
+            return [$this->get_mdl_category()];
+        }
     }
 
     /**

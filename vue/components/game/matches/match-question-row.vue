@@ -1,5 +1,5 @@
 <template lang="pug">
-    router-link(:to="{name: 'player-question-play', params: {topicId: topic.id, matchId: match.id}}")
+    router-link(:to="{name: 'player-question-play', params: {matchId: match.id, questionNumber: question.number}}")
         vk-grid(matched, :class="{'_pointer': !isQuestionAnswered}").uk-flex-middle
             .uk-width-1-5
                 v-icon(:name="leftIcon", :scale="2", :style="leftStyle")
@@ -8,29 +8,45 @@
                     template(v-if="isQuestionAnswered")
                         span(v-if="mdlQuestion", v-html="mdlQuestion.questiontext")
                         loadingIcon(v-else)
-                    span(v-else) {{ strings.game_tournament_match_lbl_question | stringParams(index + 1) }}
+                    span(v-else) {{ strings.game_match_lbl_question | stringParams(question.number) }}
             .uk-width-1-5
                 v-icon(:name="rightIcon", :scale="2", :style="rightStyle")
 </template>
 
 <script>
-    import cloneDeep from 'lodash/cloneDeep';
     import first from 'lodash/first';
-    import langMixins from '../../../../mixins/lang-mixins';
-    import {mapGetters, mapState, mapActions} from 'vuex';
-    import level from "../../../helper/level";
-    import LoadingIcon from "../../../helper/loading-icon";
+    import isNil from 'lodash/isNil';
+    import langMixins from '../../../mixins/lang-mixins';
+    import {mapState, mapActions} from 'vuex';
+    import LoadingIcon from "../../helper/loading-icon";
 
     export default {
         mixins: [langMixins],
         props: {
-            index: Number,
-            match: Object,
-            topic: Object,
-            mdlUserLeft: Number,
-            mdlUserRight: Number,
-            questions: Array,
-            ownUserId: Number,
+            question: {
+                type: Object,
+                required: true
+            },
+            match: {
+                type: Object,
+                required: true
+            },
+            mdlUserLeft: {
+                type: Number,
+                required: true
+            },
+            mdlUserRight: {
+                type: Number,
+                required: true
+            },
+            questions: {
+                type: Array,
+                required: true
+            },
+            ownUserId: {
+                type: Number,
+                required: true
+            },
         },
         data () {
             return {
@@ -39,7 +55,6 @@
         },
         computed: {
             ...mapState(['strings', 'game']),
-            ...mapGetters(['getLevel']),
             leftQuestion() {
                 return this.getQuestionByUser(this.mdlUserLeft);
             },
@@ -58,17 +73,11 @@
             rightStyle() {
                 return this.getStyleByQuestion(this.rightQuestion);
             },
-            level() {
-                let level = cloneDeep(this.getLevel(this.topic.level));
-                level.finished = this.isQuestionAnswered;
-                level.seen = false;
-                return level;
-            },
             ownQuestion() {
                 return this.getQuestionByUser(this.ownUserId);
             },
             isQuestionAnswered() {
-                return this.ownQuestion !== null && this.ownQuestion.finished;
+                return !isNil(this.ownQuestion) && this.ownQuestion.finished;
             },
         },
         methods: {
@@ -76,14 +85,10 @@
                 fetchMdlQuestion: 'player/fetchMdlQuestion',
             }),
             getQuestionByUser(mdlUserId) {
-                const questions = this.questions.filter(q => (q.topic === this.topic.id && q.mdl_user === mdlUserId));
-                if (questions.length > 0) {
-                    return first(questions);
-                }
-                return null;
+                return first(this.questions.filter(q => q.mdl_user === mdlUserId));
             },
             getIconByQuestion(question) {
-                if (question === null || !question.finished) {
+                if (isNil(question) || !question.finished) {
                     return "play-circle";
                 } else {
                     if (question.correct) {
@@ -95,7 +100,7 @@
             },
             getStyleByQuestion(question) {
                 let styles = [];
-                if (question === null || !question.finished) {
+                if (isNil(question) || !question.finished) {
                     styles.push("color: #cccccc;");
                 } else {
                     if (question.correct) {
@@ -117,7 +122,7 @@
                 })
             }
         },
-        components: {LoadingIcon, level}
+        components: {LoadingIcon}
     }
 </script>
 

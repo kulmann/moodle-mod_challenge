@@ -51,10 +51,6 @@ class question extends abstract_model {
      */
     protected $number;
     /**
-     * @var int The id of the moodle user who got this question.
-     */
-    protected $mdl_user;
-    /**
      * @var int The id of the moodle question.
      */
     protected $mdl_question;
@@ -63,25 +59,57 @@ class question extends abstract_model {
      */
     protected $mdl_answers_order;
     /**
+     * @var int The id of the moodle user who won this question.
+     */
+    protected $mdl_user_winner;
+    /**
+     * @var int The id of the moodle user who got this question.
+     */
+    protected $mdl_user_1;
+    /**
+     * @var int The timestamp of when the user started the question.
+     */
+    protected $mdl_user_1_timestart;
+    /**
      * @var int The id of the moodle answer the user has chosen.
      */
-    protected $mdl_answer_given;
+    protected $mdl_user_1_answer;
     /**
      * @var int The score the user has reached by answering this question.
      */
-    protected $score;
+    protected $mdl_user_1_score;
     /**
      * @var bool Whether or not the question was answered correctly.
      */
-    protected $correct;
+    protected $mdl_user_1_correct;
     /**
      * @var bool Whether or not the question was answered at all.
      */
-    protected $finished;
+    protected $mdl_user_1_finished;
     /**
-     * @var int The remaining time in seconds for answering this question at the time of answer submission.
+     * @var int The id of the moodle user who got this question.
      */
-    protected $timeremaining;
+    protected $mdl_user_2;
+    /**
+     * @var int The timestamp of when the user started the question.
+     */
+    protected $mdl_user_2_timestart;
+    /**
+     * @var int The id of the moodle answer the user has chosen.
+     */
+    protected $mdl_user_2_answer;
+    /**
+     * @var int The score the user has reached by answering this question.
+     */
+    protected $mdl_user_2_score;
+    /**
+     * @var bool Whether or not the question was answered correctly.
+     */
+    protected $mdl_user_2_correct;
+    /**
+     * @var bool Whether or not the question was answered at all.
+     */
+    protected $mdl_user_2_finished;
     /**
      * @var \question_definition
      */
@@ -96,14 +124,21 @@ class question extends abstract_model {
         $this->timemodified = \time();
         $this->match = 0;
         $this->number = 0;
-        $this->mdl_user = 0;
         $this->mdl_question = 0;
         $this->mdl_answers_order = '';
-        $this->mdl_answer_given = 0;
-        $this->score = 0;
-        $this->correct = 0;
-        $this->finished = 0;
-        $this->timeremaining = -1;
+        $this->mdl_user_winner = 0;
+        $this->mdl_user_1 = 0;
+        $this->mdl_user_1_timestart = 0;
+        $this->mdl_user_1_answer = 0;
+        $this->mdl_user_1_score = 0;
+        $this->mdl_user_1_correct = false;
+        $this->mdl_user_1_finished = false;
+        $this->mdl_user_2 = 0;
+        $this->mdl_user_2_timestart = 0;
+        $this->mdl_user_2_answer = 0;
+        $this->mdl_user_2_score = 0;
+        $this->mdl_user_2_correct = false;
+        $this->mdl_user_2_finished = false;
     }
 
     /**
@@ -122,14 +157,23 @@ class question extends abstract_model {
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
         $this->match = $data['match'];
         $this->number = $data['number'];
-        $this->mdl_user = $data['mdl_user'];
         $this->mdl_question = $data['mdl_question'];
         $this->mdl_answers_order = $data['mdl_answers_order'];
-        $this->mdl_answer_given = isset($data['mdl_answer_given']) ? $data['mdl_answer_given'] : null;
-        $this->score = isset($data['score']) ? $data['score'] : 0;
-        $this->correct = isset($data['correct']) ? ($data['correct'] == 1) : false;
-        $this->finished = isset($data['finished']) ? ($data['finished'] == 1) : false;
-        $this->timeremaining = isset($data['timeremaining']) ? $data['timeremaining'] : -1;
+        $this->mdl_user_winner = isset($data['mdl_user_winner']) ? $data['mdl_user_winner'] : 0;
+        // user 1
+        $this->mdl_user_1 = isset($data['mdl_user_1']) ? $data['mdl_user_1'] : 0;
+        $this->mdl_user_1_timestart = isset($data['mdl_user_1_timestart']) ? $data['mdl_user_1_timestart'] : 0;
+        $this->mdl_user_1_answer = isset($data['mdl_user_1_answer']) ? $data['mdl_user_1_answer'] : null;
+        $this->mdl_user_1_score = isset($data['mdl_user_1_score']) ? $data['mdl_user_1_score'] : 0;
+        $this->mdl_user_1_correct = isset($data['mdl_user_1_correct']) ? ($data['mdl_user_1_correct'] == 1) : false;
+        $this->mdl_user_1_finished = isset($data['mdl_user_1_finished']) ? ($data['mdl_user_1_finished'] == 1) : false;
+        // user 2
+        $this->mdl_user_2 = isset($data['mdl_user_2']) ? $data['mdl_user_2'] : 0;
+        $this->mdl_user_2_timestart = isset($data['mdl_user_2_timestart']) ? $data['mdl_user_2_timestart'] : 0;
+        $this->mdl_user_2_answer = isset($data['mdl_user_2_answer']) ? $data['mdl_user_2_answer'] : null;
+        $this->mdl_user_2_score = isset($data['mdl_user_2_score']) ? $data['mdl_user_2_score'] : 0;
+        $this->mdl_user_2_correct = isset($data['mdl_user_2_correct']) ? ($data['mdl_user_2_correct'] == 1) : false;
+        $this->mdl_user_2_finished = isset($data['mdl_user_2_finished']) ? ($data['mdl_user_2_finished'] == 1) : false;
     }
 
     /**
@@ -210,20 +254,6 @@ class question extends abstract_model {
     /**
      * @return int
      */
-    public function get_mdl_user(): int {
-        return $this->mdl_user;
-    }
-
-    /**
-     * @param int $mdl_user
-     */
-    public function set_mdl_user(int $mdl_user) {
-        $this->mdl_user = $mdl_user;
-    }
-
-    /**
-     * @return int
-     */
     public function get_mdl_question(): int {
         return $this->mdl_question;
     }
@@ -231,7 +261,7 @@ class question extends abstract_model {
     /**
      * @param int $mdl_question
      */
-    public function set_mdl_question(int $mdl_question) {
+    public function set_mdl_question(int $mdl_question): void {
         $this->mdl_question = $mdl_question;
     }
 
@@ -245,77 +275,189 @@ class question extends abstract_model {
     /**
      * @param string $mdl_answers_order
      */
-    public function set_mdl_answers_order(string $mdl_answers_order) {
+    public function set_mdl_answers_order(string $mdl_answers_order): void {
         $this->mdl_answers_order = $mdl_answers_order;
     }
 
     /**
      * @return int
      */
-    public function get_mdl_answer_given(): int {
-        return $this->mdl_answer_given;
+    public function get_mdl_user_winner(): int {
+        return $this->mdl_user_winner;
     }
 
     /**
-     * @param int $mdl_answer_given
+     * @param int $mdl_user_winner
      */
-    public function set_mdl_answer_given(int $mdl_answer_given) {
-        $this->mdl_answer_given = $mdl_answer_given;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_score(): int {
-        return $this->score;
-    }
-
-    /**
-     * @param int $score
-     */
-    public function set_score(int $score) {
-        $this->score = $score;
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_correct(): bool {
-        return $this->correct;
-    }
-
-    /**
-     * @param bool $correct
-     */
-    public function set_correct(bool $correct) {
-        $this->correct = $correct;
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_finished(): bool {
-        return $this->finished;
-    }
-
-    /**
-     * @param bool $finished
-     */
-    public function set_finished(bool $finished) {
-        $this->finished = $finished;
+    public function set_mdl_user_winner(int $mdl_user_winner): void {
+        $this->mdl_user_winner = $mdl_user_winner;
     }
 
     /**
      * @return int
      */
-    public function get_timeremaining(): int {
-        return $this->timeremaining;
+    public function get_mdl_user_1(): int {
+        return $this->mdl_user_1;
     }
 
     /**
-     * @param int $timeremaining
+     * @param int $mdl_user_1
      */
-    public function set_timeremaining(int $timeremaining) {
-        $this->timeremaining = $timeremaining;
+    public function set_mdl_user_1(int $mdl_user_1): void {
+        $this->mdl_user_1 = $mdl_user_1;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user_1_timestart(): int {
+        return $this->mdl_user_1_timestart;
+    }
+
+    /**
+     * @param int $mdl_user_1_timestart
+     */
+    public function set_mdl_user_1_timestart(int $mdl_user_1_timestart): void {
+        $this->mdl_user_1_timestart = $mdl_user_1_timestart;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user_1_answer(): int {
+        return $this->mdl_user_1_answer;
+    }
+
+    /**
+     * @param int $mdl_user_1_answer
+     */
+    public function set_mdl_user_1_answer(int $mdl_user_1_answer): void {
+        $this->mdl_user_1_answer = $mdl_user_1_answer;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user_1_score(): int {
+        return $this->mdl_user_1_score;
+    }
+
+    /**
+     * @param int $mdl_user_1_score
+     */
+    public function set_mdl_user_1_score(int $mdl_user_1_score): void {
+        $this->mdl_user_1_score = $mdl_user_1_score;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_mdl_user_1_correct(): bool {
+        return $this->mdl_user_1_correct;
+    }
+
+    /**
+     * @param bool $mdl_user_1_correct
+     */
+    public function set_mdl_user_1_correct(bool $mdl_user_1_correct): void {
+        $this->mdl_user_1_correct = $mdl_user_1_correct;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_mdl_user_1_finished(): bool {
+        return $this->mdl_user_1_finished;
+    }
+
+    /**
+     * @param bool $mdl_user_1_finished
+     */
+    public function set_mdl_user_1_finished(bool $mdl_user_1_finished): void {
+        $this->mdl_user_1_finished = $mdl_user_1_finished;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user_2(): int {
+        return $this->mdl_user_2;
+    }
+
+    /**
+     * @param int $mdl_user_2
+     */
+    public function set_mdl_user_2(int $mdl_user_2): void {
+        $this->mdl_user_2 = $mdl_user_2;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user_2_timestart(): int {
+        return $this->mdl_user_2_timestart;
+    }
+
+    /**
+     * @param int $mdl_user_2_timestart
+     */
+    public function set_mdl_user_2_timestart(int $mdl_user_2_timestart): void {
+        $this->mdl_user_2_timestart = $mdl_user_2_timestart;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user_2_answer(): int {
+        return $this->mdl_user_2_answer;
+    }
+
+    /**
+     * @param int $mdl_user_2_answer
+     */
+    public function set_mdl_user_2_answer(int $mdl_user_2_answer): void {
+        $this->mdl_user_2_answer = $mdl_user_2_answer;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user_2_score(): int {
+        return $this->mdl_user_2_score;
+    }
+
+    /**
+     * @param int $mdl_user_2_score
+     */
+    public function set_mdl_user_2_score(int $mdl_user_2_score): void {
+        $this->mdl_user_2_score = $mdl_user_2_score;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_mdl_user_2_correct(): bool {
+        return $this->mdl_user_2_correct;
+    }
+
+    /**
+     * @param bool $mdl_user_2_correct
+     */
+    public function set_mdl_user_2_correct(bool $mdl_user_2_correct): void {
+        $this->mdl_user_2_correct = $mdl_user_2_correct;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_mdl_user_2_finished(): bool {
+        return $this->mdl_user_2_finished;
+    }
+
+    /**
+     * @param bool $mdl_user_2_finished
+     */
+    public function set_mdl_user_2_finished(bool $mdl_user_2_finished): void {
+        $this->mdl_user_2_finished = $mdl_user_2_finished;
     }
 }

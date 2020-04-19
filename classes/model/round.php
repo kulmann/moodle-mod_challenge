@@ -62,6 +62,10 @@ class round extends abstract_model {
      * @var string The name of the round.
      */
     protected $name;
+    /**
+     * @var int The number of questions this round requires.
+     */
+    protected $questions;
 
     /**
      * round constructor.
@@ -74,6 +78,7 @@ class round extends abstract_model {
         $this->timeend = 0;
         $this->state = self::STATE_PENDING;
         $this->name = '';
+        $this->questions = 0;
     }
 
     /**
@@ -94,6 +99,48 @@ class round extends abstract_model {
         $this->timeend = isset($data['timeend']) ? $data['timeend'] : 0;
         $this->state = isset($data['state']) ? $data['state'] : self::STATE_PENDING;
         $this->name = isset($data['name']) ? $data['name'] : '';
+        $this->questions = isset($data['questions'])  ? $data['questions'] : 0;
+    }
+
+    /**
+     * Returns one random question out of the categories that are assigned to this level.
+     *
+     * @param category[] $active_categories
+     *
+     * @return \question_definition
+     * @throws \dml_exception
+     * @throws \coding_exception
+     */
+    public function get_random_mdl_question($active_categories): \question_definition {
+        global $DB;
+
+        // collect all moodle question categories
+        $mdl_category_ids = [];
+        foreach($active_categories as $category) {
+            $mdl_category_ids = \array_merge($mdl_category_ids, $category->get_mdl_category_ids());
+        }
+        list($cat_sql, $cat_params) = $DB->get_in_or_equal($mdl_category_ids);
+
+        // build query for moodle question selection
+        $sql = "
+            SELECT q.id
+              FROM {question} q 
+        INNER JOIN {qtype_multichoice_options} qmo ON q.id=qmo.questionid
+             WHERE q.qtype = ? AND qmo.single = ? AND q.category $cat_sql 
+        ";
+        $params = \array_merge(["multichoice", 1], $cat_params);
+
+        // Get all available questions.
+        $available_ids = $DB->get_records_sql($sql, $params);
+        if (!empty($available_ids)) {
+            // Shuffle here because SQL RAND() can't be used.
+            shuffle($available_ids);
+            // Take the first one in the array.
+            $id = \reset($available_ids)->id;
+            return \question_bank::load_question($id, false);
+        } else {
+            throw new \dml_exception('no question available');
+        }
     }
 
     /**
@@ -180,5 +227,19 @@ class round extends abstract_model {
      */
     public function set_name(string $name): void {
         $this->name = $name;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_questions(): int {
+        return $this->questions;
+    }
+
+    /**
+     * @param int $questions
+     */
+    public function set_questions(int $questions): void {
+        $this->questions = $questions;
     }
 }
