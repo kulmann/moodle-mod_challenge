@@ -5,7 +5,7 @@
                 span
                     userAvatar(:size="80", :user="user1")
                 b {{ user1.firstname }} {{ user1.lastname }}
-            .uk-width-1-5.uk-text-center.uk-flex-middle
+            .uk-width-1-5.uk-text-center.uk-flex-middle.match-versus
                 i {{ strings.game_match_versus }}
             .uk-width-2-5.uk-text-center
                 span
@@ -86,7 +86,13 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+    .match-versus {
+        font-size: 3em;
+        font-weight: bold;
+        font-style: italic;
+        text-transform: uppercase;
+    }
     .question-row-border {
         border-bottom: 1px solid #ccc;
     }
