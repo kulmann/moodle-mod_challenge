@@ -2,7 +2,7 @@
     #challenge-question_actions
         .uk-heading-divider.uk-margin-small-bottom
         .uk-align-right
-            button.btn.btn-default(@click="goToTournament")
+            button.btn.btn-default(@click="goToMatch")
                 v-icon(name="arrow-circle-right").uk-margin-small-right
                 span {{ buttonContinueText }}
 </template>
@@ -13,6 +13,7 @@
     export default {
         props: {
             question: Object,
+            attempt: Object,
         },
         data() {
             return {
@@ -37,9 +38,12 @@
             ...mapMutations([
                 'setGameMode'
             ]),
-            goToTournament() {
-                const tournamentId = this.question.tournament;
-                this.$router.push({name: 'player-tournament-show', params: {tournamentId: tournamentId}});
+            goToMatch() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
+                const matchId = this.question.matchid;
+                this.$router.push({name: 'player-match-show', params: {forcedMatchId: matchId}});
             },
         },
         mounted() {
@@ -47,13 +51,12 @@
                 // only becomes relevant if auto-continue is enabled
                 return;
             }
-            if (this.question && this.question.finished) {
+            if (this.attempt && this.attempt.finished) {
                 this.countdownValue = this.game.review_duration;
                 this.timer = setInterval(() => {
                     this.countdownValue--;
                     if (this.countdownValue <= 0) {
-                        clearInterval(this.timer);
-                        this.goToTournament();
+                        this.goToMatch();
                     }
                 }, 1000);
             }

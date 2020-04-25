@@ -195,7 +195,7 @@ class round extends abstract_model {
     /**
      * @param int $timeend
      */
-    public function set_timeend(int $timeend): void {
+    public function set_timeend(int $timeend) {
         $this->timeend = $timeend;
     }
 
@@ -209,7 +209,7 @@ class round extends abstract_model {
     /**
      * @param string $state
      */
-    public function set_state(string $state): void {
+    public function set_state(string $state) {
         if (in_array($state, self::VALID_STATES)) {
             $this->state = $state;
         }
@@ -225,7 +225,7 @@ class round extends abstract_model {
     /**
      * @param string $name
      */
-    public function set_name(string $name): void {
+    public function set_name(string $name) {
         $this->name = $name;
     }
 
@@ -239,7 +239,7 @@ class round extends abstract_model {
     /**
      * @param int $questions
      */
-    public function set_questions(int $questions): void {
+    public function set_questions(int $questions) {
         $this->questions = $questions;
     }
 }

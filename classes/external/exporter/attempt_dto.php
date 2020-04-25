@@ -18,6 +18,7 @@ namespace mod_challenge\external\exporter;
 
 use context;
 use core\external\exporter;
+use mod_challenge\model\attempt;
 use mod_challenge\model\game;
 use mod_challenge\model\match;
 use renderer_base;
@@ -25,35 +26,29 @@ use renderer_base;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class tournament_match_dto
+ * Class attempt_dto
  *
  * @package    mod_challenge\external\exporter
  * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class match_dto extends exporter {
+class attempt_dto extends exporter {
 
     /**
-     * @var match
+     * @var attempt
      */
-    protected $match;
-    /**
-     * @var game
-     */
-    protected $game;
+    protected $attempt;
 
     /**
-     * tournament_match_dto constructor.
+     * attempt_dto constructor.
      *
-     * @param match $match
-     * @param game $game
+     * @param attempt $attempt
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(match $match, game $game, context $context) {
-        $this->match = $match;
-        $this->game = $game;
+    public function __construct(attempt $attempt, context $context) {
+        $this->attempt = $attempt;
         parent::__construct([], ['context' => $context]);
     }
 
@@ -61,39 +56,43 @@ class match_dto extends exporter {
         return [
             'id' => [
                 'type' => PARAM_INT,
-                'description' => 'match id',
+                'description' => 'question id',
             ],
             'timecreated' => [
                 'type' => PARAM_INT,
-                'description' => 'timestamp of the creation of the match',
+                'description' => 'timestamp when this attempt was created',
             ],
             'timemodified' => [
                 'type' => PARAM_INT,
-                'description' => 'timestamp of the last modification of the match',
+                'description' => 'timestamp when this attempt was modified',
             ],
-            'round' => [
+            'question' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the game round this match takes place in',
+                'description' => 'id of the question this attempt was started for',
             ],
-            'mdl_user_1' => [
+            'mdl_user' => [
                 'type' => PARAM_INT,
-                'description' => 'first moodle user of the match',
+                'description' => 'id of the moodle user who attempted to answer the question',
             ],
-            'mdl_user_2' => [
+            'mdl_answer' => [
                 'type' => PARAM_INT,
-                'description' => 'second moodle user of the match',
+                'description' => 'id of the moodle answer the user has chosen',
             ],
-            'winner_mdl_user' => [
+            'score' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the moodle user who won this match',
+                'description' => 'score the user has reached by answering the question',
             ],
-            'winner_score' => [
-                'type' => PARAM_INT,
-                'description' => 'score of the moodle user who won this match',
-            ],
-            'open' => [
+            'correct' => [
                 'type' => PARAM_BOOL,
-                'description' => 'whether this match is still open or ongoing',
+                'description' => 'whether or not the question was answered correctly by the user',
+            ],
+            'finished' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether or not the question was answered at all by the user',
+            ],
+            'timeremaining' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of seconds remaining for answering the question after it was finished'
             ]
         ];
     }
@@ -105,20 +104,6 @@ class match_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        // make sure, logged in user is always the first one
-        $mdl_user_1 = $this->match->get_mdl_user_1();
-        $mdl_user_2 = $this->match->get_mdl_user_2();
-        global $USER;
-        if (intval($USER->id) === $mdl_user_2) {
-            $this->match->set_mdl_user_1($mdl_user_2);
-            $this->match->set_mdl_user_2($mdl_user_1);
-        }
-        // return data
-        return \array_merge(
-            $this->match->to_array(),
-            [
-                'open' => !$this->match->is_finished(),
-            ]
-        );
+        return $this->attempt->to_array();
     }
 }

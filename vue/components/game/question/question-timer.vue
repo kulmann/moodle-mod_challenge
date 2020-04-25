@@ -8,6 +8,7 @@
     export default {
         props: {
             question: Object,
+            attempt: Object,
         },
         data() {
             return {
@@ -20,22 +21,22 @@
                 'now',
             ]),
             timeLabelClass() {
-                if (this.remainingSeconds > this.question.score_max) {
+                if (this.remainingSeconds > this.question.time_max) {
                     return 'time-reading';
                 }
-                if (this.remainingSeconds > (this.question.score_max / 3 * 2)) {
+                if (this.remainingSeconds > (this.question.time_max / 3 * 2)) {
                     return 'time-plenty';
                 }
-                if (this.remainingSeconds > (this.question.score_max / 3)) {
+                if (this.remainingSeconds > (this.question.time_max / 3)) {
                     return 'time-okish';
                 }
                 return 'time-tight';
             },
             remainingSeconds() {
-                if (this.question.timeremaining >= 0) {
-                    return this.question.timeremaining;
+                if (this.attempt.timeremaining >= 0) {
+                    return this.attempt.timeremaining;
                 } else {
-                    let start = this.question.timecreated * 1000;
+                    let start = this.attempt.timecreated * 1000;
                     let end = start + (this.question.time_max * 1000);
                     return Math.max(0, Math.round((end - this.now) / 1000));
                 }
@@ -45,9 +46,9 @@
             ...mapActions({
                 submitAnswer: 'player/submitAnswer'
             }),
-            goToTournament() {
-                const tournamentId = this.question.tournament;
-                this.$router.push({name: 'player-tournament-show', params: {tournamentId: tournamentId}});
+            goToMatch() {
+                const matchId = this.question.matchid;
+                this.$router.push({name: 'player-match-show', params: {forcedMatchId: matchId}});
             },
         },
         watch: {
@@ -57,7 +58,7 @@
                     this.submitAnswer({
                         'questionid': this.question.id,
                         'mdlanswerid': 0,
-                    }).then(() => this.goToTournament());
+                    }).then(() => this.goToMatch());
                 }
             }
         }

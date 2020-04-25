@@ -16,6 +16,7 @@
 
 namespace mod_challenge\model;
 
+use dml_exception;
 use function array_map;
 use function explode;
 use function intval;
@@ -26,7 +27,7 @@ global $CFG;
 require_once($CFG->dirroot . '/question/engine/bank.php');
 
 /**
- * Class tournament_question
+ * Class question
  *
  * @package    mod_challenge\model
  * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
@@ -61,62 +62,18 @@ class question extends abstract_model {
     /**
      * @var int The id of the moodle user who won this question.
      */
-    protected $mdl_user_winner;
+    protected $winner_mdl_user;
     /**
-     * @var int The id of the moodle user who got this question.
+     * @var int The score of the winning user.
      */
-    protected $mdl_user_1;
-    /**
-     * @var int The timestamp of when the user started the question.
-     */
-    protected $mdl_user_1_timestart;
-    /**
-     * @var int The id of the moodle answer the user has chosen.
-     */
-    protected $mdl_user_1_answer;
-    /**
-     * @var int The score the user has reached by answering this question.
-     */
-    protected $mdl_user_1_score;
-    /**
-     * @var bool Whether or not the question was answered correctly.
-     */
-    protected $mdl_user_1_correct;
-    /**
-     * @var bool Whether or not the question was answered at all.
-     */
-    protected $mdl_user_1_finished;
-    /**
-     * @var int The id of the moodle user who got this question.
-     */
-    protected $mdl_user_2;
-    /**
-     * @var int The timestamp of when the user started the question.
-     */
-    protected $mdl_user_2_timestart;
-    /**
-     * @var int The id of the moodle answer the user has chosen.
-     */
-    protected $mdl_user_2_answer;
-    /**
-     * @var int The score the user has reached by answering this question.
-     */
-    protected $mdl_user_2_score;
-    /**
-     * @var bool Whether or not the question was answered correctly.
-     */
-    protected $mdl_user_2_correct;
-    /**
-     * @var bool Whether or not the question was answered at all.
-     */
-    protected $mdl_user_2_finished;
+    protected $winner_score;
     /**
      * @var \question_definition
      */
     protected $_mdl_question;
 
     /**
-     * tournament_question constructor.
+     * question constructor.
      */
     function __construct() {
         parent::__construct('challenge_questions', 0);
@@ -126,19 +83,8 @@ class question extends abstract_model {
         $this->number = 0;
         $this->mdl_question = 0;
         $this->mdl_answers_order = '';
-        $this->mdl_user_winner = 0;
-        $this->mdl_user_1 = 0;
-        $this->mdl_user_1_timestart = 0;
-        $this->mdl_user_1_answer = 0;
-        $this->mdl_user_1_score = 0;
-        $this->mdl_user_1_correct = false;
-        $this->mdl_user_1_finished = false;
-        $this->mdl_user_2 = 0;
-        $this->mdl_user_2_timestart = 0;
-        $this->mdl_user_2_answer = 0;
-        $this->mdl_user_2_score = 0;
-        $this->mdl_user_2_correct = false;
-        $this->mdl_user_2_finished = false;
+        $this->winner_mdl_user = 0;
+        $this->winner_score = 0;
     }
 
     /**
@@ -159,21 +105,8 @@ class question extends abstract_model {
         $this->number = $data['number'];
         $this->mdl_question = $data['mdl_question'];
         $this->mdl_answers_order = $data['mdl_answers_order'];
-        $this->mdl_user_winner = isset($data['mdl_user_winner']) ? $data['mdl_user_winner'] : 0;
-        // user 1
-        $this->mdl_user_1 = isset($data['mdl_user_1']) ? $data['mdl_user_1'] : 0;
-        $this->mdl_user_1_timestart = isset($data['mdl_user_1_timestart']) ? $data['mdl_user_1_timestart'] : 0;
-        $this->mdl_user_1_answer = isset($data['mdl_user_1_answer']) ? $data['mdl_user_1_answer'] : null;
-        $this->mdl_user_1_score = isset($data['mdl_user_1_score']) ? $data['mdl_user_1_score'] : 0;
-        $this->mdl_user_1_correct = isset($data['mdl_user_1_correct']) ? ($data['mdl_user_1_correct'] == 1) : false;
-        $this->mdl_user_1_finished = isset($data['mdl_user_1_finished']) ? ($data['mdl_user_1_finished'] == 1) : false;
-        // user 2
-        $this->mdl_user_2 = isset($data['mdl_user_2']) ? $data['mdl_user_2'] : 0;
-        $this->mdl_user_2_timestart = isset($data['mdl_user_2_timestart']) ? $data['mdl_user_2_timestart'] : 0;
-        $this->mdl_user_2_answer = isset($data['mdl_user_2_answer']) ? $data['mdl_user_2_answer'] : null;
-        $this->mdl_user_2_score = isset($data['mdl_user_2_score']) ? $data['mdl_user_2_score'] : 0;
-        $this->mdl_user_2_correct = isset($data['mdl_user_2_correct']) ? ($data['mdl_user_2_correct'] == 1) : false;
-        $this->mdl_user_2_finished = isset($data['mdl_user_2_finished']) ? ($data['mdl_user_2_finished'] == 1) : false;
+        $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
+        $this->winner_score = isset($data['winner_score']) ? $data['winner_score'] : 0;
     }
 
     /**
@@ -203,55 +136,55 @@ class question extends abstract_model {
     }
 
     /**
-     * Checks if the given moodle user has finished this question.
+     * Loads all attempts of this question ([0-2] attempts).
      *
-     * @param int $mdl_user_id
-     * @return bool
+     * @return attempt[]
+     * @throws dml_exception
      */
-    public function is_finished_by($mdl_user_id): bool {
-        if ($this->is_mdl_user_1($mdl_user_id)) {
-            return $this->mdl_user_1_finished;
-        } elseif ($this->is_mdl_user_2($mdl_user_id)) {
-            return $this->mdl_user_2_finished;
-        } else {
-            return false;
+    public function get_attempts(): array {
+        global $DB;
+        $records = $DB->get_records('challenge_attempts', ['question' => $this->get_id()]);
+        return array_map(function ($record) {
+            $attempt = new attempt();
+            $attempt->load_data_by_id($record->id);
+            return $attempt;
+        }, $records);
+    }
+
+    /**
+     * Checks if the attempts for this question are finished and determines a winner if not done already.
+     *
+     * @param game $game
+     * @throws dml_exception
+     */
+    public function check_winner(game $game) {
+        if ($this->is_finished()) {
+            return;
         }
-    }
-
-    /**
-     * Gets the question start time of the given user.
-     *
-     * @param int $mdl_user_id
-     * @return int
-     */
-    public function get_timestart($mdl_user_id): int {
-        if ($this->is_mdl_user_1($mdl_user_id)) {
-            return $this->get_mdl_user_1_timestart();
-        } elseif($this->is_mdl_user_2($mdl_user_id)) {
-            return $this->get_mdl_user_2_timestart();
-        } else {
-            return 0;
+        $attempts = $this->get_attempts();
+        $count_finished = 0;
+        foreach($attempts as $attempt) {
+            $attempt->check_time_exceeded($game);
+            if ($attempt->is_finished()) {
+                $count_finished++;
+            }
         }
-    }
-
-    /**
-     * Checks if the given moodle user is the first match user.
-     *
-     * @param int $mdl_user_id
-     * @return bool
-     */
-    public function is_mdl_user_1($mdl_user_id): bool {
-        return $this->get_mdl_user_1() === $mdl_user_id;
-    }
-
-    /**
-     * Checks if the given moodle user is the second match user.
-     *
-     * @param int $mdl_user_id
-     * @return bool
-     */
-    public function is_mdl_user_2($mdl_user_id): bool {
-        return $this->get_mdl_user_2() === $mdl_user_id;
+        if ($count_finished === 2) {
+            usort($attempts, function(attempt $a1, attempt $a2) {
+                if ($a1->is_correct() === $a2->is_correct()) {
+                    if ($a1->get_score() === $a2->get_score()) {
+                        return $a1->get_timecreated() <=> $a2->get_timecreated();
+                    }
+                    return $a2->get_score() <=> $a1->get_score();
+                }
+                return $a2->is_correct() <=> $a1->is_correct();
+            });
+            $winner = reset($attempts);
+            assert($winner instanceof attempt);
+            $this->set_winner_mdl_user($winner->get_mdl_user());
+            $this->set_winner_score($winner->get_score());
+            $this->save();
+        }
     }
 
     /**
@@ -313,7 +246,7 @@ class question extends abstract_model {
     /**
      * @param int $mdl_question
      */
-    public function set_mdl_question(int $mdl_question): void {
+    public function set_mdl_question(int $mdl_question) {
         $this->mdl_question = $mdl_question;
     }
 
@@ -327,189 +260,44 @@ class question extends abstract_model {
     /**
      * @param string $mdl_answers_order
      */
-    public function set_mdl_answers_order(string $mdl_answers_order): void {
+    public function set_mdl_answers_order(string $mdl_answers_order) {
         $this->mdl_answers_order = $mdl_answers_order;
     }
 
     /**
      * @return int
      */
-    public function get_mdl_user_winner(): int {
-        return $this->mdl_user_winner;
+    public function get_winner_mdl_user(): int {
+        return $this->winner_mdl_user;
     }
 
     /**
-     * @param int $mdl_user_winner
+     * @param int $winner_mdl_user
      */
-    public function set_mdl_user_winner(int $mdl_user_winner): void {
-        $this->mdl_user_winner = $mdl_user_winner;
+    public function set_winner_mdl_user(int $winner_mdl_user) {
+        $this->winner_mdl_user = $winner_mdl_user;
     }
 
     /**
-     * @return int
-     */
-    public function get_mdl_user_1(): int {
-        return $this->mdl_user_1;
-    }
-
-    /**
-     * @param int $mdl_user_1
-     */
-    public function set_mdl_user_1(int $mdl_user_1): void {
-        $this->mdl_user_1 = $mdl_user_1;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_mdl_user_1_timestart(): int {
-        return $this->mdl_user_1_timestart;
-    }
-
-    /**
-     * @param int $mdl_user_1_timestart
-     */
-    public function set_mdl_user_1_timestart(int $mdl_user_1_timestart): void {
-        $this->mdl_user_1_timestart = $mdl_user_1_timestart;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_mdl_user_1_answer(): int {
-        return $this->mdl_user_1_answer;
-    }
-
-    /**
-     * @param int $mdl_user_1_answer
-     */
-    public function set_mdl_user_1_answer(int $mdl_user_1_answer): void {
-        $this->mdl_user_1_answer = $mdl_user_1_answer;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_mdl_user_1_score(): int {
-        return $this->mdl_user_1_score;
-    }
-
-    /**
-     * @param int $mdl_user_1_score
-     */
-    public function set_mdl_user_1_score(int $mdl_user_1_score): void {
-        $this->mdl_user_1_score = $mdl_user_1_score;
-    }
-
-    /**
+     * Returns whether this question is already finished.
+     *
      * @return bool
      */
-    public function is_mdl_user_1_correct(): bool {
-        return $this->mdl_user_1_correct;
-    }
-
-    /**
-     * @param bool $mdl_user_1_correct
-     */
-    public function set_mdl_user_1_correct(bool $mdl_user_1_correct): void {
-        $this->mdl_user_1_correct = $mdl_user_1_correct;
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_mdl_user_1_finished(): bool {
-        return $this->mdl_user_1_finished;
-    }
-
-    /**
-     * @param bool $mdl_user_1_finished
-     */
-    public function set_mdl_user_1_finished(bool $mdl_user_1_finished): void {
-        $this->mdl_user_1_finished = $mdl_user_1_finished;
+    public function is_finished() {
+        return $this->winner_mdl_user > 0;
     }
 
     /**
      * @return int
      */
-    public function get_mdl_user_2(): int {
-        return $this->mdl_user_2;
+    public function get_winner_score(): int {
+        return $this->winner_score;
     }
 
     /**
-     * @param int $mdl_user_2
+     * @param int $winner_score
      */
-    public function set_mdl_user_2(int $mdl_user_2): void {
-        $this->mdl_user_2 = $mdl_user_2;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_mdl_user_2_timestart(): int {
-        return $this->mdl_user_2_timestart;
-    }
-
-    /**
-     * @param int $mdl_user_2_timestart
-     */
-    public function set_mdl_user_2_timestart(int $mdl_user_2_timestart): void {
-        $this->mdl_user_2_timestart = $mdl_user_2_timestart;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_mdl_user_2_answer(): int {
-        return $this->mdl_user_2_answer;
-    }
-
-    /**
-     * @param int $mdl_user_2_answer
-     */
-    public function set_mdl_user_2_answer(int $mdl_user_2_answer): void {
-        $this->mdl_user_2_answer = $mdl_user_2_answer;
-    }
-
-    /**
-     * @return int
-     */
-    public function get_mdl_user_2_score(): int {
-        return $this->mdl_user_2_score;
-    }
-
-    /**
-     * @param int $mdl_user_2_score
-     */
-    public function set_mdl_user_2_score(int $mdl_user_2_score): void {
-        $this->mdl_user_2_score = $mdl_user_2_score;
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_mdl_user_2_correct(): bool {
-        return $this->mdl_user_2_correct;
-    }
-
-    /**
-     * @param bool $mdl_user_2_correct
-     */
-    public function set_mdl_user_2_correct(bool $mdl_user_2_correct): void {
-        $this->mdl_user_2_correct = $mdl_user_2_correct;
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_mdl_user_2_finished(): bool {
-        return $this->mdl_user_2_finished;
-    }
-
-    /**
-     * @param bool $mdl_user_2_finished
-     */
-    public function set_mdl_user_2_finished(bool $mdl_user_2_finished): void {
-        $this->mdl_user_2_finished = $mdl_user_2_finished;
+    public function set_winner_score(int $winner_score) {
+        $this->winner_score = $winner_score;
     }
 }

@@ -4,7 +4,7 @@
         loadingAlert(v-if="!isInitialized", message="Loading Game").uk-text-center
         failureAlert(v-else-if="isAdminUser", :message="strings.game_not_allowed").uk-text-center
         template(v-else)
-            matches(v-if="viewMode === VIEW_MODE_MATCHES_LIST", :rounds="rounds", :matches="matches")
+            matches(v-if="viewMode === VIEW_MODE_MATCH_SHOW", :rounds="rounds", :matches="matches")
             question(v-else-if="viewMode === VIEW_MODE_QUESTION_PLAY")
 </template>
 
@@ -22,7 +22,7 @@
         data() {
             return {
                 VIEW_MODE_NONE: 'none',
-                VIEW_MODE_MATCHES_LIST: 'player-matches-list',
+                VIEW_MODE_MATCH_SHOW: 'player-match-show',
                 VIEW_MODE_QUESTION_PLAY: 'player-question-play',
             }
         },
@@ -41,7 +41,7 @@
             ]),
             viewMode() {
                 const viewModes = [
-                    this.VIEW_MODE_MATCHES_LIST,
+                    this.VIEW_MODE_MATCH_SHOW,
                     this.VIEW_MODE_QUESTION_PLAY,
                 ];
                 const viewMode = this.$route.name;
@@ -54,7 +54,7 @@
         },
         mounted() {
             if (this.viewMode === this.VIEW_MODE_NONE) {
-                this.$router.push({name: this.VIEW_MODE_MATCHES_LIST});
+                this.$router.push({name: this.VIEW_MODE_MATCH_SHOW});
             }
         },
         components: {

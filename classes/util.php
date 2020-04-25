@@ -21,10 +21,11 @@ use coding_exception;
 use context;
 use dml_exception;
 use invalid_parameter_exception;
+use mod_challenge\model\attempt;
 use mod_challenge\model\category;
+use mod_challenge\model\game;
 use mod_challenge\model\match;
 use mod_challenge\model\question;
-use mod_challenge\model\game;
 use mod_challenge\model\round;
 use required_capability_exception;
 
@@ -59,21 +60,6 @@ class util {
     }
 
     /**
-     * Checks that the question belongs to the given user.
-     *
-     * @param int $mdl_user_id
-     * @param question $question
-     *
-     * @return void
-     * @throws invalid_parameter_exception
-     */
-    public static function validate_question($mdl_user_id, question $question) {
-        if (!$question->is_mdl_user_1($mdl_user_id) && !$question->is_mdl_user_2($mdl_user_id)) {
-            throw new invalid_parameter_exception("question " . $question->get_id() . " doesn't belong to given moodle user $mdl_user_id ");
-        }
-    }
-
-    /**
      * Checks that the round belongs to the given $game.
      *
      * @param game $game
@@ -99,7 +85,7 @@ class util {
     public static function validate_match(game $game, match $match) {
         try {
             $round = self::get_round($match->get_round());
-        } catch(dml_exception $e) {
+        } catch (dml_exception $e) {
             throw new invalid_parameter_exception("match " . $match->get_id() . " doesn't belong to given game");
         }
         self::validate_round($game, $round);
@@ -191,28 +177,22 @@ class util {
     }
 
     /**
-     * Checks if the question is already timed out and sets the question data accordingly.
+     * Tries to load an attempt by the given moodle user and question.
      *
-     * @param question $question
-     * @param game $game
-     * @param int $userid The id of the logged in moodle user.
+     * @param int $questionid
+     * @param int $mdl_user_id
+     * @return attempt|null
      * @throws dml_exception
      */
-    public static function check_question_timeout(question $question, game $game, int $userid) {
-        if (!$question->is_finished_by($userid) && $question->get_timestart($userid) + $game->get_question_duration() < \time()) {
-            if ($question->is_mdl_user_1($userid)) {
-                $question->set_mdl_user_1_answer(0);
-                $question->set_mdl_user_1_finished(true);
-                $question->set_mdl_user_1_correct(false);
-                $question->set_mdl_user_1_score(0);
-            } else {
-                $question->set_mdl_user_2_answer(0);
-                $question->set_mdl_user_2_finished(true);
-                $question->set_mdl_user_2_correct(false);
-                $question->set_mdl_user_2_score(0);
-            }
-            $question->save();
+    public static function get_attempt_by_question($questionid, $mdl_user_id) {
+        global $DB;
+        $record = $DB->get_record('challenge_attempts', ['question' => $questionid, 'mdl_user' => $mdl_user_id]);
+        if ($record) {
+            $attempt = new attempt();
+            $attempt->load_data_by_id($record->id);
+            return $attempt;
         }
+        return null;
     }
 
     /**
@@ -229,7 +209,7 @@ class util {
             $questions = $match->get_questions();
             // check if user 1 answered enough questions
             $user1 = $match->get_mdl_user_1();
-            $questions_user1 = \array_filter($questions, function(question $question) use ($user1) {
+            $questions_user1 = \array_filter($questions, function (question $question) use ($user1) {
                 return $question->get_mdl_user() === $user1;
             });
             $answer_count_user1 = \count($questions_user1);
@@ -238,7 +218,7 @@ class util {
             }
             // check if user 2 answered enough questions
             $user2 = $match->get_mdl_user_2();
-            $questions_user2 = \array_filter($questions, function(question $question) use ($user2) {
+            $questions_user2 = \array_filter($questions, function (question $question) use ($user2) {
                 return $question->get_mdl_user() === $user2;
             });
             $answer_count_user2 = \count($questions_user2);
@@ -246,31 +226,31 @@ class util {
                 return;
             }
             // check which user won
-            $win_count_user1 = \count(\array_filter($questions_user1, function(question $question) {
+            $win_count_user1 = \count(\array_filter($questions_user1, function (question $question) {
                 return $question->is_correct();
             }));
-            $win_count_user2 = \count(\array_filter($questions_user2, function(question $question) {
+            $win_count_user2 = \count(\array_filter($questions_user2, function (question $question) {
                 return $question->is_correct();
             }));
             if ($win_count_user1 > $win_count_user2) {
-                $match->set_mdl_user_winner($user1);
+                $match->set_winner_mdl_user($user1);
                 $match->save();
                 return;
             }
             if ($win_count_user2 > $win_count_user1) {
-                $match->set_mdl_user_winner($user2);
+                $match->set_winner_mdl_user($user2);
                 $match->save();
                 return;
             }
             if ($win_count_user1 === $win_count_user2) {
                 // tie breaking rule is the earlier participation
-                $datetime_sum_user1 = \array_sum(\array_map(function(question $question) {
+                $datetime_sum_user1 = \array_sum(\array_map(function (question $question) {
                     return $question->get_timecreated();
                 }, $questions_user1));
-                $datetime_sum_user2 = \array_sum(\array_map(function(question $question) {
+                $datetime_sum_user2 = \array_sum(\array_map(function (question $question) {
                     return $question->get_timecreated();
                 }, $questions_user2));
-                $match->set_mdl_user_winner(($datetime_sum_user1 < $datetime_sum_user2) ? $user1 : $user2);
+                $match->set_winner_mdl_user(($datetime_sum_user1 < $datetime_sum_user2) ? $user1 : $user2);
                 $match->save();
                 return;
             }

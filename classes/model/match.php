@@ -16,6 +16,8 @@
 
 namespace mod_challenge\model;
 
+use mod_challenge\util;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -50,7 +52,11 @@ class match extends abstract_model {
     /**
      * @var int The user id of the winner of this match.
      */
-    protected $mdl_user_winner;
+    protected $winner_mdl_user;
+    /**
+     * @var int The score of the winning user.
+     */
+    protected $winner_score;
 
     /**
      * tournament_match constructor.
@@ -62,7 +68,8 @@ class match extends abstract_model {
         $this->round = 0;
         $this->mdl_user_1 = 0;
         $this->mdl_user_2 = 0;
-        $this->mdl_user_winner = 0;
+        $this->winner_mdl_user = 0;
+        $this->winner_score = 0;
     }
 
     /**
@@ -82,9 +89,72 @@ class match extends abstract_model {
         $this->round = $data['round'];
         $this->mdl_user_1 = $data['mdl_user_1'];
         $this->mdl_user_2 = $data['mdl_user_2'];
-        $this->mdl_user_winner = isset($data['mdl_user_winner']) ? $data['mdl_user_winner'] : 0;
+        $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
+        $this->winner_score = isset($data['winner_score']) ? $data['winner_score'] : 0;
     }
 
+    /**
+     * Check if all questions have been flagged as finished and determine this match's winner.
+     * Note: This doesn't trigger the question winner check. That has to be done separately.
+     *
+     * @throws \dml_exception
+     */
+    public function check_winner() {
+        if ($this->is_finished()) {
+            return;
+        }
+
+        // make sure that the questions have the most recent winner-state already
+        $questions = $this->get_questions();
+        $finished = 0;
+        $win_counts = [];
+        $score_sum = [];
+        foreach($questions as $question) {
+            if ($question->is_finished()) {
+                $finished++;
+                $win_counts[$question->get_winner_mdl_user()]++;
+                $score_sum[$question->get_winner_mdl_user()] += $question->get_winner_score();
+            }
+        }
+
+        // check if the match is finished already
+        $round = util::get_round($this->get_round());
+        if ($finished !== $round->get_questions()) {
+            return;
+        }
+
+        // check if there's a winner by win count
+        if (max($win_counts) !== min($win_counts)) {
+            $winner_as_array = array_keys($win_counts, max($win_counts));
+            $mdl_user_winner = reset($winner_as_array);
+            $this->set_winner_mdl_user($mdl_user_winner);
+            $this->set_winner_score($score_sum[$mdl_user_winner]);
+        }
+
+        // check if there's a winner by score sum
+        if (max($score_sum) !== min($score_sum)) {
+            $winner_as_array = array_keys($score_sum, max($score_sum));
+            $mdl_user_winner = reset($winner_as_array);
+            $this->set_winner_mdl_user($mdl_user_winner);
+            $this->set_winner_score($score_sum[$mdl_user_winner]);
+        }
+
+        // not likely, but if there is no winner by win count or score, pick first one
+        $winner_as_array = array_keys($win_counts);
+        $mdl_user_winner = reset($winner_as_array);
+        $this->set_winner_mdl_user($mdl_user_winner);
+        $this->set_winner_score($score_sum[$mdl_user_winner]);
+
+        // save the changes
+        $this->save();
+    }
+
+    /**
+     * Gets all questions associated with this match.
+     *
+     * @return question[]
+     * @throws \dml_exception
+     */
     public function get_questions() {
         global $DB;
         $sql = "
@@ -193,15 +263,15 @@ class match extends abstract_model {
     /**
      * @return int
      */
-    public function get_mdl_user_winner(): int {
-        return $this->mdl_user_winner;
+    public function get_winner_mdl_user(): int {
+        return $this->winner_mdl_user;
     }
 
     /**
-     * @param int $mdl_user_winner
+     * @param int $winner_mdl_user
      */
-    public function set_mdl_user_winner(int $mdl_user_winner) {
-        $this->mdl_user_winner = $mdl_user_winner;
+    public function set_winner_mdl_user(int $winner_mdl_user) {
+        $this->winner_mdl_user = $winner_mdl_user;
     }
 
     /**
@@ -210,6 +280,20 @@ class match extends abstract_model {
      * @return bool
      */
     public function is_finished() {
-        return $this->mdl_user_winner > 0;
+        return $this->winner_mdl_user > 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_winner_score(): int {
+        return $this->winner_score;
+    }
+
+    /**
+     * @param int $winner_score
+     */
+    public function set_winner_score(int $winner_score) {
+        $this->winner_score = $winner_score;
     }
 }

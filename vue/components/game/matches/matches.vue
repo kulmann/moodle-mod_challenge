@@ -1,6 +1,6 @@
 <template lang="pug">
     .uk-card.uk-card-default.uk-card-body
-        loading-alert(v-if="loading", :message="strings.game_tournament_match_loading")
+        loading-alert(v-if="loading", :message="strings.game_match_loading")
         template(v-else)
             .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom
                 button.btn.btn-default(:disabled="isFirstMatch", @click="goToPrevMatch")
@@ -15,7 +15,7 @@
                 button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
                     v-icon(name="chevron-right")
             failure-alert(v-if="match === null", :message="strings.game_match_show_error")
-            match-show(v-else, :round="round", :match="match", :questions="questions", :own-user-id="ownUserId" )
+            match-show(v-else, :round="round", :match="match", :questions="questions", :attempts="attempts", :own-user-id="ownUserId" )
 </template>
 
 <script>
@@ -43,7 +43,8 @@
             return {
                 loading: true,
                 matchIndex: undefined,
-                questions: []
+                questions: [],
+                attempts: [],
             }
         },
         computed: {
@@ -91,6 +92,7 @@
         methods: {
             ...mapActions({
                 fetchMatchQuestions: 'player/fetchMatchQuestions',
+                fetchMatchAttempts: 'player/fetchMatchAttempts',
             }),
             async initData() {
                 this.loading = true;
@@ -102,8 +104,10 @@
                 const matchId = this.match ? this.match.id : undefined;
                 if (matchId) {
                     this.questions = await this.fetchMatchQuestions({matchid: matchId});
+                    this.attempts = await this.fetchMatchAttempts({matchid: matchId});
                 } else {
                     this.questions = [];
+                    this.attempts = [];
                 }
             },
             goToPrevMatch() {

@@ -26,7 +26,7 @@ use renderer_base;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class tournament_question_dto
+ * Class question_dto
  *
  * @package    mod_challenge\external\exporter
  * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
@@ -48,7 +48,7 @@ class question_dto extends exporter {
     protected $game;
 
     /**
-     * tournament_question_dto constructor.
+     * question_dto constructor.
      *
      * @param question $question
      * @param match $match
@@ -90,63 +90,15 @@ class question_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'id of the moodle question instance',
             ],
-            'mdl_user_winner' => [
+            'winner_mdl_user' => [
                 'type' => PARAM_INT,
                 'description' => 'id of the moodle user who won this question',
             ],
-            'mdl_user_1' => [
+            'winner_score' => [
                 'type' => PARAM_INT,
-                'description' => 'id of the first moodle user this question was chosen for',
-            ],
-            'mdl_user_1_timestart' => [
-                'type' => PARAM_INT,
-                'description' => 'timestamp of when the first moodle user started this question',
-            ],
-            'mdl_user_1_answer' => [
-                'type' => PARAM_INT,
-                'description' => 'id of the moodle answer the first user has chosen',
-            ],
-            'mdl_user_1_score' => [
-                'type' => PARAM_INT,
-                'description' => 'score the first user has reached by answering this question',
-            ],
-            'mdl_user_1_correct' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not the question was answered correctly by the first user',
-            ],
-            'mdl_user_1_finished' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not the question was answered at all by the first user',
-            ],
-            'mdl_user_2' => [
-                'type' => PARAM_INT,
-                'description' => 'id of the second moodle user this question was chosen for',
-            ],
-            'mdl_user_2_timestart' => [
-                'type' => PARAM_INT,
-                'description' => 'timestamp of when the second moodle user started this question',
-            ],
-            'mdl_user_2_answer' => [
-                'type' => PARAM_INT,
-                'description' => 'id of the moodle answer the second user has chosen',
-            ],
-            'mdl_user_2_score' => [
-                'type' => PARAM_INT,
-                'description' => 'score the second user has reached by answering this question',
-            ],
-            'mdl_user_2_correct' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not the question was answered correctly by the second user',
-            ],
-            'mdl_user_2_finished' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether or not the question was answered at all by the second user',
+                'description' => 'score of the moodle user who won this question',
             ],
             // custom (non-model) fields
-            'mdl_question_id' => [
-                'type' => PARAM_INT,
-                'description' => 'id of the associated moodle question',
-            ],
             'mdl_question_type' => [
                 'type' => PARAM_TEXT,
                 'description' => 'type of the associated moodle question',
@@ -173,7 +125,6 @@ class question_dto extends exporter {
         return \array_merge(
             $this->question->to_array(),
             [
-                'mdl_question_id' => $mdl_question->id,
                 'mdl_question_type' => \get_class($mdl_question),
                 'score_max' => $this->game->get_question_duration(),
                 'time_max' => $this->game->get_question_duration(),

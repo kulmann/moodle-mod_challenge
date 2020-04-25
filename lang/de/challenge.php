@@ -204,3 +204,4 @@ $string['game_match_lbl_open'] = 'offen';
 $string['game_match_lbl_won'] = 'gewonnen';
 $string['game_match_lbl_lost'] = 'verloren';
 $string['game_match_lbl_question'] = 'Frage {$a} beantworten';
+$string['game_match_question_title'] = 'Frage {$a}';

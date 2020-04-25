@@ -103,10 +103,17 @@ $functions = [
         'ajax' => true,
     ],
     // PLAYER FUNCTIONS
+    'mod_challenge_player_get_match_attempts' => [
+        'classname' => 'mod_challenge\external\player_get_match_attempts',
+        'methodname' => 'request',
+        'description' => 'Retrieves all attempts of a certain match for the current user and their opponent.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'mod_challenge_player_get_match_questions' => [
         'classname' => 'mod_challenge\external\player_get_match_questions',
         'methodname' => 'request',
-        'description' => 'Retrieves all questions of a match for the current user.',
+        'description' => 'Retrieves all questions of a certain match for the current user and their opponent.',
         'type' => 'write',
         'ajax' => true,
     ],

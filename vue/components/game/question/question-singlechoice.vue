@@ -4,9 +4,9 @@
             .uk-card-header(style="padding-top: 5px; padding-bottom: 5px;")
                 vk-grid(matched)
                     .uk-width-expand
-                        i.uk-h5 {{ levelName }}
+                        i.uk-h5 {{ strings.game_match_question_title | stringParams(question.number) }}
                     .uk-width-auto
-                        questionTimer(:question="question")
+                        questionTimer(:question="question", :attempt="attempt")
             .uk-card-body
                 p._question(v-html="mdl_question.questiontext")
         vk-grid.uk-margin-top(matched)
@@ -29,6 +29,7 @@
         props: {
             game: Object,
             question: Object,
+            attempt: Object,
             mdl_question: Object,
             mdl_answers: Array,
         },
@@ -48,45 +49,27 @@
                 return correct ? correct.id : null;
             },
             isFinished() {
-                return this.clickedAnswerId !== null || this.question.finished;
+                return this.clickedAnswerId !== null || this.attempt.finished;
             },
             isAnyAnswerGiven() {
-                return this.clickedAnswerId !== null || this.question.finished;
-            },
-            level() {
-                if (this.question) {
-                    let levelId = this.question.level;
-                    return find(this.levels, function (level) {
-                        return level.id === levelId;
-                    });
-                } else {
-                    return null;
-                }
-            },
-            levelName() {
-                if (this.level) {
-                    return this.level.name;
-                } else {
-                    return '';
-                }
+                return this.clickedAnswerId !== null || this.attempt.finished;
             },
         },
         methods: {
             ...mapActions({
                 submitAnswer: 'player/submitAnswer'
             }),
-            selectAnswer(answer) {
+            async selectAnswer(answer) {
                 if (this.isFinished) {
                     // don't allow another submission if already answered
                     return;
                 }
                 this.clickedAnswerId = answer.id;
-                this.submitAnswer({
+                await this.submitAnswer({
                     'questionid': this.question.id,
                     'mdlanswerid': this.clickedAnswerId,
-                }).then(() => {
-                    this.$emit('reloadQuestion');
                 });
+                this.$emit('reloadQuestion');
             },
             getAnswerClasses(answer) {
                 let result = [];
@@ -115,16 +98,16 @@
                 return this.correctAnswerId === answer.id;
             },
             initQuestion() {
-                this.clickedAnswerId = (this.question.mdl_answer_given > 0) ? this.question.mdl_answer_given : null;
+                this.clickedAnswerId = (this.attempt.mdl_answer > 0) ? this.attempt.mdl_answer : null;
             },
         },
         mounted() {
-            if (this.question) {
+            if (this.attempt) {
                 this.initQuestion();
             }
         },
         watch: {
-            question() {
+            attempt() {
                 this.initQuestion();
             }
         },

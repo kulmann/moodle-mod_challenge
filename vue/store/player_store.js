@@ -60,6 +60,16 @@ export default {
             return await ajax('mod_challenge_player_get_match_questions', payload);
         },
         /**
+         * Fetches the attempts of a match.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async fetchMatchAttempts(context, payload) {
+            return await ajax('mod_challenge_player_get_match_attempts', payload);
+        },
+        /**
          * Requests a question by topic id and fetches the chosen question.
          *
          * @param context

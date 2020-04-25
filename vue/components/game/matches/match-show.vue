@@ -18,6 +18,7 @@
                 :mdlUserLeft="match.mdl_user_1",
                 :mdlUserRight="match.mdl_user_2",
                 :questions="questions",
+                :attempts="attempts"
                 :ownUserId="ownUserId"
             )
             .uk-heading-divider.uk-margin-small-bottom(v-if="!isLastRow(question)")
@@ -40,6 +41,10 @@
                 required: true
             },
             questions: {
+                type: Array,
+                required: true
+            },
+            attempts: {
                 type: Array,
                 required: true
             },

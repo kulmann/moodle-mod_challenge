@@ -23,7 +23,7 @@ use external_function_parameters;
 use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
-use mod_challenge\external\exporter\question_dto;
+use mod_challenge\external\exporter\attempt_dto;
 use mod_challenge\util;
 use moodle_exception;
 use question_answer;
@@ -56,7 +56,7 @@ class player_save_answer extends external_api {
      * @return external_single_structure
      */
     public static function request_returns() {
-        return question_dto::get_read_structure();
+        return attempt_dto::get_read_structure();
     }
 
     /**
@@ -85,11 +85,14 @@ class player_save_answer extends external_api {
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
         $question = util::get_question($questionid);
-        util::validate_question(intval($USER->id), $question);
         $match = util::get_match($question->get_matchid());
+        $attempt = util::get_attempt_by_question($questionid, intval($USER->id));
 
         // some validations
-        if ($question->is_finished_by(intval($USER->id))) {
+        if ($attempt === null) {
+            throw new moodle_exception('trying to save answer without started attempt.');
+        }
+        if ($attempt->is_finished()) {
             throw new moodle_exception('question has already been answered.');
         }
         $mdl_question = $question->get_mdl_question_ref();
@@ -97,7 +100,7 @@ class player_save_answer extends external_api {
             throw new coding_exception('property »answers« doesn\'t exist on the moodle question with id ' . $question->get_mdl_question() . '.');
         }
 
-        // submit the answer
+        // determine correct moodle answer
         $correct_mdl_answers = array_filter(
             $mdl_question->answers,
             function (question_answer $mdlanswer) {
@@ -109,30 +112,25 @@ class player_save_answer extends external_api {
         }
         $correct_mdl_answer = array_pop($correct_mdl_answers);
         assert($correct_mdl_answer instanceof question_answer);
-        $answered_correct = intval($correct_mdl_answer->id) === $mdlanswerid;
-        if ($question->is_mdl_user_1(intval($USER->id))) {
-            $question->set_mdl_user_1_answer($mdlanswerid);
-            $question->set_mdl_user_1_finished(true);
-            $question->set_mdl_user_1_correct($answered_correct);
-            if ($answered_correct) {
-                $time_taken = (time() - $question->get_mdl_user_1_timestart());
-                $time_available = $game->get_question_duration();
-                $question->set_mdl_user_1_score(max(0, min($time_available, ($time_available - $time_taken))));
-            }
-        } else {
-            $question->set_mdl_user_2_answer($mdlanswerid);
-            $question->set_mdl_user_2_finished(true);
-            $question->set_mdl_user_2_correct($answered_correct);
-            if ($answered_correct) {
-                $time_taken = (time() - $question->get_mdl_user_2_timestart());
-                $time_available = $game->get_question_duration();
-                $question->set_mdl_user_2_score(max(0, min($time_available, ($time_available - $time_taken))));
-            }
+
+        // submit the given answer
+        $attempt->set_mdl_answer($mdlanswerid);
+        $attempt->set_finished(true);
+        $attempt->set_correct(intval($correct_mdl_answer->id) === $mdlanswerid);
+        $time_taken = (time() - $attempt->get_timecreated());
+        $time_available = $game->get_question_duration();
+        $attempt->set_timeremaining(max(0, ($time_available - $time_taken)));
+        if ($attempt->is_correct()) {
+            $attempt->set_score(min($time_available, $attempt->get_timeremaining()));
         }
-        $question->save();
+        $attempt->save();
+
+        // now that the attempt is finished, check if there is a winner already
+        $question->check_winner($game);
+        $match->check_winner();
 
         // create export
-        $exporter = new question_dto($question, $match, $game, $ctx);
+        $exporter = new attempt_dto($attempt, $ctx);
         return $exporter->export($renderer);
     }
 }

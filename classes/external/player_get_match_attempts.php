@@ -23,6 +23,7 @@ use external_function_parameters;
 use external_multiple_structure;
 use external_value;
 use invalid_parameter_exception;
+use mod_challenge\external\exporter\attempt_dto;
 use mod_challenge\external\exporter\question_dto;
 use mod_challenge\model\question;
 use mod_challenge\util;
@@ -31,7 +32,7 @@ use restricted_context_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
-class player_get_match_questions extends external_api {
+class player_get_match_attempts extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -52,7 +53,7 @@ class player_get_match_questions extends external_api {
      */
     public static function request_returns() {
         return new external_multiple_structure(
-            question_dto::get_read_structure()
+            attempt_dto::get_read_structure()
         );
     }
 
@@ -76,7 +77,7 @@ class player_get_match_questions extends external_api {
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
-        global $PAGE, $USER;
+        global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
@@ -89,8 +90,11 @@ class player_get_match_questions extends external_api {
         foreach ($questions as $question) {
             assert($question instanceof question);
             $question->check_winner($game);
-            $exporter = new question_dto($question, $match, $game, $ctx);
-            $result[] = $exporter->export($renderer);
+            $attempts = $question->get_attempts();
+            foreach ($attempts as $attempt) {
+                $exporter = new attempt_dto($attempt, $ctx);
+                $result[] = $exporter->export($renderer);
+            }
         }
         return $result;
     }

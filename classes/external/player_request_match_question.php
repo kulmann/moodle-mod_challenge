@@ -24,6 +24,7 @@ use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\question_dto;
+use mod_challenge\model\attempt;
 use mod_challenge\model\question;
 use mod_challenge\util;
 use moodle_exception;
@@ -94,23 +95,12 @@ class player_request_match_question extends external_api {
         // get existing question
         $question = $match->get_question_by_number($number);
 
-        // if question answered by opponent: assign own starting time
-        if ($question !== null && $question->get_mdl_user_1() !== intval($USER->id) && $question->get_mdl_user_2() === 0) {
-            $question->set_mdl_user_2(intval($USER->id));
-            $question->set_mdl_user_2_timestart(time());
-            $question->save();
-        }
-
         // if question doesn't exist at all: create a new one
         if ($question === null) {
             // create question
             $question = new question();
             $question->set_matchid($matchid);
             $question->set_number($number);
-
-            // assign moodle user
-            $question->set_mdl_user_1(intval($USER->id));
-            $question->set_mdl_user_1_timestart(time());
 
             // set moodle question
             $active_categories = $game->get_categories_by_round($match->get_round());
@@ -131,6 +121,15 @@ class player_request_match_question extends external_api {
 
             // done. save it
             $question->save();
+        }
+
+        // check if an attempt needs to be logged
+        $attempt = util::get_attempt_by_question($question->get_id(), intval($USER->id));
+        if ($attempt === null) {
+            $attempt = new attempt();
+            $attempt->set_question($question->get_id());
+            $attempt->set_mdl_user(intval($USER->id));
+            $attempt->save();
         }
 
         // create export

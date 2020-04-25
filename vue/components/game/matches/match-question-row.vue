@@ -43,6 +43,10 @@
                 type: Array,
                 required: true
             },
+            attempts: {
+                type: Array,
+                required: true
+            },
             ownUserId: {
                 type: Number,
                 required: true
@@ -55,55 +59,53 @@
         },
         computed: {
             ...mapState(['strings', 'game']),
-            leftQuestion() {
-                return this.getQuestionByUser(this.mdlUserLeft);
+            leftAttempt() {
+                return this.getAttemptByUser(this.mdlUserLeft);
             },
             leftIcon() {
-                return this.getIconByQuestion(this.leftQuestion);
+                return this.getIconByAttempt(this.leftAttempt);
             },
             leftStyle() {
-                return this.getStyleByQuestion(this.leftQuestion);
+                return this.getStyleByAttempt(this.leftAttempt);
             },
-            rightQuestion() {
-                return this.getQuestionByUser(this.mdlUserRight);
+            rightAttempt() {
+                return this.getAttemptByUser(this.mdlUserRight);
             },
             rightIcon() {
-                return this.getIconByQuestion(this.rightQuestion);
+                return this.getIconByAttempt(this.rightAttempt);
             },
             rightStyle() {
-                return this.getStyleByQuestion(this.rightQuestion);
+                return this.getStyleByAttempt(this.rightAttempt);
             },
-            ownQuestion() {
-                return this.getQuestionByUser(this.ownUserId);
+            ownAttempt() {
+                return this.getAttemptByUser(this.ownUserId);
             },
             isQuestionAnswered() {
-                return !isNil(this.ownQuestion) && this.ownQuestion.finished;
+                return !isNil(this.ownAttempt) && this.ownAttempt.finished;
             },
         },
         methods: {
-            ...mapActions({
-                fetchMdlQuestion: 'player/fetchMdlQuestion',
-            }),
-            getQuestionByUser(mdlUserId) {
-                return first(this.questions.filter(q => q.mdl_user === mdlUserId));
+            ...mapActions(['fetchMdlQuestion']),
+            getAttemptByUser(mdlUserId) {
+                return first(this.attempts.filter(a => a.mdl_user === mdlUserId && a.question === this.question.id));
             },
-            getIconByQuestion(question) {
-                if (isNil(question) || !question.finished) {
+            getIconByAttempt(attempt) {
+                if (isNil(attempt) || !attempt.finished) {
                     return "play-circle";
                 } else {
-                    if (question.correct) {
+                    if (attempt.correct) {
                         return "check-circle";
                     } else {
                         return "times-circle";
                     }
                 }
             },
-            getStyleByQuestion(question) {
+            getStyleByAttempt(attempt) {
                 let styles = [];
-                if (isNil(question) || !question.finished) {
+                if (isNil(attempt) || !attempt.finished) {
                     styles.push("color: #cccccc;");
                 } else {
-                    if (question.correct) {
+                    if (attempt.correct) {
                         styles.push("color: #00bb00;");
                     } else {
                         styles.push("color: #9d261d;");
@@ -113,10 +115,9 @@
             },
         },
         mounted () {
-            const ownQuestion = this.ownQuestion;
-            if (ownQuestion) {
+            if (!isNil(this.question.id)) {
                 this.fetchMdlQuestion({
-                    questionid: this.ownQuestion.id
+                    questionid: this.question.id
                 }).then(mdlQuestion => {
                     this.mdlQuestion = mdlQuestion;
                 })
