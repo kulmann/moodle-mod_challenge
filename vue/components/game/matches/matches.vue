@@ -1,6 +1,6 @@
 <template lang="pug">
     .uk-card.uk-card-default.uk-card-body
-        loading-alert(v-if="loading", :message="strings.game_match_loading")
+        loading-alert(v-if="loading", :message="strings.game_match_loading").uk-text-center
         template(v-else)
             match-nav(v-model="matchIndex", :own-user-id="ownUserId", :round="round", :match="match", :matches="matches")
             failure-alert(v-if="match === null", :message="strings.game_match_show_error")
@@ -75,11 +75,13 @@
         },
         methods: {
             ...mapActions({
+                fetchMatches: 'player/fetchMatches',
                 fetchMatchQuestions: 'player/fetchMatchQuestions',
                 fetchMatchAttempts: 'player/fetchMatchAttempts',
             }),
             async initData() {
                 this.loading = true;
+                await this.fetchMatches();
                 await this.loadQuestions();
                 this.matchIndex = isNil(this.match) ? undefined : this.matches.indexOf(this.match);
                 this.loading = false;
