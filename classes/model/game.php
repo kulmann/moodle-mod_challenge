@@ -19,7 +19,10 @@ namespace mod_challenge\model;
 global $CFG;
 require_once($CFG->libdir . '/outputcomponents.php');
 
+use coding_exception;
 use dml_exception;
+use mod_challenge\util;
+use moodle_exception;
 use stdClass;
 use user_picture;
 use function assert;
@@ -155,13 +158,16 @@ class game extends abstract_model {
 
     /**
      * Select all users within the given course.
-     *
-     * @param int $courseid
+     * Important: this excludes teachers!
      *
      * @return stdClass[]
+     * @throws coding_exception
+     * @throws moodle_exception
      * @throws dml_exception
      */
-    public function get_mdl_users($courseid) {
+    public function get_mdl_users() {
+        list($course, $coursemodule) = get_course_and_cm_from_instance($this->get_id(), 'challenge');
+        $ctx = $coursemodule->context;
         global $DB;
         $picture_fields = user_picture::fields('u');
         $sql = "SELECT DISTINCT $picture_fields
@@ -169,8 +175,17 @@ class game extends abstract_model {
                 JOIN {role_assignments} a ON a.userid = u.id
                 JOIN {context} ctx ON (a.contextid = ctx.id AND instanceid = :courseid)
                 ORDER BY u.lastname, u.firstname ASC";
-        $params = ['courseid' => $courseid];
-        return $DB->get_records_sql($sql, $params);
+        $params = ['courseid' => $course->id];
+        $users = $DB->get_records_sql($sql, $params);
+        $result = [];
+        foreach($users as $user) {
+            if (util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $user->id)) {
+                // skip teachers
+                continue;
+            }
+            $result[] = $user;
+        }
+        return $result;
     }
 
     /**
@@ -348,7 +363,7 @@ class game extends abstract_model {
                     WHERE r.game = :game 
                         AND r.state <> :state_deleted
                         AND (m.mdl_user_1 = :user_1 OR m.mdl_user_2 = :user_2) 
-                    ORDER BY m.timecreated DESC", $sql_params);
+                    ORDER BY m.timecreated ASC", $sql_params);
         $result = [];
         foreach ($records as $match_data) {
             $match = new match();

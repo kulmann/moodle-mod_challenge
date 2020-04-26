@@ -85,7 +85,7 @@ export default {
         getRoundById: state => roundId => {
             return first(state.rounds.filter(round => round.id === roundId));
         },
-        getMdlUser: state => (mdlUserId) => {
+        getMdlUser: state => mdlUserId => {
             return first(state.mdlUsers.filter(user => user.id === mdlUserId));
         }
     },

@@ -39,10 +39,6 @@
                 type: Number,
                 required: true
             },
-            questions: {
-                type: Array,
-                required: true
-            },
             attempts: {
                 type: Array,
                 required: true

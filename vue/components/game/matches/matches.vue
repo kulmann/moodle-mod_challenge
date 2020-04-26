@@ -11,7 +11,7 @@
     import langMixins from '../../../mixins/lang-mixins';
     import {mapActions, mapGetters, mapState} from 'vuex';
     import isNil from 'lodash/isNil';
-    import first from 'lodash/first';
+    import last from 'lodash/last';
     import FailureAlert from "../../helper/failure-alert";
     import LoadingAlert from "../../helper/loading-alert";
     import MatchShow from "./match-show";
@@ -61,13 +61,13 @@
                 if (!isNil(this.forcedMatchId)) {
                     return this.getMatchById(this.forcedMatchId);
                 }
-                return first(this.matches);
+                return last(this.matches);
             },
             round() {
                 if (!isNil(this.match)) {
                     return this.getRoundById(this.match.round);
                 }
-                return first(this.rounds);
+                return last(this.rounds);
             },
             ownUserId() {
                 return this.game.mdl_user;

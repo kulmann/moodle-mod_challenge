@@ -12,12 +12,11 @@
                     userAvatar(:size="80", :user="user2")
                 b {{ user2.firstname }} {{ user2.lastname }}
         template(v-for="question in questionMocks")
-            question-row(:key="'question-row-' + question.number",
+            question-row(:key="`question-row-${question.number}`",
                 :question="question",
                 :match="match",
                 :mdlUserLeft="match.mdl_user_1",
                 :mdlUserRight="match.mdl_user_2",
-                :questions="questions",
                 :attempts="attempts"
                 :ownUserId="ownUserId"
             )
@@ -65,7 +64,7 @@
             questionMocks() {
                 const questions = [];
                 for (let i = 0; i < this.round.questions; i++) {
-                    const existingQuestion = first(this.questions.filter(question => question.number === (i + 1)));
+                    const existingQuestion = first(this.questions.filter(question => question.matchid === this.match.id && question.number === (i + 1)));
                     if (existingQuestion) {
                         questions.push(existingQuestion);
                     } else {

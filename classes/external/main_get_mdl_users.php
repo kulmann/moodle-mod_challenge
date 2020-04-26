@@ -85,13 +85,9 @@ class main_get_mdl_users extends external_api {
         $game = util::get_game($coursemodule);
 
         // get the users and transform to output
-        $mdl_users = $game->get_mdl_users($course->id);
+        $mdl_users = $game->get_mdl_users();
         $result = [];
         foreach($mdl_users as $mdl_user) {
-            if (util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $mdl_user->id)) {
-                // skip teachers
-                continue;
-            }
             $exporter = new mdl_user_dto($mdl_user, $ctx);
             $result[] = $exporter->export($renderer);
         }
