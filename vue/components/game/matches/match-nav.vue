@@ -1,23 +1,27 @@
 <template lang="pug">
-    .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom
-        button.btn.btn-default(:disabled="isFirstMatch", @click="goToPrevMatch")
-            v-icon(name="chevron-left")
-        div
-            b.uk-margin-small-left.uk-margin-small-right {{ strings.game_match_step | stringParams({step: value + 1, total: matches.length}) }}
-            template(v-if="match")
-                br
-                i(v-if="match.open") {{ strings.game_match_lbl_open }}
-                b.uk-text-success(v-else-if="match.mdl_user_winner === ownUserId") {{ strings.game_match_lbl_won }}
-                b.uk-text-danger(v-else) {{ strings.game_match_lbl_lost }}
-        button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
-            v-icon(name="chevron-right")
+    div
+        .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom
+            button.btn.btn-default(:disabled="isFirstMatch", @click="goToPrevMatch")
+                v-icon(name="chevron-left")
+            div
+                b.uk-margin-small-left.uk-margin-small-right {{ strings.game_match_step | stringParams({step: value + 1, total: matches.length}) }}
+                template(v-if="match")
+                    br
+                    i(v-if="match.open") {{ strings.game_match_lbl_open }}
+                    b.uk-text-success(v-else-if="match.mdl_user_winner === ownUserId") {{ strings.game_match_lbl_won }}
+                    b.uk-text-danger(v-else) {{ strings.game_match_lbl_lost }}
+            button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
+                v-icon(name="chevron-right")
+        .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom(v-if="round")
+            span(v-html="stringParams(strings.game_round_dates, {start: roundStartDate, end: roundEndDate})")
 </template>
 
 <script>
     import {mapState} from 'vuex';
     import LangMixins from '../../../mixins/lang-mixins';
+    import TimeMixins from '../../../mixins/time-mixins';
     export default {
-        mixins: [LangMixins],
+        mixins: [LangMixins, TimeMixins],
         props: {
             value: {
                 type: Number,
@@ -26,6 +30,10 @@
             ownUserId: {
                 type: Number,
                 required: true
+            },
+            round: {
+                type: Object,
+                required: false
             },
             match: {
                 type: Object,
@@ -44,6 +52,12 @@
             isLastMatch() {
                 return this.value === this.matches.length - 1;
             },
+            roundStartDate() {
+                return this.formDateTime(this.round.timestart);
+            },
+            roundEndDate() {
+                return this.formDateTime(this.round.timeend);
+            }
         },
         methods: {
             goToPrevMatch() {

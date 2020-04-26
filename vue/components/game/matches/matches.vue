@@ -2,7 +2,7 @@
     .uk-card.uk-card-default.uk-card-body
         loading-alert(v-if="loading", :message="strings.game_match_loading")
         template(v-else)
-            match-nav(v-model="matchIndex", :match="match", :matches="matches", :own-user-id="ownUserId" )
+            match-nav(v-model="matchIndex", :own-user-id="ownUserId", :round="round", :match="match", :matches="matches")
             failure-alert(v-if="match === null", :message="strings.game_match_show_error")
             match-show(v-else, :round="round", :match="match", :questions="questions", :attempts="attempts", :own-user-id="ownUserId" )
 </template>

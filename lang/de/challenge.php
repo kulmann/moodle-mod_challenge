@@ -82,6 +82,7 @@ $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';
 $string['format_date_time'] = 'DD.MM.YYYY, hh:mm';
 $string['format_date'] = 'DD.MM.YYYY';
 $string['format_time'] = 'hh:mm';
+$string['format_time_suffix'] = 'Uhr';
 
 /* admin screen in vue app */
 $string['admin_screen_title'] = 'Spiel-Inhalte bearbeiten';
@@ -205,3 +206,4 @@ $string['game_match_lbl_won'] = 'gewonnen';
 $string['game_match_lbl_lost'] = 'verloren';
 $string['game_match_lbl_question'] = 'Frage {$a} beantworten';
 $string['game_match_question_title'] = 'Frage {$a}';
+$string['game_round_dates'] = 'Aktiv von <b>{$a->start}</b> bis <b>{$a->end}</b>';
