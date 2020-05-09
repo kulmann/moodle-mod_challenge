@@ -99,7 +99,7 @@ $string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Rounds';
 $string['admin_rounds_title'] = 'Manager rounds';
-$string['admin_rounds_intro'] = 'Description text about rounds...';
+$string['admin_rounds_intro'] = '';
 $string['admin_rounds_list_th_no'] = 'No.';
 $string['admin_rounds_list_th_name'] = 'Name';
 $string['admin_rounds_list_th_timing'] = 'Timing';
@@ -122,6 +122,13 @@ $string['admin_round_lbl_category_closed_same'] = 'Category {$a->number} - In ro
 $string['admin_round_lbl_category_new'] = 'Category {$a} - Gerade hinzugefügt';
 $string['admin_round_lbl_category_please_select'] = 'Select category';
 $string['admin_round_msg_saving'] = 'Saving the round, please wait';
+/* admin: round results */
+$string['admin_results_loading'] = 'Loading round results';
+$string['admin_results_title'] = 'Results of round {$a}';
+$string['admin_results_btn_rounds'] = 'Go Back';
+$string['admin_results_match_score_table_question'] = 'Question {$a}';
+$string['admin_results_match_score_state_finished'] = 'Finished';
+$string['admin_results_match_score_state_ongoing'] = 'Ongoing';
 
 
 /* DEPRECATED */

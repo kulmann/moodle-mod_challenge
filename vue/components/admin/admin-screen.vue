@@ -21,6 +21,10 @@
                     :mdlCategories="mdlCategories",
                     :rounds="rounds"
                 )
+                round-results(v-else-if="viewMode === VIEW_MODE_ROUND_RESULTS",
+                    :round="roundForEditing",
+                    :rounds="rounds"
+                )
 </template>
 
 <script>
@@ -36,6 +40,7 @@
     import RoundEdit from "./rounds/round-edit";
 
     import constants from "../../constants";
+    import RoundResults from "./rounds/round-results";
 
     export default {
         mixins: [langMixins],
@@ -44,6 +49,7 @@
                 VIEW_MODE_NONE: constants.ROUTE_UNKNOWN,
                 VIEW_MODE_ROUNDS: constants.ROUTE_ADMIN_ROUNDS,
                 VIEW_MODE_ROUND_EDIT: constants.ROUTE_ADMIN_ROUND_EDIT,
+                VIEW_MODE_ROUND_RESULTS: constants.ROUTE_ADMIN_ROUND_RESULTS,
             }
         },
         computed: {
@@ -66,6 +72,7 @@
                 const routes = [
                     this.VIEW_MODE_ROUNDS,
                     this.VIEW_MODE_ROUND_EDIT,
+                    this.VIEW_MODE_ROUND_RESULTS,
                 ];
                 if (routes.includes(this.$route.name)) {
                     return this.$route.name;
@@ -101,6 +108,7 @@
             }
         },
         components: {
+            RoundResults,
             RoundsList,
             RoundEdit,
             VkGrid,

@@ -144,6 +144,75 @@ class round extends abstract_model {
     }
 
     /**
+     * Loads all matches of this round.
+     *
+     * @return match[]
+     * @throws \dml_exception
+     */
+    public function get_matches(): array {
+        global $DB;
+        $records = $DB->get_records('challenge_matches', ['round' => $this->get_id()]);
+        return \array_map(function($record) {
+            $match = new match();
+            $match->apply($record);
+            return $match;
+        }, $records);
+    }
+
+    /**
+     * Loads all questions of this round, identified through matches.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public function get_match_questions(): array {
+        global $DB;
+        $sql = "
+                SELECT question.*
+                  FROM {challenge_questions} question
+            INNER JOIN {challenge_matches} m ON question.matchid=m.id 
+                 WHERE m.round = :round
+              ORDER BY m.id, question.number ASC
+        ";
+        $sql_conditions = ['round' => $this->get_id()];
+        $records = $DB->get_records_sql($sql, $sql_conditions);
+        $result = [];
+        foreach ($records as $record) {
+            $question = new question();
+            $question->apply($record);
+            $result[] = $question;
+        }
+        return $result;
+    }
+
+    /**
+     * Loads all attempts of this round, identified through matches.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public function get_match_attempts(): array {
+        global $DB;
+        $sql = "
+                SELECT attempt.*
+                  FROM {challenge_attempts} attempt
+            INNER JOIN {challenge_questions} q ON attempt.question=q.id 
+            INNER JOIN {challenge_matches} m ON q.matchid=m.id 
+                 WHERE m.round = :round
+              ORDER BY m.id, q.number, attempt.id ASC
+        ";
+        $sql_conditions = ['round' => $this->get_id()];
+        $records = $DB->get_records_sql($sql, $sql_conditions);
+        $result = [];
+        foreach ($records as $record) {
+            $attempt = new attempt();
+            $attempt->apply($record);
+            $result[] = $attempt;
+        }
+        return $result;
+    }
+
+    /**
      * @return int
      */
     public function get_game(): int {

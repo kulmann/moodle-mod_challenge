@@ -38,6 +38,27 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_admin_get_round_attempts' => [
+        'classname' => 'mod_challenge\external\admin_get_round_attempts',
+        'methodname' => 'request',
+        'description' => 'Retrieves the attempts of a certain round.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+    'mod_challenge_admin_get_round_matches' => [
+        'classname' => 'mod_challenge\external\admin_get_round_matches',
+        'methodname' => 'request',
+        'description' => 'Retrieves the matches of a certain round.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+    'mod_challenge_admin_get_round_questions' => [
+        'classname' => 'mod_challenge\external\admin_get_round_questions',
+        'methodname' => 'request',
+        'description' => 'Retrieves the questions of a certain round.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     'mod_challenge_admin_get_mdl_categories' => [
         'classname' => 'mod_challenge\external\admin_get_mdl_categories',
         'methodname' => 'request',

@@ -28,6 +28,8 @@
                                     v-icon(name="stop")
                                 button.btn.btn-primary(@click="startRoundAsk(round)", v-else-if="isUpcomingRound(round)")
                                     v-icon(name="play")
+                                button.btn.btn-success(@click="goToRoundResults(round)", :disabled="!isRoundStarted(round)")
+                                    v-icon(name="chart-line")
                                 button.btn.btn-default(@click="goToEditRound(round)")
                                     v-icon(name="regular/edit")
                                 button.btn.btn-default(@click="deleteRoundAsk(round)", :disabled="isRoundStarted(round)")
@@ -131,6 +133,9 @@
                 return this.stringParams(this.strings.admin_rounds_list_timing_to, this.formDateTime(round.timeend));
             },
             // actions
+            goToRoundResults(round) {
+                this.$router.push({name: 'admin-round-results', params: {roundId: round.id}});
+            },
             goToCreateRound() {
                 this.$router.push({name: 'admin-round-edit', params: {roundId: 0}});
             },

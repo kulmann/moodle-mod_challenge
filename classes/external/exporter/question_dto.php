@@ -19,7 +19,6 @@ namespace mod_challenge\external\exporter;
 use context;
 use core\external\exporter;
 use mod_challenge\model\game;
-use mod_challenge\model\match;
 use mod_challenge\model\question;
 use renderer_base;
 
@@ -39,10 +38,6 @@ class question_dto extends exporter {
      */
     protected $question;
     /**
-     * @var match
-     */
-    protected $match;
-    /**
      * @var game
      */
     protected $game;
@@ -51,15 +46,13 @@ class question_dto extends exporter {
      * question_dto constructor.
      *
      * @param question $question
-     * @param match $match
      * @param game $game
      * @param context $context
      *
      * @throws \coding_exception
      */
-    public function __construct(question $question, match $match, game $game, context $context) {
+    public function __construct(question $question, game $game, context $context) {
         $this->question = $question;
-        $this->match = $match;
         $this->game = $game;
         parent::__construct([], ['context' => $context]);
     }

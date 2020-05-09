@@ -11,6 +11,7 @@ export const ROUND_DELETED=  'deleted';
 export const ROUTE_UNKNOWN = 'unknown';
 export const ROUTE_ADMIN_ROUNDS = 'admin-round-list';
 export const ROUTE_ADMIN_ROUND_EDIT = 'admin-round-edit';
+export const ROUTE_ADMIN_ROUND_RESULTS = 'admin-round-results';
 
 export default {
     // rounds
@@ -21,5 +22,6 @@ export default {
     // views
     ROUTE_UNKNOWN,
     ROUTE_ADMIN_ROUNDS,
-    ROUTE_ADMIN_ROUND_EDIT
+    ROUTE_ADMIN_ROUND_EDIT,
+    ROUTE_ADMIN_ROUND_RESULTS
 }

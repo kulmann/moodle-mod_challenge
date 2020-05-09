@@ -23,15 +23,14 @@ use external_function_parameters;
 use external_multiple_structure;
 use external_value;
 use invalid_parameter_exception;
-use mod_challenge\external\exporter\question_dto;
-use mod_challenge\model\question;
+use mod_challenge\external\exporter\match_dto;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
-class player_get_match_questions extends external_api {
+class admin_get_round_matches extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -41,26 +40,22 @@ class player_get_match_questions extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'matchid' => new external_value(PARAM_INT, 'match id'),
+            'roundid' => new external_value(PARAM_INT, 'round id'),
         ]);
     }
 
     /**
-     * Definition of return type for {@see request}.
-     *
      * @return external_multiple_structure
      */
     public static function request_returns() {
-        return new external_multiple_structure(
-            question_dto::get_read_structure()
-        );
+        return new external_multiple_structure(match_dto::get_read_structure());
     }
 
     /**
-     * Get all questions of a match.
+     * Get all matches of a round.
      *
      * @param int $coursemoduleid
-     * @param int $matchid
+     * @param int $roundid
      *
      * @return array
      * @throws coding_exception
@@ -69,28 +64,26 @@ class player_get_match_questions extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid, $matchid) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'matchid' => $matchid];
+    public static function request($coursemoduleid, $roundid) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'roundid' => $roundid];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
-        global $PAGE, $USER;
+        $game = util::get_game($coursemodule);
+        $round = util::get_round($roundid);
+        util::validate_round($game, $round);
+        $matches = $round->get_matches();
+
+        // construct result
+        global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
-        $game = util::get_game($coursemodule);
-        $match = util::get_match($matchid);
-        util::validate_match($game, $match);
-
-        // collect export data
         $result = [];
-        $questions = $match->get_questions();
-        foreach ($questions as $question) {
-            assert($question instanceof question);
-            $question->check_winner($game);
-            $exporter = new question_dto($question, $game, $ctx);
-            $result[] = $exporter->export($renderer);
+        foreach ($matches as $match) {
+            $match_dto = new match_dto($match, $game, $ctx);
+            $result[] = $match_dto->export($renderer);
         }
         return $result;
     }

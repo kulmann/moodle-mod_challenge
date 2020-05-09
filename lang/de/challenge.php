@@ -99,7 +99,7 @@ $string['admin_avatar_alt'] = 'Foto von {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Runden';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
-$string['admin_rounds_intro'] = 'Erklärungstext über Spielrunden...';
+$string['admin_rounds_intro'] = '';
 $string['admin_rounds_list_th_no'] = 'Nr.';
 $string['admin_rounds_list_th_name'] = 'Name';
 $string['admin_rounds_list_th_timing'] = 'Zeit';
@@ -121,6 +121,13 @@ $string['admin_round_lbl_category_closed_range'] = 'Kategorie {$a->number} - Von
 $string['admin_round_lbl_category_closed_same'] = 'Kategorie {$a->number} - Nur in Runde {$a->round_first_number}';
 $string['admin_round_lbl_category_new'] = 'Kategorie {$a} - Gerade hinzugefügt';
 $string['admin_round_lbl_category_please_select'] = 'Kategorie auswählen';
+/* admin: round results */
+$string['admin_results_loading'] = 'Rundenergebnisse werden geladen';
+$string['admin_results_title'] = 'Ergebnisse Runde {$a}';
+$string['admin_results_btn_rounds'] = 'Zurück';
+$string['admin_results_match_score_table_question'] = 'Frage {$a}';
+$string['admin_results_match_score_state_finished'] = 'Beendet';
+$string['admin_results_match_score_state_ongoing'] = 'Offen';
 
 
 /* DEPRECATED */

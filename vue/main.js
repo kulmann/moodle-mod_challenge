@@ -70,6 +70,9 @@ function init(coursemoduleid, contextid) {
             }, {
                 path: 'round/:roundId?',
                 name: constants.ROUTE_ADMIN_ROUND_EDIT,
+            }, {
+                path: 'round/:roundId/results',
+                name: constants.ROUTE_ADMIN_ROUND_RESULTS,
             }]
         }, {
             path: '*',

@@ -109,8 +109,28 @@ export default {
          * @param payload
          * @returns {Promise<void>}
          */
-        async fetchMatches(context, payload) {
-            return await ajax('mod_challenge_admin_get_matches', payload);
+        async fetchRoundMatches(context, payload) {
+            return await ajax('mod_challenge_admin_get_round_matches', payload);
+        },
+        /**
+         * Fetches the questions of the given round.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async fetchRoundQuestions(context, payload) {
+            return await ajax('mod_challenge_admin_get_round_questions', payload);
+        },
+        /**
+         * Fetches the attempts of the given round.
+         *
+         * @param context
+         * @param payload
+         * @returns {Promise<*>}
+         */
+        async fetchRoundAttempts(context, payload) {
+            return await ajax('mod_challenge_admin_get_round_attempts', payload);
         },
         /**
          * Updates the matches of the given round.

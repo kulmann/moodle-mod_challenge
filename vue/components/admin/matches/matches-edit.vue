@@ -63,7 +63,7 @@
         },
         methods: {
             ...mapActions({
-                fetchMatches: 'admin/fetchMatches',
+                fetchMatches: 'admin/fetchRoundMatches',
                 saveMatches: 'admin/saveMatches',
             }),
             setActiveTab(tab) {

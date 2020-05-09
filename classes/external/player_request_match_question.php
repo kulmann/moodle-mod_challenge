@@ -133,7 +133,7 @@ class player_request_match_question extends external_api {
         }
 
         // create export
-        $exporter = new question_dto($question, $match, $game, $ctx);
+        $exporter = new question_dto($question, $game, $ctx);
         return $exporter->export($renderer);
     }
 }
