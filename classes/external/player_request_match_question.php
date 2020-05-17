@@ -97,30 +97,7 @@ class player_request_match_question extends external_api {
 
         // if question doesn't exist at all: create a new one
         if ($question === null) {
-            // create question
-            $question = new question();
-            $question->set_matchid($matchid);
-            $question->set_number($number);
-
-            // set moodle question
-            $active_categories = $game->get_categories_by_round($match->get_round());
-            $mdl_question = $round->get_random_mdl_question($active_categories);
-            $question->set_mdl_question($mdl_question->id);
-
-            // fixate the answer order
-            $mdl_answer_ids = array_map(
-                function ($mdl_answer) {
-                    return $mdl_answer->id;
-                },
-                $mdl_question->answers
-            );
-            if ($game->is_question_shuffle_answers()) {
-                shuffle($mdl_answer_ids);
-            }
-            $question->set_mdl_answers_order(implode(",", $mdl_answer_ids));
-
-            // done. save it
-            $question->save();
+            $question = $match->create_question($game, $round, $number);
         }
 
         // check if an attempt needs to be logged

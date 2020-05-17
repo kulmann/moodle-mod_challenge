@@ -103,6 +103,24 @@ class round extends abstract_model {
     }
 
     /**
+     * Checks if the round start date is reached.
+     *
+     * @return bool
+     */
+    public function is_started() {
+        return $this->get_timestart() <= time();
+    }
+
+    /**
+     * Checks if the round end date is reached.
+     *
+     * @return bool
+     */
+    public function is_ended() {
+        return $this->get_timeend() <= time();
+    }
+
+    /**
      * Returns one random question out of the categories that are assigned to this level.
      *
      * @param category[] $active_categories

@@ -84,6 +84,7 @@ class player_get_matches extends external_api {
         $result = [];
         foreach ($matches as $match) {
             \assert($match instanceof match);
+            $match->check_winner();
             $exporter = new match_dto($match, $game, $ctx);
             $result[] = $exporter->export($renderer);
         }

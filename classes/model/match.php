@@ -98,18 +98,25 @@ class match extends abstract_model {
      * Note: This doesn't trigger the question winner check. That has to be done separately.
      *
      * @throws \dml_exception
+     * @throws \coding_exception
      */
     public function check_winner() {
+        // early returns for performance
         if ($this->is_finished()) {
             return;
         }
+        $round = util::get_round($this->get_round());
+        if (!$round->is_started()) {
+            return;
+        }
+        $game = util::get_game_by_id($round->get_game());
 
         // make sure that the questions have the most recent winner-state already
         $questions = $this->get_questions();
         $finished = 0;
         $win_counts = [];
         $score_sum = [];
-        foreach($questions as $question) {
+        foreach ($questions as $question) {
             if ($question->is_finished()) {
                 $finished++;
                 $win_counts[$question->get_winner_mdl_user()]++;
@@ -117,8 +124,28 @@ class match extends abstract_model {
             }
         }
 
-        // check if the match is finished already
-        $round = util::get_round($this->get_round());
+        // if match is over, add empty questions and lost attempts where necessary
+        if ($round->is_ended() && $finished !== $round->get_questions()) {
+            // add empty questions
+            for ($index = $finished; $index < $round->get_questions(); $index++) {
+                $questions[] = $this->create_question($game, $round, $index + 1);
+            }
+            // go through unfinished questions and add lost attempts
+            foreach ($questions as $question) {
+                if (!$question->is_finished()) {
+                    $question->close_attempt($this->get_mdl_user_1());
+                    $question->close_attempt($this->get_mdl_user_2());
+                    $question->check_winner($game);
+                    if ($question->is_finished()) {
+                        $finished++;
+                        $win_counts[$question->get_winner_mdl_user()]++;
+                        $score_sum[$question->get_winner_mdl_user()] += $question->get_winner_score();
+                    }
+                }
+            }
+        }
+
+        // check if the finished questions match the required number of questions
         if ($finished !== $round->get_questions()) {
             return;
         }
@@ -147,6 +174,44 @@ class match extends abstract_model {
 
         // save the changes
         $this->save();
+    }
+
+    /**
+     * Create a question for this match, using the given $game and $round.
+     *
+     * @param game $game
+     * @param round $round
+     * @param int $number
+     * @return question
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function create_question(game $game, round $round, int $number) {
+        // create question
+        $question = new question();
+        $question->set_matchid($this->get_id());
+        $question->set_number($number);
+
+        // set moodle question
+        $active_categories = $game->get_categories_by_round($this->get_round());
+        $mdl_question = $round->get_random_mdl_question($active_categories);
+        $question->set_mdl_question($mdl_question->id);
+
+        // fixate the answer order
+        $mdl_answer_ids = array_map(
+            function ($mdl_answer) {
+                return $mdl_answer->id;
+            },
+            $mdl_question->answers
+        );
+        if ($game->is_question_shuffle_answers()) {
+            shuffle($mdl_answer_ids);
+        }
+        $question->set_mdl_answers_order(implode(",", $mdl_answer_ids));
+
+        // done. save it
+        $question->save();
+        return $question;
     }
 
     /**

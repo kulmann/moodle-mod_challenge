@@ -152,6 +152,44 @@ class question extends abstract_model {
     }
 
     /**
+     * Try to find an attempt for this question by the given $userid.
+     *
+     * @param int $userid
+     * @return attempt|null
+     * @throws dml_exception
+     */
+    private function get_attempt_by_user(int $userid) {
+        global $DB;
+        $record = $DB->get_record('challenge_attempts', ['question' => $this->get_id(), 'mdl_user' => $userid]);
+        if ($record !== false) {
+            $attempt = new attempt();
+            $attempt->apply($record);
+            return $attempt;
+        }
+        return null;
+    }
+
+    /**
+     * Tries to find an attempt for this question by the given $userid, creates one if none found. And then closes it.
+     *
+     * @param int $userid
+     * @throws dml_exception
+     */
+    public function close_attempt(int $userid) {
+        $attempt = $this->get_attempt_by_user($userid);
+        if ($attempt === null) {
+            $attempt = new attempt();
+            $attempt->set_question($this->get_id());
+            $attempt->set_mdl_user($userid);
+        } elseif($attempt->is_finished()) {
+            return;
+        }
+        $attempt->set_finished(true);
+        $attempt->set_timeremaining(0);
+        $attempt->save();
+    }
+
+    /**
      * Checks if the attempts for this question are finished and determines a winner if not done already.
      *
      * @param game $game

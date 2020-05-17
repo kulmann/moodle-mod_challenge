@@ -107,7 +107,7 @@ class util {
     }
 
     /**
-     * Gets the game instance from the database.
+     * Gets the game instance for the given $coursemodule from the database.
      *
      * @param cm_info $coursemodule
      *
@@ -115,8 +115,20 @@ class util {
      * @throws dml_exception
      */
     public static function get_game(cm_info $coursemodule): game {
+        return self::get_game_by_id($coursemodule->instance);
+    }
+
+    /**
+     * Gets the game instance for the given $gameid from the database.
+     *
+     * @param int $gameid
+     *
+     * @return game
+     * @throws dml_exception
+     */
+    public static function get_game_by_id($gameid): game {
         $game = new game();
-        $game->load_data_by_id($coursemodule->instance);
+        $game->load_data_by_id($gameid);
         return $game;
     }
 
