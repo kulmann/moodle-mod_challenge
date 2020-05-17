@@ -253,7 +253,9 @@ class game extends abstract_model {
      * - create matches
      *
      * @return round The upcoming round
+     * @throws coding_exception
      * @throws dml_exception
+     * @throws moodle_exception
      */
     public function start_upcoming_round() {
         // get or create upcoming round
@@ -272,7 +274,7 @@ class game extends abstract_model {
 
         // get participants
         // TODO: restrict participants. for now pick all.
-        $mdl_users = $this->get_mdl_users($this->get_course());
+        $mdl_users = $this->get_mdl_users();
         \shuffle($mdl_users);
 
         // create matches
@@ -288,6 +290,20 @@ class game extends abstract_model {
             $matches[] = $match;
         }
         return $upcoming_round;
+    }
+
+    /**
+     * If there is a current round, it is set to finished.
+     *
+     * @throws dml_exception
+     */
+    public function stop_current_round() {
+        $current_round = $this->get_current_round();
+        if ($current_round !== null) {
+            $current_round->set_timeend(time());
+            $current_round->set_state(round::STATE_FINISHED);
+            $current_round->save();
+        }
     }
 
     /**
