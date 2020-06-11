@@ -75,6 +75,9 @@ $string['reset_progress_confirm_question'] = 'Möchten Sie wirklich den Fortschr
 $string['course_reset_include_progress'] = 'Fortschritt zurücksetzen (Highscores etc.)';
 $string['course_reset_include_topics'] = 'Eingestellte Themen etc. zurücksetzen (Alles wird gelöscht!)';
 
+/* messaging */
+$string['messageprovider:match'] = 'Einladung zu einem Quiz Challenge Match';
+
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';
 

@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,10 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version and other meta-info about the plugin
- *
- * Setting the $plugin->version to 0 prevents the plugin from being installed.
- * See https://docs.moodle.org/dev/version.php for more info.
+ * Plugin message providers
  *
  * @package    mod_challenge
  * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
@@ -27,8 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_challenge';
-$plugin->requires = 2017111302;
-$plugin->maturity = MATURITY_BETA;
-$plugin->version = 2020061101;
-$plugin->release = '0.5.0';
+$messageproviders = [
+    // Notify match opponents about their new match.
+    'match' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDOFF
+        ],
+    ],
+];

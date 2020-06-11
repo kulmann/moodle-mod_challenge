@@ -75,6 +75,9 @@ $string['reset_progress_confirm_question'] = 'Are you sure you want to reset the
 $string['course_reset_include_progress'] = 'Reset progress (Highscores etc.)';
 $string['course_reset_include_topics'] = 'Reset topics etc. (Everything will be deleted!)';
 
+/* messaging */
+$string['messageprovider:match'] = 'Invitation to a new quiz challenge match';
+
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Loading Quiz Challenge...';
 
