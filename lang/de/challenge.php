@@ -111,7 +111,6 @@ $string['admin_rounds_list_timing_to'] = 'Bis {$a}';
 $string['admin_round_delete_confirm'] = 'Möchten Sie die Runde {$a} wirklich löschen?';
 $string['admin_round_stop_confirm'] = 'Möchten Sie die Runde {$a} wirklich vorzeitig beenden? Achtung: Matches mit unbeantworteten Fragen können nicht gewonnen werden.';
 $string['admin_round_datepicker_start'] = "Runden-Start auswählen";
-$string['admin_round_datepicker_end'] = "Runden-Ende auswählen";
 $string['admin_round_edit_title_edit'] = 'Runde {$a} bearbeiten';
 $string['admin_round_edit_title_add'] = 'Runde {$a} hinzufügen';
 $string['admin_round_edit_description'] = 'Fügen Sie neue Fragenkategorien hinzu, die von dieser Runde an und in allen Folgerunden verwendet werden sollen. Sie können auch Fragenkategorien entfernen - diese werden dann ab dieser Runde nicht mehr verwendet. In vorherigen Runden bleiben Sie unverändert bestehen. Bitte beachten Sie, dass bereits gespeicherte Kategorien nicht verändert, sondern nur entfernt werden können.';
@@ -130,72 +129,6 @@ $string['admin_results_btn_rounds'] = 'Zurück';
 $string['admin_results_match_score_table_question'] = 'Frage {$a}';
 $string['admin_results_match_score_state_finished'] = 'Beendet';
 $string['admin_results_match_score_state_ongoing'] = 'Offen';
-
-
-/* DEPRECATED */
-/* admin: levels */
-$string['admin_nav_levels'] = 'Themengebiete';
-$string['admin_levels_title'] = 'Themengebiet bearbeiten';
-$string['admin_levels_none'] = 'Sie haben noch keine Themengebiete angelegt.';
-$string['admin_levels_intro'] = 'Sie haben die folgenden Themengebiete für dieses Spiel angelegt. Sie können hier die Daten und Reihenfolge der Themengebiete verändern, oder sie löschen. Bitte beachten Sie, dass das Löschen nur für die zukünftige Turniere Auswirkungen hat.';
-$string['admin_level_delete_confirm'] = 'Möchten Sie das Themengebiet »{$a}« wirklich löschen?';
-$string['admin_level_title_add'] = 'Themengebiet {$a} erstellen';
-$string['admin_level_title_edit'] = 'Themengebiet {$a} bearbeiten';
-$string['admin_level_loading'] = 'Lade Themengebiet-Daten';
-$string['admin_level_lbl_name'] = 'Name';
-$string['admin_level_lbl_bgcolor'] = 'Hintergrund-Farbe';
-$string['admin_level_lbl_bgcolor_help'] = 'HEX-Format, mit oder ohne #, im 3er oder 6er Format. Beispiel: #cc0033 oder #c03';
-$string['admin_level_lbl_image'] = 'Hintergrund-Bild';
-$string['admin_level_lbl_image_drag'] = 'Hochladen via Drag&Drop oder Auswahl';
-$string['admin_level_lbl_image_change'] = 'Ändern';
-$string['admin_level_lbl_image_remove'] = 'Entfernen';
-$string['admin_level_lbl_categories'] = 'Fragen-Zuweisungen';
-$string['admin_level_lbl_category'] = 'Kategorie {$a}';
-$string['admin_level_lbl_category_please_select'] = 'Kategorie auswählen';
-$string['admin_level_msg_saving'] = 'Das Themengebiet wird gespeichert, bitte warten';
-/* admin: tournaments */
-$string['admin_nav_tournaments'] = 'Turniere';
-$string['admin_tournaments_title'] = 'Turniere bearbeiten';
-$string['admin_tournaments_title_unpublished'] = 'Geplante Turniere';
-$string['admin_tournaments_none_unpublished'] = 'Es gibt keine geplanten Turniere.';
-$string['admin_tournaments_intro_unpublished'] = 'Geplante Turniere können bis zu ihrer Veröffentlichung bearbeitet werden.';
-$string['admin_tournaments_title_progress'] = 'Laufende Turniere';
-$string['admin_tournaments_none_progress'] = 'Es gibt keine laufenden Turniere.';
-$string['admin_tournaments_intro_progress'] = 'Laufende Turniere können hier beobachtet werden.';
-$string['admin_tournaments_title_finished'] = 'Abgeschlossene Turniere';
-$string['admin_tournaments_none_finished'] = 'Es gibt keine abgeschlossenen Turniere.';
-$string['admin_tournaments_intro_finished'] = 'Abgeschlossene Turniere können hier ausgewertet werden.';
-$string['admin_tournament_publish_confirm'] = 'Möchten Sie das Turnier »{$a}« wirklich veröffentlichen? Die Teilnehmer werden unverzüglich zu ihrer ersten Teilnahme eingeladen.';
-$string['admin_tournament_delete_confirm'] = 'Möchten Sie das Turnier »{$a}« wirklich löschen?';
-$string['admin_tournament_title_add'] = 'Turnier erstellen';
-$string['admin_tournament_title_edit'] = 'Turnier bearbeiten';
-$string['admin_tournament_loading'] = 'Lade Turnier-Daten';
-$string['admin_tournament_lbl_name'] = 'Name';
-$string['admin_tournament_title_matches'] = 'Turnier-Teilnehmer bearbeiten';
-$string['admin_tournament_participants_loading'] = 'Lade Turnier-Teilnehmer';
-$string['admin_tournament_participants_saving'] = 'Die Matches werden gespeichert, bitte warten';
-$string['admin_nav_matches_users'] = 'Teilnehmer auswählen';
-$string['admin_nav_matches_pairs'] = 'Matches generieren';
-$string['admin_tournament_match_invalid_users'] = 'Mit den ausgewählten Teilnehmern kann kein Turnier gestartet werden. Bitte beachten Sie, dass eine gerade Teilnehmer-Anzahl benötigt wird.';
-$string['admin_tournament_match_info_participants'] = '{$a} Teilnehmer ausgewählt';
-$string['admin_tournament_match_none_title'] = 'Noch keine Matches';
-$string['admin_tournament_match_none_msg'] = 'Sie haben noch keine Teilnehmer-Matches generiert. Bitte klicken Sie auf den »Generieren« Button.';
-$string['admin_tournament_match_done_title'] = 'Matches generiert';
-$string['admin_tournament_match_done_msg'] = 'Sie haben die folgenden Teilnehmer-Matches generiert. Wenn Sie mit der Zusammenstellung einverstanden sind, können Sie auf »Speichern« klicken.';
-$string['admin_tournament_match_table_number'] = 'Nummer';
-$string['admin_tournament_match_table_participant'] = 'Teilnehmer';
-$string['admin_tournament_title_topics'] = 'Turnier-Themen bearbeiten';
-$string['admin_tournament_topics_loading'] = 'Lade Turnier-Themen';
-$string['admin_tournament_topics_saving'] = 'Die Themen werden gespeichert, bitte warten';
-$string['admin_tournament_topics_lbl_step'] = 'Runde';
-$string['admin_tournament_topics_lbl_levels'] = 'Verfügbare Themengebiete';
-$string['admin_tournament_topics_lbl_select'] = 'Bitte Themengebiet für Runde {$a} auswählen';
-$string['admin_tournament_topics_lbl_none'] = 'Keins';
-
-
-
-
-
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';

@@ -111,10 +111,8 @@ $string['admin_rounds_list_timing_to'] = 'Until {$a}';
 $string['admin_round_delete_confirm'] = 'Do you really want to delete round {$a}?';
 $string['admin_round_stop_confirm'] = 'Do you really want to stop round {$a} ahead of it\'s regular expiration? Warning: Matches with unanswered questions are lost.';
 $string['admin_round_datepicker_start'] = "Select round start";
-$string['admin_round_datepicker_end'] = "Select round end";
 $string['admin_round_edit_title_edit'] = 'Edit round {$a}';
 $string['admin_round_edit_title_add'] = 'Create round {$a}';
-$string['admin_round_edit_title'] = 'Edit round {$a}';
 $string['admin_round_edit_description'] = 'Add new question categories so that they are included in this round and all following rounds. You can remove question categories as well - they will be excluded for this and all following rounds, but will remain in previous rounds. Please be aware that already saved categories can not be changed anymore, but only be removed.';
 $string['admin_round_lbl_name'] = 'Name';
 $string['admin_round_categories_title'] = 'Edit question categories';
@@ -131,71 +129,6 @@ $string['admin_results_btn_rounds'] = 'Go Back';
 $string['admin_results_match_score_table_question'] = 'Question {$a}';
 $string['admin_results_match_score_state_finished'] = 'Finished';
 $string['admin_results_match_score_state_ongoing'] = 'Ongoing';
-
-
-/* DEPRECATED */
-/* admin: levels */
-$string['admin_nav_levels'] = 'Topics';
-$string['admin_levels_title'] = 'Edit topics';
-$string['admin_levels_none'] = 'You didn\'t add any topics, yet.';
-$string['admin_levels_intro'] = 'You have already created the following topics for this game. You may edit their data and order, or even delete them. Please note, that deleting topics only has effects for future tournaments.';
-$string['admin_level_delete_confirm'] = 'Do you really want to delete the topic »{$a}«?';
-$string['admin_level_title_add'] = 'Create topic {$a}';
-$string['admin_level_title_edit'] = 'Edit topic {$a}';
-$string['admin_level_loading'] = 'Loading topic data';
-$string['admin_level_lbl_name'] = 'Name';
-$string['admin_level_lbl_bgcolor'] = 'Background Color';
-$string['admin_level_lbl_bgcolor_help'] = 'HEX format, with or without #, as 3 or 6 chars. Example: #cc0033 or #c03';
-$string['admin_level_lbl_image'] = 'Background Image';
-$string['admin_level_lbl_image_drag'] = 'Upload via drag&drop or select';
-$string['admin_level_lbl_image_change'] = 'Change';
-$string['admin_level_lbl_image_remove'] = 'Remove';
-$string['admin_level_lbl_categories'] = 'Question assignments';
-$string['admin_level_lbl_category'] = 'Category {$a}';
-$string['admin_level_lbl_category_please_select'] = 'Select category';
-$string['admin_level_msg_saving'] = 'Saving the topic, please wait';
-/* admin: tournaments */
-$string['admin_nav_tournaments'] = 'Tournaments';
-$string['admin_tournaments_title'] = 'Edit tournaments';
-$string['admin_tournaments_title_unpublished'] = 'Planned tournaments';
-$string['admin_tournaments_none_unpublished'] = 'There are no planned tournaments.';
-$string['admin_tournaments_intro_unpublished'] = 'Planned tournaments can be edited until they are published.';
-$string['admin_tournaments_title_progress'] = 'Active tournaments';
-$string['admin_tournaments_none_progress'] = 'There are no active tournaments.';
-$string['admin_tournaments_intro_progress'] = 'Here you can observe active tournaments.';
-$string['admin_tournaments_title_finished'] = 'Finished tournaments';
-$string['admin_tournaments_none_finished'] = 'There are no finished tournaments.';
-$string['admin_tournaments_intro_finished'] = 'Here you can evaluate finished tournaments.';
-$string['admin_tournament_publish_confirm'] = 'Do you really want to publish the tournament »{$a}«? Participants will be invited to their first match immediately.';
-$string['admin_tournament_delete_confirm'] = 'Do you really want to delete the tournament »{$a}«?';
-$string['admin_tournament_title_add'] = 'Create tournament';
-$string['admin_tournament_title_edit'] = 'Edit tournament';
-$string['admin_tournament_loading'] = 'Loading tournament data';
-$string['admin_tournament_lbl_name'] = 'Name';
-$string['admin_tournament_title_matches'] = 'Edit tournament participants';
-$string['admin_tournament_participants_loading'] = 'Loading tournament participants';
-$string['admin_tournament_participants_saving'] = 'Saving the matches, please wait';
-$string['admin_nav_matches_users'] = 'Select Participants';
-$string['admin_nav_matches_pairs'] = 'Generate Matches';
-$string['admin_tournament_match_invalid_users'] = 'Starting a tournament with the selected participants is impossible. Please be aware that an even number of participants is required.';
-$string['admin_tournament_match_info_participants'] = '{$a} participants selected';
-$string['admin_tournament_match_none_title'] = 'No matches';
-$string['admin_tournament_match_none_msg'] = 'You didn\'t generate any participant matches so far. Please click on the »Generate« button.';
-$string['admin_tournament_match_done_title'] = 'Matches generated';
-$string['admin_tournament_match_done_msg'] = 'You have generated the following participant matches. If you agree with the current set, please click »Save«.';
-$string['admin_tournament_match_table_number'] = 'Number';
-$string['admin_tournament_match_table_participant'] = 'Participant';
-$string['admin_tournament_title_topics'] = 'Edit tournament topics';
-$string['admin_tournament_topics_loading'] = 'Loading tournament topics';
-$string['admin_tournament_topics_saving'] = 'Saving the topics, please wait';
-$string['admin_tournament_topics_lbl_step'] = 'Round';
-$string['admin_tournament_topics_lbl_levels'] = 'Available topics';
-$string['admin_tournament_topics_lbl_select'] = 'Please select a topic for round {$a}';
-$string['admin_tournament_topics_lbl_none'] = 'None';
-
-
-
-
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
