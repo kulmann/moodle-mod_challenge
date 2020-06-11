@@ -88,6 +88,7 @@ class player_save_answer extends external_api {
         $match = util::get_match($question->get_matchid());
         $attempt = util::get_attempt_by_question($questionid, intval($USER->id));
         $round = util::get_round($match->get_round());
+        util::validate_round_running($round);
 
         // some validations
         if ($attempt === null) {
