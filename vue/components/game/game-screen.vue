@@ -36,9 +36,7 @@
                 'isInitialized',
                 'getCurrentRound'
             ]),
-            ...mapState('player', [
-                'matches'
-            ]),
+            ...mapState('player', ['matches']),
             viewMode() {
                 const viewModes = [
                     this.VIEW_MODE_MATCH_SHOW,

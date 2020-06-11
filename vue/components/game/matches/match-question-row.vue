@@ -48,7 +48,7 @@
                 required: true
             },
         },
-        data () {
+        data() {
             return {
                 mdlQuestion: null,
             }
@@ -109,14 +109,20 @@
                 }
                 return styles.join(' ');
             },
+            async loadMdlQuestion() {
+                if (!isNil(this.question.id)) {
+                    this.mdlQuestion = await this.fetchMdlQuestion({
+                        questionid: this.question.id
+                    });
+                }
+            }
         },
-        mounted () {
-            if (!isNil(this.question.id)) {
-                this.fetchMdlQuestion({
-                    questionid: this.question.id
-                }).then(mdlQuestion => {
-                    this.mdlQuestion = mdlQuestion;
-                })
+        mounted() {
+            this.loadMdlQuestion();
+        },
+        watch: {
+            question() {
+                this.loadMdlQuestion();
             }
         },
         components: {LoadingIcon}

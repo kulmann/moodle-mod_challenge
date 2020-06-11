@@ -83,6 +83,7 @@ class main_get_game extends external_api {
         $renderer = $PAGE->get_renderer('core');
         $ctx = $coursemodule->context;
         $game = util::get_game($coursemodule);
+        $game->validate_rounds();
 
         $exporter = new game_dto($game, $USER, $ctx);
         return $exporter->export($renderer);

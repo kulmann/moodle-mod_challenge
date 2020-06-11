@@ -2,7 +2,7 @@
     .uk-card.uk-card-default.uk-card-body
         loading-alert(v-if="loading", :message="strings.game_match_loading").uk-text-center
         template(v-else)
-            match-nav(v-model="matchIndex", :own-user-id="ownUserId", :round="round", :match="match", :matches="matches")
+            match-nav(:own-user-id="ownUserId", :round="round", :match="match", :matches="matches")
             failure-alert(v-if="match === null", :message="strings.game_match_show_error")
             match-show(v-else, :round="round", :match="match", :questions="questions", :attempts="attempts", :own-user-id="ownUserId" )
 </template>
@@ -32,7 +32,6 @@
         data() {
             return {
                 loading: true,
-                matchIndex: undefined,
                 questions: [],
                 attempts: [],
             }
@@ -43,23 +42,19 @@
                 'game',
             ]),
             ...mapGetters(['getRoundById']),
-            ...mapGetters('player', [
-                'getMatchById'
-            ]),
-            forcedMatchId() {
-                if (!isNil(this.$route.params.matchId)) {
-                    return parseInt(this.$route.params.matchId);
+            ...mapGetters('player', ['getMatchById']),
+            matchId() {
+                if (!isNil(this.$route.params.forcedMatchId)) {
+                    return parseInt(this.$route.params.forcedMatchId);
+                }
+                if (this.matches.length > 0) {
+                    return last(this.matches).id;
                 }
                 return undefined;
             },
             match() {
-                if (!isNil(this.matchIndex)) {
-                    if (this.matchIndex >= 0 && this.matchIndex < this.matches.length) {
-                        return this.matches[this.matchIndex];
-                    }
-                }
-                if (!isNil(this.forcedMatchId)) {
-                    return this.getMatchById(this.forcedMatchId);
+                if (this.matchId) {
+                    return this.getMatchById(this.matchId);
                 }
                 return last(this.matches);
             },
@@ -79,30 +74,27 @@
                 fetchMatchQuestions: 'player/fetchMatchQuestions',
                 fetchMatchAttempts: 'player/fetchMatchAttempts',
             }),
-            async initData() {
-                this.loading = true;
+            async loadData() {
                 await this.fetchMatches();
                 await this.loadQuestions();
-                this.matchIndex = isNil(this.match) ? undefined : this.matches.indexOf(this.match);
-                this.loading = false;
             },
             async loadQuestions() {
-                const matchId = this.match ? this.match.id : undefined;
-                if (matchId) {
-                    this.questions = await this.fetchMatchQuestions({matchid: matchId});
-                    this.attempts = await this.fetchMatchAttempts({matchid: matchId});
+                if (this.matchId) {
+                    this.questions = await this.fetchMatchQuestions({matchid: this.matchId});
+                    this.attempts = await this.fetchMatchAttempts({matchid: this.matchId});
                 } else {
                     this.questions = [];
                     this.attempts = [];
                 }
             }
         },
-        mounted() {
-            this.initData();
+        async mounted() {
+            await this.loadData();
+            this.loading = false;
         },
         watch: {
-            forcedMatchId() {
-                this.initData();
+            matchId() {
+                this.loadData();
             }
         },
         components: {

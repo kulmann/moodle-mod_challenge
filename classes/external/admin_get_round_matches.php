@@ -82,7 +82,6 @@ class admin_get_round_matches extends external_api {
         $ctx = $coursemodule->context;
         $result = [];
         foreach ($matches as $match) {
-            $match->check_winner();
             $match_dto = new match_dto($match, $game, $ctx);
             $result[] = $match_dto->export($renderer);
         }

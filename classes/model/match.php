@@ -95,21 +95,27 @@ class match extends abstract_model {
 
     /**
      * Check if all questions have been flagged as finished and determine this match's winner.
-     * Note: This doesn't trigger the question winner check. That has to be done separately.
+     *
+     * This should be executed when
+     * a) a match gets potentially closed (i.e. when a question gets answered), or
+     * b) a round exceeds it's lifetime and gets stopped.
+     * There are no other situations in which this should be called, as there are a lot of
+     * database queries involved.
+     *
+     * @param game $game
+     * @param round $round
      *
      * @throws \dml_exception
      * @throws \coding_exception
      */
-    public function check_winner() {
+    public function check_winner(game $game, round $round) {
         // early returns for performance
         if ($this->is_finished()) {
             return;
         }
-        $round = util::get_round($this->get_round());
         if (!$round->is_started()) {
             return;
         }
-        $game = util::get_game_by_id($round->get_game());
 
         // make sure that the questions have the most recent winner-state already
         $questions = $this->get_questions();
@@ -117,6 +123,7 @@ class match extends abstract_model {
         $win_counts = [];
         $score_sum = [];
         foreach ($questions as $question) {
+            $question->check_winner($game);
             if ($question->is_finished()) {
                 $finished++;
                 $win_counts[$question->get_winner_mdl_user()]++;

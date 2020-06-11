@@ -87,6 +87,7 @@ class player_save_answer extends external_api {
         $question = util::get_question($questionid);
         $match = util::get_match($question->get_matchid());
         $attempt = util::get_attempt_by_question($questionid, intval($USER->id));
+        $round = util::get_round($match->get_round());
 
         // some validations
         if ($attempt === null) {
@@ -127,7 +128,7 @@ class player_save_answer extends external_api {
 
         // now that the attempt is finished, check if there is a winner already
         $question->check_winner($game);
-        $match->check_winner();
+        $match->check_winner($game, $round);
 
         // create export
         $exporter = new attempt_dto($attempt, $ctx);

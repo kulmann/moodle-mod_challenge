@@ -212,6 +212,56 @@ class game extends abstract_model {
     }
 
     /**
+     * Loads all pending and active rounds of this game and checks if they need to be started or stopped.
+     *
+     * @throws dml_exception
+     */
+    public function validate_rounds() {
+        // get pending and active rounds
+        global $DB;
+        $sql_params = [
+            'game' => $this->get_id(),
+            'state_pending' => round::STATE_PENDING,
+            'state_active' => round::STATE_ACTIVE
+        ];
+        $sql = "SELECT *
+                FROM {challenge_rounds}
+                WHERE game = :game
+                AND (state = :state_pending OR state = :state_active)";
+        $records = $DB->get_records_sql($sql, $sql_params);
+
+        // check if round should be started or stopped
+        foreach ($records as $round_data) {
+            $round = new round();
+            $round->apply($round_data);
+            $this->validate_round($round);
+        }
+    }
+
+    /**
+     * Checks if the given round needs to be started or stopped.
+     *
+     * @param round $round
+     */
+    private function validate_round(round $round) {
+        // check if round needs to be started
+        if ($round->get_state() === round::STATE_PENDING && $round->is_started()) {
+            try {
+                $this->start_round($round);
+            } catch(moodle_exception $ignored) {
+            }
+        }
+
+        // check if round needs to be ended
+        if ($round->get_state() === round::STATE_ACTIVE && $round->is_ended()) {
+            try {
+                $this->stop_round($round);
+            } catch(moodle_exception $ignored) {
+            }
+        }
+    }
+
+    /**
      * Starts the given round, i.e.
      * - set start and end date
      * - set state to active
@@ -225,7 +275,7 @@ class game extends abstract_model {
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public function start_round(round $round) {
+    private function start_round(round $round) {
         $round->set_timestart(time());
         $round->set_timeend(time() + $this->calculate_round_duration_seconds());
         $round->set_state(round::STATE_ACTIVE);
@@ -276,9 +326,18 @@ class game extends abstract_model {
      * @throws dml_exception
      */
     public function stop_round(round $round) {
+        // stop round
         $round->set_timeend(time());
         $round->set_state(round::STATE_FINISHED);
         $round->save();
+
+        // close matches if necessary
+        foreach($round->get_matches() as $match) {
+            try {
+                $match->check_winner($this, $round);
+            } catch(moodle_exception $ignored) {
+            }
+        }
     }
 
     /**
