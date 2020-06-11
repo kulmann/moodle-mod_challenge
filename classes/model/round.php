@@ -108,7 +108,7 @@ class round extends abstract_model {
      * @return bool
      */
     public function is_started() {
-        return $this->get_timestart() <= time();
+        return $this->get_timestart() !== 0 && $this->get_timestart() <= time();
     }
 
     /**
@@ -117,7 +117,7 @@ class round extends abstract_model {
      * @return bool
      */
     public function is_ended() {
-        return $this->get_timeend() <= time();
+        return $this->get_timeend() !== 0 && $this->get_timeend() <= time();
     }
 
     /**

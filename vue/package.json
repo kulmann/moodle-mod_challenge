@@ -13,13 +13,16 @@
   "dependencies": {
     "@vuikit/theme": "^0.8.1",
     "lodash": "^4.17.11",
+    "luxon": "^1.24.1",
     "moment": "^2.24.0",
     "range-inclusive": "^1.0.2",
     "vue": "^2.6.10",
     "vue-awesome": "^3.5.2",
+    "vue-datetime": "^1.0.0-beta.13",
     "vue-router": "^3.0.5",
     "vuex": "^3.1.0",
-    "vuikit": "^0.8.10"
+    "vuikit": "^0.8.10",
+    "weekstart": "^1.0.1"
   },
   "browserslist": [
     "> 1%",

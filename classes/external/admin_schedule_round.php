@@ -31,7 +31,7 @@ use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-class admin_start_round extends external_api {
+class admin_schedule_round extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -41,6 +41,9 @@ class admin_start_round extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
+            'roundid' => new external_value(PARAM_INT, 'round id'),
+            'timestart' => new external_value(PARAM_INT, 'timestamp when the round should start'),
+            'timeend' => new external_value(PARAM_INT, 'timestamp when the round should end'),
         ]);
     }
 
@@ -55,6 +58,9 @@ class admin_start_round extends external_api {
      * Start a new round.
      *
      * @param int $coursemoduleid
+     * @param int $roundid
+     * @param int $timestart
+     * @param int $timeend
      *
      * @return stdClass
      * @throws coding_exception
@@ -63,8 +69,8 @@ class admin_start_round extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid) {
-        $params = ['coursemoduleid' => $coursemoduleid];
+    public static function request($coursemoduleid, $roundid, $timestart, $timeend) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'roundid' => $roundid, 'timestart' => $timestart, 'timeend' => $timeend];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
@@ -72,13 +78,24 @@ class admin_start_round extends external_api {
         self::validate_context(($ctx = $coursemodule->context));
         util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
         $game = util::get_game($coursemodule);
+        $round = util::get_round($roundid);
+        util::validate_round($game, $round);
+        util::validate_round_pending($round);
+
+        // validate that the given timestamps are in the future and in correct order
+        if ($timestart > $timeend) {
+            throw new invalid_parameter_exception("start is greater than end");
+        }
+        if ($timestart <= time()) {
+            throw new invalid_parameter_exception("start is already in the past");
+        }
 
         // start renderer
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
 
-        // trigger round start
-        $game->start_upcoming_round();
+        // schedule round
+        $game->schedule_round($round, $timestart, $timeend);
 
         // return success response
         $exporter = new bool_dto(true, $ctx);

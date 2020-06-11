@@ -79,9 +79,9 @@ $string['course_reset_include_topics'] = 'Reset topics etc. (Everything will be 
 $string['loading_screen_title'] = 'Loading Quiz Challenge...';
 
 /* formatting */
-$string['format_date_time'] = 'DD.MM.YYYY, hh:mm';
+$string['format_date_time'] = 'DD.MM.YYYY, hh:mm a';
 $string['format_date'] = 'DD.MM.YYYY';
-$string['format_time'] = 'hh:mm';
+$string['format_time'] = 'hh:mm a';
 $string['format_time_suffix'] = 'o\'clock';
 
 /* admin screen in vue app */
@@ -92,9 +92,10 @@ $string['admin_btn_cancel'] = 'Cancel';
 $string['admin_btn_add'] = 'Add';
 $string['admin_btn_confirm_publish'] = 'Confirm Publishing';
 $string['admin_btn_confirm_delete'] = 'Confirm Delete';
-$string['admin_btn_confirm_start'] = 'Confirm Start';
 $string['admin_btn_confirm_stop'] = 'Confirm Stop';
 $string['admin_btn_generate'] = 'Generate';
+$string['admin_btn_datepicker_cancel'] = "Cancel";
+$string['admin_btn_datepicker_submit'] = "Select";
 $string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Rounds';
@@ -108,8 +109,9 @@ $string['admin_rounds_list_timing_open'] = 'open';
 $string['admin_rounds_list_timing_from'] = 'From {$a}';
 $string['admin_rounds_list_timing_to'] = 'Until {$a}';
 $string['admin_round_delete_confirm'] = 'Do you really want to delete round {$a}?';
-$string['admin_round_start_confirm'] = 'Do you really want to start round {$a}?';
-$string['admin_round_stop_confirm'] = 'Do you really want to stop round {$a} ahead of it\'s regular expiration? Warning: Unanswered questions receive 0 points.';
+$string['admin_round_stop_confirm'] = 'Do you really want to stop round {$a} ahead of it\'s regular expiration? Warning: Matches with unanswered questions are lost.';
+$string['admin_round_datepicker_start'] = "Select round start";
+$string['admin_round_datepicker_end'] = "Select round end";
 $string['admin_round_edit_title_edit'] = 'Edit round {$a}';
 $string['admin_round_edit_title_add'] = 'Create round {$a}';
 $string['admin_round_edit_title'] = 'Edit round {$a}';

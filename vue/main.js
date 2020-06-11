@@ -22,6 +22,7 @@ function init(coursemoduleid, contextid) {
     Vue.component('v-icon', Icon);
 
     require('./styles/theme.scss');
+    require('vue-datetime/dist/vue-datetime.css');
 
     store.commit('setCourseModuleID', coursemoduleid);
     store.commit('setContextID', contextid);

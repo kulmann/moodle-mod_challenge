@@ -212,65 +212,25 @@ class game extends abstract_model {
     }
 
     /**
-     * Loads the upcoming round, if there is any.
-     *
-     * @return round
-     * @throws dml_exception
-     */
-    public function get_upcoming_round() {
-        // rounds are sorted. Return first round without start time or with start time in the future
-        $rounds = $this->get_rounds();
-        foreach ($rounds as $round) {
-            if ($round->get_timestart() === 0 || $round->get_timestart() > \time()) {
-                return $round;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Loads the current round, if there is any.
-     *
-     * @return round
-     * @throws dml_exception
-     */
-    public function get_current_round() {
-        // rounds are sorted. Return first round with start time <= now and end time >= now.
-        $rounds = $this->get_rounds();
-        foreach ($rounds as $round) {
-            if ($round->get_timestart() <= time() && $round->get_timeend() >= time()) {
-                return $round;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Creates or selects the upcoming round and starts it, i.e.
+     * Starts the given round, i.e.
      * - set start and end date
      * - set state to active
      * - select participants
      * - create matches
+     *
+     * @param round $round
      *
      * @return round The upcoming round
      * @throws coding_exception
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public function start_upcoming_round() {
-        // get or create upcoming round
-        $upcoming_round = $this->get_upcoming_round();
-        if ($upcoming_round === null) {
-            $rounds = $this->get_rounds();
-            $upcoming_round = new round();
-            $upcoming_round->set_game($this->get_id());
-            $upcoming_round->set_number(count($rounds) + 1);
-        }
-        $upcoming_round->set_timestart(time());
-        $upcoming_round->set_timeend(time() + $this->calculate_round_duration_seconds());
-        $upcoming_round->set_state(round::STATE_ACTIVE);
-        $upcoming_round->set_questions($this->get_question_count());
-        $upcoming_round->save();
+    public function start_round(round $round) {
+        $round->set_timestart(time());
+        $round->set_timeend(time() + $this->calculate_round_duration_seconds());
+        $round->set_state(round::STATE_ACTIVE);
+        $round->set_questions($this->get_question_count());
+        $round->save();
 
         // get participants
         // TODO: restrict participants. for now pick all.
@@ -285,25 +245,40 @@ class game extends abstract_model {
             $match = new match();
             $match->set_mdl_user_1($mdl_user_1->id);
             $match->set_mdl_user_2($mdl_user_2->id);
-            $match->set_round($upcoming_round->get_id());
+            $match->set_round($round->get_id());
             $match->save();
             $matches[] = $match;
         }
-        return $upcoming_round;
+        return $round;
     }
 
     /**
-     * If there is a current round, it is set to finished.
+     * Schedules the given round.
+     *
+     * @param round $round
+     * @param int $timestart
+     * @param int $timeend
      *
      * @throws dml_exception
      */
-    public function stop_current_round() {
-        $current_round = $this->get_current_round();
-        if ($current_round !== null) {
-            $current_round->set_timeend(time());
-            $current_round->set_state(round::STATE_FINISHED);
-            $current_round->save();
-        }
+    public function schedule_round(round $round, int $timestart, int $timeend) {
+        $round->set_timestart($timestart);
+        $round->set_timeend($timeend);
+        $round->set_state(round::STATE_PENDING);
+        $round->save();
+    }
+
+    /**
+     * Ends the given round.
+     *
+     * @param round $round
+     *
+     * @throws dml_exception
+     */
+    public function stop_round(round $round) {
+        $round->set_timeend(time());
+        $round->set_state(round::STATE_FINISHED);
+        $round->save();
     }
 
     /**

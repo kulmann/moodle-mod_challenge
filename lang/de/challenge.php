@@ -79,9 +79,9 @@ $string['course_reset_include_topics'] = 'Eingestellte Themen etc. zurücksetzen
 $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';
 
 /* formatting */
-$string['format_date_time'] = 'DD.MM.YYYY, hh:mm';
+$string['format_date_time'] = 'DD.MM.YYYY, HH:mm';
 $string['format_date'] = 'DD.MM.YYYY';
-$string['format_time'] = 'hh:mm';
+$string['format_time'] = 'HH:mm';
 $string['format_time_suffix'] = 'Uhr';
 
 /* admin screen in vue app */
@@ -92,9 +92,10 @@ $string['admin_btn_cancel'] = 'Abbrechen';
 $string['admin_btn_add'] = 'Hinzufügen';
 $string['admin_btn_confirm_publish'] = 'Wirklich Veröffentlichen';
 $string['admin_btn_confirm_delete'] = 'Wirklich Löschen';
-$string['admin_btn_confirm_start'] = 'Wirklich Starten';
 $string['admin_btn_confirm_stop'] = 'Wirklich Stoppen';
 $string['admin_btn_generate'] = 'Generieren';
+$string['admin_btn_datepicker_cancel'] = "Abbrechen";
+$string['admin_btn_datepicker_submit'] = "Auswählen";
 $string['admin_avatar_alt'] = 'Foto von {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Runden';
@@ -108,8 +109,9 @@ $string['admin_rounds_list_timing_open'] = 'offen';
 $string['admin_rounds_list_timing_from'] = 'Von {$a}';
 $string['admin_rounds_list_timing_to'] = 'Bis {$a}';
 $string['admin_round_delete_confirm'] = 'Möchten Sie die Runde {$a} wirklich löschen?';
-$string['admin_round_start_confirm'] = 'Möchten Sie die Runde {$a} wirklich starten?';
-$string['admin_round_stop_confirm'] = 'Möchten Sie die Runde {$a} wirklich vorzeitig beenden? Achtung: Unbeantworteten Fragen werden 0 Punkte zugewiesen.';
+$string['admin_round_stop_confirm'] = 'Möchten Sie die Runde {$a} wirklich vorzeitig beenden? Achtung: Matches mit unbeantworteten Fragen können nicht gewonnen werden.';
+$string['admin_round_datepicker_start'] = "Runden-Start auswählen";
+$string['admin_round_datepicker_end'] = "Runden-Ende auswählen";
 $string['admin_round_edit_title_edit'] = 'Runde {$a} bearbeiten';
 $string['admin_round_edit_title_add'] = 'Runde {$a} hinzufügen';
 $string['admin_round_edit_description'] = 'Fügen Sie neue Fragenkategorien hinzu, die von dieser Runde an und in allen Folgerunden verwendet werden sollen. Sie können auch Fragenkategorien entfernen - diese werden dann ab dieser Runde nicht mehr verwendet. In vorherigen Runden bleiben Sie unverändert bestehen. Bitte beachten Sie, dass bereits gespeicherte Kategorien nicht verändert, sondern nur entfernt werden können.';

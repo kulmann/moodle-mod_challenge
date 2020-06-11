@@ -73,10 +73,10 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
-    'mod_challenge_admin_start_round' => [
-        'classname' => 'mod_challenge\external\admin_start_round',
+    'mod_challenge_admin_schedule_round' => [
+        'classname' => 'mod_challenge\external\admin_schedule_round',
         'methodname' => 'request',
-        'description' => 'Starts the given round.',
+        'description' => 'Schedules the given round.',
         'type' => 'write',
         'ajax' => true,
     ],

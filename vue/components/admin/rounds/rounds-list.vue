@@ -24,10 +24,10 @@
                                     span {{ getRoundTimingTo(round) }}
                                 span(v-else) -
                             td.uk-text-right.uk-preserve-width
-                                button.btn.btn-danger(@click="stopRoundAsk(round)", v-if="isCurrentRound(round)")
+                                button.btn.btn-primary(@click="pickSchedule(round)", v-if="!isRoundStarted(round)")
+                                    v-icon(name="clock")
+                                button.btn.btn-danger(@click="stopRoundAsk(round)", v-if="isActiveRound(round)")
                                     v-icon(name="stop")
-                                button.btn.btn-primary(@click="startRoundAsk(round)", v-else-if="isUpcomingRound(round)")
-                                    v-icon(name="play")
                                 button.btn.btn-success(@click="goToRoundResults(round)", :disabled="!isRoundStarted(round)")
                                     v-icon(name="chart-line")
                                 button.btn.btn-default(@click="goToEditRound(round)")
@@ -41,29 +41,36 @@
                                     :labelSubmit="strings.admin_btn_confirm_delete",
                                     @onSubmit="deleteRoundConfirm(round)",
                                     @onCancel="deleteConfirmationRoundId = null")
-                                confirmationPanel(v-if="startConfirmationRoundId",
-                                    :message="stringParams(strings.admin_round_start_confirm, round.number)",
-                                    :labelSubmit="strings.admin_btn_confirm_start",
-                                    @onSubmit="startRoundConfirm",
-                                    @onCancel="startConfirmationRoundId = null")
                                 confirmationPanel(v-if="stopConfirmationRoundId",
                                     :message="stringParams(strings.admin_round_stop_confirm, round.number)",
                                     :labelSubmit="strings.admin_btn_confirm_stop",
                                     @onSubmit="stopRoundConfirm",
                                     @onCancel="stopConfirmationRoundId = null")
             btnAdd(@click="goToCreateRound")
+            datetime-popup(
+                v-if="datepicker.show",
+                :key="datepicker.key",
+                type="datetime",
+                :datetime="datepicker.value",
+                :title="datepicker.title",
+                :phrases="datepickerPhrases"
+                @cancel="onResetDatepicker",
+                @confirm="onInputDatepicker"
+            )
 </template>
 
 <script>
     import {mapActions, mapState} from 'vuex';
     import moment from 'moment';
-    import first from 'lodash/first';
+    import { first } from 'lodash';
     import LangMixins from '../../../mixins/lang-mixins';
     import TimeMixins from '../../../mixins/time-mixins';
     import infoAlert from '../../helper/info-alert';
     import btnAdd from '../btn-add';
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import ConfirmationPanel from "../../helper/confirmation-panel";
+    import {DatetimePopup} from "vue-datetime"
+    import {DateTime} from "luxon";
 
     export default {
         mixins: [LangMixins, TimeMixins],
@@ -84,8 +91,15 @@
         data() {
             return {
                 deleteConfirmationRoundId: null,
-                startConfirmationRoundId: null,
                 stopConfirmationRoundId: null,
+                datepicker: {
+                    key: 'empty',
+                    show: false,
+                    isStart: true,
+                    value: null,
+                    round: null,
+                    title: null,
+                }
             }
         },
         computed: {
@@ -93,29 +107,23 @@
                 'contextID',
                 'strings',
                 'now',
+                'game',
             ]),
-            currentRound() {
-                return first(this.rounds.filter(round => {
-                    return this.isRoundStarted(round) && !this.isRoundEnded(round);
-                }));
-            },
-            upcomingRound() {
-                return first(this.rounds.filter(round => {
-                    return !this.isRoundStarted(round);
-                }));
+            datepickerPhrases() {
+                return {
+                    ok: this.strings.admin_btn_datepicker_submit,
+                    cancel: this.strings.admin_btn_datepicker_cancel
+                };
             }
         },
         methods: {
             ...mapActions({
                 deleteRound: 'admin/deleteRound',
-                startRound: 'admin/startRound',
+                scheduleRound: 'admin/scheduleRound',
                 stopRound: 'admin/stopRound',
             }),
-            isCurrentRound(round) {
-                return this.currentRound && round.id === this.currentRound.id;
-            },
-            isUpcomingRound(round) {
-                return this.upcomingRound && round.id === this.upcomingRound.id;
+            isActiveRound(round) {
+                return this.isRoundStarted(round) && !this.isRoundEnded(round);
             },
             isRoundStarted(round) {
                 return round.timestart !== 0 && round.timestart <= moment().unix();
@@ -148,27 +156,51 @@
             deleteRoundConfirm(round) {
                 this.deleteRound({roundid: round.id}).then(this.closeConfirmations);
             },
-            startRoundAsk(round) {
-                this.startConfirmationRoundId = round.id;
-            },
-            startRoundConfirm() {
-                this.startRound({}).then(this.closeConfirmations);
-            },
             stopRoundAsk(round) {
                 this.stopConfirmationRoundId = round.id;
             },
-            stopRoundConfirm() {
-                this.stopRound({}).then(this.closeConfirmations);
+            stopRoundConfirm(round) {
+                this.stopRound({roundid: round.id}).then(this.closeConfirmations);
+            },
+            // date picker
+            pickSchedule(round) {
+                this.datepicker = {
+                    key: 'start',
+                    show: true,
+                    isStart: true,
+                    value: DateTime.local(),
+                    round,
+                    title: this.strings.admin_round_datepicker_start
+                }
+            },
+            onResetDatepicker() {
+                this.datepicker = {
+                    key: 'empty',
+                    show: false,
+                    isStart: true,
+                    value: null,
+                    round: null,
+                    title: null
+                }
+            },
+            onInputDatepicker(value) {
+                const round = this.datepicker.round;
+                round.timestart = Math.round(value.toSeconds());
+                round.timeend = Math.round(value.toSeconds()) + this.game.round_duration_seconds;
+                this.onResetDatepicker();
+                this.scheduleRound({
+                    roundid: round.id,
+                    timestart: round.timestart,
+                    timeend: round.timeend
+                });
             },
             // confirmation panels
             isConfirmationShown(round) {
                 return this.deleteConfirmationRoundId === round.id
-                    || this.startConfirmationRoundId === round.id
                     || this.stopConfirmationRoundId === round.id;
             },
             closeConfirmations() {
                 this.deleteConfirmationRoundId = null;
-                this.startConfirmationRoundId = null;
                 this.stopConfirmationRoundId = null;
             },
         },
@@ -177,6 +209,7 @@
             VkGrid,
             infoAlert,
             btnAdd,
+            DatetimePopup,
         }
     }
 </script>

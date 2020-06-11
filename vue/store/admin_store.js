@@ -79,14 +79,14 @@ export default {
             return result.result;
         },
         /**
-         * Starts the given round.
+         * Schedule the given round.
          *
          * @param context
          * @param payload
          * @returns {Promise<*>}
          */
-        async startRound(context, payload) {
-            const result = await ajax('mod_challenge_admin_start_round', payload);
+        async scheduleRound(context, payload) {
+            const result = await ajax('mod_challenge_admin_schedule_round', payload);
             await context.dispatch('fetchRounds', null, {root: true});// fetch in main store (root)
             return result.result;
         },

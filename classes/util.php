@@ -75,6 +75,34 @@ class util {
     }
 
     /**
+     * Checks that the round is running.
+     *
+     * @param round $round
+     *
+     * @return void
+     * @throws invalid_parameter_exception
+     */
+    public static function validate_round_running(round $round) {
+        if (!$round->is_started() || $round->is_ended()) {
+            throw new invalid_parameter_exception("round " . $round->get_id() . " is not running");
+        }
+    }
+
+    /**
+     * Checks that the round is pending.
+     *
+     * @param round $round
+     *
+     * @return void
+     * @throws invalid_parameter_exception
+     */
+    public static function validate_round_pending(round $round) {
+        if ($round->is_started()) {
+            throw new invalid_parameter_exception("round " . $round->get_id() . " is not pending");
+        }
+    }
+
+    /**
      * Checks that the match belongs to the given $round.
      *
      * @param game $game

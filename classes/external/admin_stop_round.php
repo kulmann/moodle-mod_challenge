@@ -41,6 +41,7 @@ class admin_stop_round extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
+            'roundid' => new external_value(PARAM_INT, 'round id')
         ]);
     }
 
@@ -55,6 +56,7 @@ class admin_stop_round extends external_api {
      * Stop the current round.
      *
      * @param int $coursemoduleid
+     * @param int $roundid
      *
      * @return stdClass
      * @throws coding_exception
@@ -63,8 +65,8 @@ class admin_stop_round extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid) {
-        $params = ['coursemoduleid' => $coursemoduleid];
+    public static function request($coursemoduleid, $roundid) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'roundid' => $roundid];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
@@ -72,13 +74,16 @@ class admin_stop_round extends external_api {
         self::validate_context(($ctx = $coursemodule->context));
         util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
         $game = util::get_game($coursemodule);
+        $round = util::get_round($roundid);
+        util::validate_round($game, $round);
+        util::validate_round_running($round);
 
         // start renderer
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
 
         // trigger stopping current round
-        $game->stop_current_round();
+        $game->stop_round($round);
 
         // return success response
         $exporter = new bool_dto(true, $ctx);
