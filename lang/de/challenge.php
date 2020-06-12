@@ -78,8 +78,21 @@ $string['course_reset_include_topics'] = 'Eingestellte Themen etc. zurücksetzen
 /* messaging */
 $string['messageprovider:match'] = 'Einladung zu einem Quiz Challenge Match';
 $string['message_match_invitation_subject'] = 'Quiz Challenge Einladung';
-$string['message_match_invitation_message'] = 'Sie wurden zu einem Quiz Challenge Match herausgefordert. Über den untenstehenden Match-Link können Sie sich der Herausforderung stellen.';
-$string['message_match_invitation_calltoaction'] = 'Zum Match';
+$string['message_match_invitation_message_html'] = 'Hallo {$a->fullname},<br />
+
+Sie wurden zu einem Quiz Challenge Match herausgefordert.<br />
+
+<a href="{$a->matchurl}">Klicken Sie hier</a>, um sich der Herausforderung zu stellen.<br />
+
+Viel Erfolg!';
+$string['message_match_invitation_message_plain'] = 'Hallo {$a->username},
+
+Sie wurden zu einem Quiz Challenge Match herausgefordert.
+
+Klicken Sie auf den folgenden Link, um sich der Herausforderung zu stellen:
+{$a->matchurl}
+
+Viel Erfolg!';
 $string['task_validate_rounds'] = 'Verarbeitung geplanter Spielrunden';
 $string['task_send_match_invitations'] = 'Versand von Match-Einladungen';
 

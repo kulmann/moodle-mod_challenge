@@ -87,7 +87,7 @@ class admin_schedule_round extends external_api {
             throw new invalid_parameter_exception("start is greater than end");
         }
         if ($timestart <= time()) {
-            throw new invalid_parameter_exception("start is already in the past");
+            $timestart = time();
         }
 
         // start renderer

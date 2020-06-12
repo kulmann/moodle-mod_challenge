@@ -78,8 +78,21 @@ $string['course_reset_include_topics'] = 'Reset topics etc. (Everything will be 
 /* messaging */
 $string['messageprovider:match'] = 'Invitation to a new quiz challenge match';
 $string['message_match_invitation_subject'] = 'Quiz Challenge invitation';
-$string['message_match_invitation_message'] = 'You have been challenged to a Quiz Challenge match. Click on the link below to take up the challenge.';
-$string['message_match_invitation_calltoaction'] = 'Go to match';
+$string['message_match_invitation_message_html'] = 'Hi {$a->fullname},<br />
+
+you have been challenged to a Quiz Challenge match.<br />
+
+<a href="{$a->matchurl}">Click here</a> to take up the challenge.<br />
+
+Good luck!';
+$string['message_match_invitation_message_plain'] = 'Hi {$a->username},
+
+you have been challenged to a Quiz Challenge match.
+
+Follow the link to take up the challenge:
+{$a->matchurl}
+
+Good luck!';
 $string['task_validate_rounds'] = 'Process scheduled game rounds';
 $string['task_send_match_invitations'] = 'Send out match invitations';
 

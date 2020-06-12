@@ -47,7 +47,7 @@ class validate_rounds extends scheduled_task {
     public function execute() {
         global $DB;
         $records = $DB->get_records("challenge");
-        mtrace("Checking rounds of " . count($records) . " games in mod_challenge");
+        mtrace("... checking round runtime of " . count($records) . " games");
         foreach ($records as $record) {
             $game = new game();
             $game->apply($record);

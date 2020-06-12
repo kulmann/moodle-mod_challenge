@@ -26,6 +26,7 @@ use mod_challenge\model\match;
 use mod_challenge\output\challenge_match_invitation;
 use mod_challenge\util;
 use moodle_exception;
+use moodle_url;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -57,9 +58,8 @@ class send_match_invitations extends scheduled_task {
     public function execute() {
         global $DB;
         $records = $DB->get_records_sql("SELECT * FROM {challenge_matches} WHERE mdl_user_1_notified = 0 OR mdl_user_2_notified = 0", null, 0, 200);
-        mtrace("Sending out mod_challenge match invitations for " . count($records) . " matches.");
+        mtrace("... sending out match invitations for " . count($records) . " matches.");
         $games_by_rounds = [];
-        $courses_by_rounds = [];
         foreach ($records as $record) {
             // load match
             $match = new match();
@@ -70,16 +70,13 @@ class send_match_invitations extends scheduled_task {
                 $round = util::get_round($match->get_round());
                 $game = util::get_game_by_id($round->get_game());
                 $games_by_rounds[$match->get_round()] = $game;
-                $course = $DB->get_record('course', ['id' => $game->get_course()]);
-                $courses_by_rounds[$match->get_round()] = $course;
             }
             $game = $games_by_rounds[$match->get_round()];
-            $course = $courses_by_rounds[$match->get_round()];
 
             // send invitation for opponent 1
             if (!$match->is_mdl_user_1_notified()) {
                 try {
-                    $this->send_invitation(intval($match->get_mdl_user_1()), intval($match->get_mdl_user_2()), $match, $game, $course);
+                    $this->send_invitation(intval($match->get_mdl_user_1()), intval($match->get_mdl_user_2()), $game, $match);
                     $match->set_mdl_user_1_notified(true);
                     $match->save();
                 } catch (moodle_exception $ignored) {
@@ -89,7 +86,7 @@ class send_match_invitations extends scheduled_task {
             // send invitation for opponent 2
             if (!$match->is_mdl_user_2_notified()) {
                 try {
-                    $this->send_invitation(intval($match->get_mdl_user_2()), intval($match->get_mdl_user_1()), $match, $game, $course);
+                    $this->send_invitation(intval($match->get_mdl_user_2()), intval($match->get_mdl_user_1()), $game, $match);
                     $match->set_mdl_user_2_notified(true);
                     $match->save();
                 } catch (moodle_exception $ignored) {
@@ -103,46 +100,52 @@ class send_match_invitations extends scheduled_task {
      *
      * @param int $mdl_user_to
      * @param int $mdl_user_from
-     * @param match $match
      * @param game $game
-     * @param stdClass $course
+     * @param match $match
      *
      * @throws coding_exception|moodle_exception
      */
-    private function send_invitation(int $mdl_user_to, int $mdl_user_from, match $match, game $game, stdClass $course) {
+    private function send_invitation(int $mdl_user_to, int $mdl_user_from, game $game, match $match) {
         // set up context
+        global $DB;
+        $user_to = $DB->get_record('user', array('id' => $mdl_user_to));
         list($course, $cm) = get_course_and_cm_from_instance($game->get_id(), 'challenge');
-        $user_to = new stdClass();
-        $user_to->id = $mdl_user_to;
-        cron_setup_user($user_to, $course);
-        $user_from = core_user::get_noreply_user();
-        $opponent = new stdClass();
-        $opponent->id = $mdl_user_from;
-
-        // build message renderers
-        global $PAGE;
-        $htmlout = $PAGE->get_renderer('mod_challenge', 'email', 'htmlemail');
-        $textout = $PAGE->get_renderer('mod_challenge', 'email', 'textemail');
 
         // build message content
-        $subject = get_string('message_match_invitation_subject', 'mod_challenge');
-        $data = new challenge_match_invitation($course, $cm, $game, $match, $opponent, $user_to);
+        $data = new stdClass();
+        $data->fullname = $user_to->firstname . " " . $user_to->lastname;
+        $data->matchurl = $this->get_match_url($cm->id, $match->get_id());
 
         // send message
         $eventdata = new message();
         $eventdata->courseid = $course->id;
         $eventdata->component = 'mod_challenge';
         $eventdata->name = 'match';
-        $eventdata->userfrom = $user_from;
-        $eventdata->userto = $user_to;
-        $eventdata->subject = $subject;
-        $eventdata->fullmessage = $textout->render($data);
-        $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessagehtml = $htmlout->render($data);
-        $eventdata->notification = 1;
+        $eventdata->userfrom = core_user::get_noreply_user();
+        $eventdata->userto = $mdl_user_to;
+        $eventdata->subject = get_string('message_match_invitation_subject', 'challenge');
+        $eventdata->fullmessage = get_string('message_match_invitation_message_plain', 'challenge', $data);
+        $eventdata->fullmessagehtml = get_string('message_match_invitation_message_html', 'challenge', $data);
+        $eventdata->fullmessageformat = FORMAT_HTML;
+        $eventdata->notification = 1;//this is only set to 0 for personal messages between users
         message_send($eventdata);
 
         // clean up
         unset($user_to);
+    }
+
+    /**
+     * Get the link to the match.
+     *
+     * @param int $cmid
+     * @param int $matchid
+     *
+     * @return string
+     */
+    public function get_match_url(int $cmid, int $matchid) {
+        $link = new moodle_url(
+            "/mod/challenge/view.php/$cmid/game/matches/$matchid"
+        );
+        return $link->out(false);
     }
 }
