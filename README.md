@@ -33,7 +33,7 @@ Important to know: As soon as a round is started, you cannot revert it. It can o
 
 ![game configuration](images/README-Screenshot-GameConfiguration.png)
 
-# Contribute
+# Development
 If you want to change the Vue components or the javascript code, you have to install
 all dependencies:
 ```
@@ -55,4 +55,5 @@ Hence, there is a symbolic link to `../build/app-lazy.min.js`.
 If you want to use javascript libraries from Moodle, you have to declare them as external
 dependencies in `vue/webpack.config.js` under `exports.externals`.
 
-Pull requests are very welcome.
+# Contribute
+This is an open source project. Contributions are very welcome.
