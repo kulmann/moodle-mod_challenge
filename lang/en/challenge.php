@@ -103,7 +103,7 @@ $string['loading_screen_title'] = 'Loading Quiz Challenge...';
 $string['format_date_time'] = 'DD.MM.YYYY, hh:mm a';
 $string['format_date'] = 'DD.MM.YYYY';
 $string['format_time'] = 'hh:mm a';
-$string['format_time_suffix'] = 'o\'clock';
+$string['format_time_suffix'] = '';// don't add a suffix, since the time already has am or pm.
 
 /* admin screen in vue app */
 $string['admin_screen_title'] = 'Edit game content';
@@ -120,7 +120,7 @@ $string['admin_btn_datepicker_submit'] = "Select";
 $string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Rounds';
-$string['admin_rounds_title'] = 'Manager rounds';
+$string['admin_rounds_title'] = 'Manage rounds';
 $string['admin_rounds_intro'] = '';
 $string['admin_rounds_list_th_no'] = 'No.';
 $string['admin_rounds_list_th_name'] = 'Name';
