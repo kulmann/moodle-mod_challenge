@@ -29,8 +29,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_challenge\model\tournament_gamesession;
-use mod_challenge\model\level;
 use mod_challenge\util;
 
 defined('MOODLE_INTERNAL') || die();
@@ -39,16 +37,6 @@ defined('MOODLE_INTERNAL') || die();
 define('MOD_CHALLENGE_CAP_ADD_INSTANCE', 'mod/challenge:addinstance');
 define('MOD_CHALLENGE_CAP_MANAGE', 'mod/challenge:manage');
 define('MOD_CHALLENGE_CAP_VIEW', 'mod/challenge:view');
-
-// round duration units
-define('MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS', 'hours');
-define('MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS', 'days');
-define('MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS', 'weeks');
-define('MOD_CHALLENGE_ROUND_DURATION_UNITS', [
-    MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS,
-    MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS,
-    MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS,
-]);
 
 /**
  * Returns the information on whether the module supports a feature

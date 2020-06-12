@@ -50,6 +50,16 @@ class game extends abstract_model {
         self::STATE_UNPUBLISHED,
     ];
 
+    // round duration units
+    const MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS = 'hours';
+    const MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS = 'days';
+    const MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS = 'weeks';
+    const MOD_CHALLENGE_ROUND_DURATION_UNITS = [
+        self::MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS,
+        self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS,
+        self::MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS,
+    ];
+
     /**
      * @var int Timestamp of creation of this game.
      */
@@ -120,7 +130,7 @@ class game extends abstract_model {
         $this->question_duration = 30;
         $this->review_duration = 2;
         $this->question_shuffle_answers = true;
-        $this->round_duration_unit = MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
+        $this->round_duration_unit = self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
         $this->round_duration_value = 7;
         $this->rounds = 10;
         $this->winner_mdl_user = 0;
@@ -148,7 +158,7 @@ class game extends abstract_model {
         $this->question_duration = isset($data['question_duration']) ? $data['question_duration'] : 30;
         $this->review_duration = isset($data['review_duration']) ? $data['review_duration'] : 2;
         $this->question_shuffle_answers = isset($data['question_shuffle_answers']) ? ($data['question_shuffle_answers'] == 1) : true;
-        $this->round_duration_unit = isset($data['round_duration_unit']) ? $data['round_duration_unit'] : MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
+        $this->round_duration_unit = isset($data['round_duration_unit']) ? $data['round_duration_unit'] : self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
         $this->round_duration_value = isset($data['round_duration_value']) ? $data['round_duration_value'] : 7;
         $this->rounds = isset($data['rounds']) ? $data['rounds'] : 10;
         $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
@@ -178,7 +188,7 @@ class game extends abstract_model {
         $params = ['courseid' => $course->id];
         $users = $DB->get_records_sql($sql, $params);
         $result = [];
-        foreach($users as $user) {
+        foreach ($users as $user) {
             if (util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $user->id)) {
                 // skip teachers
                 continue;
@@ -248,7 +258,7 @@ class game extends abstract_model {
         if ($round->get_state() === round::STATE_PENDING && $round->is_started()) {
             try {
                 $this->start_round($round);
-            } catch(moodle_exception $ignored) {
+            } catch (moodle_exception $ignored) {
             }
         }
 
@@ -256,7 +266,7 @@ class game extends abstract_model {
         if ($round->get_state() === round::STATE_ACTIVE && $round->is_ended()) {
             try {
                 $this->stop_round($round);
-            } catch(moodle_exception $ignored) {
+            } catch (moodle_exception $ignored) {
             }
         }
     }
@@ -289,7 +299,7 @@ class game extends abstract_model {
 
         // create matches
         $matches = [];
-        while(count($mdl_users) > 1) {
+        while (count($mdl_users) > 1) {
             $mdl_user_1 = array_shift($mdl_users);
             $mdl_user_2 = array_shift($mdl_users);
             $match = new match();
@@ -332,10 +342,10 @@ class game extends abstract_model {
         $round->save();
 
         // close matches if necessary
-        foreach($round->get_matches() as $match) {
+        foreach ($round->get_matches() as $match) {
             try {
                 $match->check_winner($this, $round);
-            } catch(moodle_exception $ignored) {
+            } catch (moodle_exception $ignored) {
             }
         }
     }
@@ -372,12 +382,12 @@ class game extends abstract_model {
      * @throws dml_exception
      */
     public function get_categories_by_round($round_id) {
-        $round_ids = array_map(function(round $round) {
+        $round_ids = array_map(function (round $round) {
             return $round->get_id();
         }, $this->get_rounds());
         $round_index = array_search($round_id, $round_ids);
         $result = [];
-        foreach($this->get_categories() as $category) {
+        foreach ($this->get_categories() as $category) {
             $round_index_first = array_search($category->get_round_first(), $round_ids);
             if ($round_index < $round_index_first) {
                 continue;
@@ -510,11 +520,11 @@ class game extends abstract_model {
      */
     private function determine_round_duration_factor(): int {
         switch ($this->round_duration_unit) {
-            case MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS:
+            case self::MOD_CHALLENGE_ROUND_DURATION_UNIT_HOURS:
                 return 60 * 60;
-            case MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS:
+            case self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS:
                 return 60 * 60 * 24;
-            case MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS:
+            case self::MOD_CHALLENGE_ROUND_DURATION_UNIT_WEEKS:
             default:
                 return 60 * 60 * 24 * 7;
         }

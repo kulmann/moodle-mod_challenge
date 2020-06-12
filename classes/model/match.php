@@ -46,9 +46,17 @@ class match extends abstract_model {
      */
     protected $mdl_user_1;
     /**
+     * @var bool Whether or not the user has been notified.
+     */
+    protected $mdl_user_1_notified;
+    /**
      * @var int The id of the second user.
      */
     protected $mdl_user_2;
+    /**
+     * @var bool Whether or not the user has been notified.
+     */
+    protected $mdl_user_2_notified;
     /**
      * @var int The user id of the winner of this match.
      */
@@ -67,7 +75,9 @@ class match extends abstract_model {
         $this->timemodified = \time();
         $this->round = 0;
         $this->mdl_user_1 = 0;
+        $this->mdl_user_1_notified = false;
         $this->mdl_user_2 = 0;
+        $this->mdl_user_2_notified = false;
         $this->winner_mdl_user = 0;
         $this->winner_score = 0;
     }
@@ -88,7 +98,9 @@ class match extends abstract_model {
         $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
         $this->round = $data['round'];
         $this->mdl_user_1 = $data['mdl_user_1'];
+        $this->mdl_user_1_notified = isset($data['mdl_user_1_notified']) ? intval($data['mdl_user_1_notified']) === 1 : false;
         $this->mdl_user_2 = $data['mdl_user_2'];
+        $this->mdl_user_2_notified = isset($data['mdl_user_2_notified']) ? intval($data['mdl_user_2_notified']) === 1 : false;
         $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
         $this->winner_score = isset($data['winner_score']) ? $data['winner_score'] : 0;
     }
@@ -319,6 +331,20 @@ class match extends abstract_model {
     }
 
     /**
+     * @return bool
+     */
+    public function is_mdl_user_1_notified(): bool {
+        return $this->mdl_user_1_notified;
+    }
+
+    /**
+     * @param bool $mdl_user_1_notified
+     */
+    public function set_mdl_user_1_notified(bool $mdl_user_1_notified): void {
+        $this->mdl_user_1_notified = $mdl_user_1_notified;
+    }
+
+    /**
      * @return int
      */
     public function get_mdl_user_2(): int {
@@ -330,6 +356,20 @@ class match extends abstract_model {
      */
     public function set_mdl_user_2(int $mdl_user_2) {
         $this->mdl_user_2 = $mdl_user_2;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_mdl_user_2_notified(): bool {
+        return $this->mdl_user_2_notified;
+    }
+
+    /**
+     * @param bool $mdl_user_2_notified
+     */
+    public function set_mdl_user_2_notified(bool $mdl_user_2_notified): void {
+        $this->mdl_user_2_notified = $mdl_user_2_notified;
     }
 
     /**

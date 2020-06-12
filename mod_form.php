@@ -25,6 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_challenge\model\game;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
@@ -86,11 +88,11 @@ class mod_challenge_mod_form extends moodleform_mod {
         $mform->addElement('header', 'rounds_fieldset', get_string('rounds_fieldset', 'challenge'));
         // ... round duration unit
         $round_duration_units = [];
-        foreach (MOD_CHALLENGE_ROUND_DURATION_UNITS as $unit) {
+        foreach (game::MOD_CHALLENGE_ROUND_DURATION_UNITS as $unit) {
             $round_duration_units[$unit] = get_string('round_duration_unit_' . $unit, 'challenge');
         }
         $mform->addElement('select', 'round_duration_unit', get_string('round_duration_unit', 'challenge'), $round_duration_units);
-        $mform->setDefault('round_duration_unit', MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS);
+        $mform->setDefault('round_duration_unit', game::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS);
         $mform->addHelpButton('round_duration_unit', 'round_duration_unit', 'challenge');
         // ... round duration value
         $mform->addElement('text', 'round_duration_value', get_string('round_duration_value', 'challenge'), ['size' => 5]);

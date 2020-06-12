@@ -77,6 +77,11 @@ $string['course_reset_include_topics'] = 'Reset topics etc. (Everything will be 
 
 /* messaging */
 $string['messageprovider:match'] = 'Invitation to a new quiz challenge match';
+$string['message_match_invitation_subject'] = 'Quiz Challenge invitation';
+$string['message_match_invitation_message'] = 'You have been challenged to a Quiz Challenge match. Click on the link below to take up the challenge.';
+$string['message_match_invitation_calltoaction'] = 'Go to match';
+$string['task_validate_rounds'] = 'Process scheduled game rounds';
+$string['task_send_match_invitations'] = 'Send out match invitations';
 
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Loading Quiz Challenge...';
