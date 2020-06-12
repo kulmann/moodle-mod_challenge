@@ -8,8 +8,14 @@
 <script>
     export default {
         props: {
-            icon: String,
-            message: String
+            icon: {
+                type: String,
+                default: "info-circle"
+            },
+            message: {
+                type: String,
+                required: true
+            }
         }
     }
 </script>

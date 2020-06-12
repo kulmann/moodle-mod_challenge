@@ -1,14 +1,14 @@
 <template lang="pug">
     div
-        vk-grid(matched).uk-text-middle.uk-margin-bottom
-            .uk-width-2-5.uk-text-center
+        vk-grid(matched).uk-text-middle.uk-margin-bottom.uk-grid-small
+            .uk-width-1-3.uk-text-center
                 span
                     userAvatar(:size="80", :user="user1")
                 b {{ user1.firstname }} {{ user1.lastname }}
-            .uk-width-1-5.uk-text-center.uk-flex-middle.match-versus
+            .uk-width-1-3.uk-text-center.uk-flex-middle.match-versus
                 span(v-if="finished") {{ user1Score }} : {{ user2Score }}
                 span(v-else) {{ user1Score }} : ?
-            .uk-width-2-5.uk-text-center
+            .uk-width-1-3.uk-text-center
                 span
                     userAvatar(:size="80", :user="user2")
                 b {{ user2.firstname }} {{ user2.lastname }}

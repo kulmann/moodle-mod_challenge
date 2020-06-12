@@ -4,7 +4,7 @@
             h3 {{ strings.admin_rounds_title }}
         .uk-card-body
             p {{ strings.admin_rounds_intro }}
-            table.uk-table.uk-table-small.uk-table-striped
+            table.uk-table.uk-table-small.uk-table-striped(v-if="rounds.length > 0")
                 thead
                     tr
                         th.uk-table-shrink {{ strings.admin_rounds_list_th_no }}
@@ -46,6 +46,7 @@
                                     :labelSubmit="strings.admin_btn_confirm_stop",
                                     @onSubmit="stopRoundConfirm",
                                     @onCancel="stopConfirmationRoundId = null")
+            infoAlert(v-else, :message="strings.admin_rounds_empty")
             btnAdd(@click="goToCreateRound")
             datetime-popup(
                 v-if="datepicker.show",
@@ -62,7 +63,6 @@
 <script>
     import {mapActions, mapState} from 'vuex';
     import moment from 'moment';
-    import { first } from 'lodash';
     import LangMixins from '../../../mixins/lang-mixins';
     import TimeMixins from '../../../mixins/time-mixins';
     import infoAlert from '../../helper/info-alert';

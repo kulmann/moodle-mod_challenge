@@ -122,6 +122,7 @@ $string['admin_avatar_alt'] = 'Foto von {$a}';
 $string['admin_nav_rounds'] = 'Runden';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
 $string['admin_rounds_intro'] = '';
+$string['admin_rounds_empty'] = 'Klicken Sie auf "Hinzufügen" um eine Runde zu erzeugen.';
 $string['admin_rounds_list_th_no'] = 'Nr.';
 $string['admin_rounds_list_th_name'] = 'Name';
 $string['admin_rounds_list_th_timing'] = 'Zeit';
@@ -154,6 +155,7 @@ $string['admin_results_match_score_state_ongoing'] = 'Offen';
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';
 $string['game_not_allowed'] = 'Sie können nicht an einer »Quiz Challenge« teilnehmen.';
+$string['game_not_started'] = 'Diese »Quiz Challenge« wurde noch nicht gestartet. Bitte gedulden Sie sich noch, bis die erste Runde beginnt.';
 $string['game_qtype_not_supported'] = 'Der Fragentyp »{$a}« wird nicht unterstützt.';
 $string['game_loading_question'] = 'Frage wird geladen';
 $string['game_btn_continue'] = 'Weiter';

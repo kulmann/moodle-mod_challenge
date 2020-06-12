@@ -122,6 +122,7 @@ $string['admin_avatar_alt'] = 'Picture of {$a}';
 $string['admin_nav_rounds'] = 'Rounds';
 $string['admin_rounds_title'] = 'Manage rounds';
 $string['admin_rounds_intro'] = '';
+$string['admin_rounds_empty'] = 'Click on "Add" to create a round.';
 $string['admin_rounds_list_th_no'] = 'No.';
 $string['admin_rounds_list_th_name'] = 'Name';
 $string['admin_rounds_list_th_timing'] = 'Timing';
@@ -154,6 +155,7 @@ $string['admin_results_match_score_state_ongoing'] = 'Ongoing';
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
 $string['game_not_allowed'] = 'You are not allowed to participate in a »Quiz Challenge«.';
+$string['game_not_started'] = 'This »Quiz Challenge« has not been started, yet. Please wait until the first round started.';
 $string['game_qtype_not_supported'] = 'The question type »{$a}« is not supported.';
 $string['game_loading_question'] = 'Loading question details';
 $string['game_btn_continue'] = 'Continue';

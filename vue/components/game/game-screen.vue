@@ -3,6 +3,7 @@
         .uk-clearfix
         loadingAlert(v-if="!isInitialized", message="Loading Game").uk-text-center
         failureAlert(v-else-if="isAdminUser", :message="strings.game_not_allowed").uk-text-center
+        infoAlert(v-else-if="isNotStarted", :message="strings.game_not_started").uk-text-center
         template(v-else)
             matches(v-if="viewMode === VIEW_MODE_MATCH_SHOW", :rounds="rounds", :matches="matches")
             question(v-else-if="viewMode === VIEW_MODE_QUESTION_PLAY")
@@ -49,6 +50,9 @@
                     return this.VIEW_MODE_NONE;
                 }
             },
+            isNotStarted() {
+                return this.matches.length === 0;
+            }
         },
         mounted() {
             if (this.viewMode === this.VIEW_MODE_NONE) {
