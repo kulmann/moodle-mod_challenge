@@ -6,7 +6,8 @@
                     userAvatar(:size="80", :user="user1")
                 b {{ user1.firstname }} {{ user1.lastname }}
             .uk-width-1-5.uk-text-center.uk-flex-middle.match-versus
-                i {{ strings.game_match_versus }}
+                span(v-if="finished") {{ user1Score }} : {{ user2Score }}
+                span(v-else) {{ user1Score }} : ?
             .uk-width-2-5.uk-text-center
                 span
                     userAvatar(:size="80", :user="user2")
@@ -74,12 +75,26 @@
                     }
                 }
                 return questions;
+            },
+            finished() {
+                return this.match.open === false;
+            },
+            user1Score() {
+                return this.getScoreSum(this.match.mdl_user_1);
+            },
+            user2Score() {
+                return this.getScoreSum(this.match.mdl_user_2);
             }
         },
         methods: {
             isLastRow(question) {
                 return question.number === this.round.questions;
             },
+            getScoreSum(userId) {
+                return this.attempts.filter(attempt => attempt.mdl_user === userId && attempt.finished === true)
+                    .map(attempt => attempt.score)
+                    .reduce((a,b) => a + b, 0);
+            }
         },
         components: {userAvatar, questionRow}
     }
@@ -89,8 +104,6 @@
     .match-versus {
         font-size: 3em;
         font-weight: bold;
-        font-style: italic;
-        text-transform: uppercase;
     }
     .question-row-border {
         border-bottom: 1px solid #ccc;

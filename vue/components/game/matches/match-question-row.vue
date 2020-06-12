@@ -2,7 +2,9 @@
     router-link(:to="{name: 'player-question-play', params: {matchId: match.id, questionNumber: question.number}}")
         vk-grid(matched, :class="{'_pointer': !isQuestionAnswered}").uk-flex-middle
             .uk-width-1-5
-                v-icon(:name="leftIcon", :scale="2", :style="leftStyle")
+                .uk-flex.uk-flex-middle.uk-flex-center
+                    v-icon(:name="leftIcon", :scale="2", :style="leftStyle")
+                    .score.score-left {{ leftScore }}
             .uk-width-3-5
                 .question-tile.uk-text-center.uk-text-middle
                     template(v-if="isQuestionAnswered")
@@ -10,7 +12,9 @@
                         loadingIcon(v-else)
                     span(v-else) {{ strings.game_match_lbl_question | stringParams(question.number) }}
             .uk-width-1-5
-                v-icon(:name="rightIcon", :scale="2", :style="rightStyle")
+                .uk-flex.uk-flex-middle.uk-flex-center
+                    .score.score-right {{ rightScore }}
+                    v-icon(:name="rightIcon", :scale="2", :style="rightStyle")
 </template>
 
 <script>
@@ -58,6 +62,12 @@
             leftAttempt() {
                 return this.getAttemptByUser(this.mdlUserLeft);
             },
+            leftScore() {
+                if (this.leftAttempt) {
+                    return this.leftAttempt.score;
+                }
+                return "";
+            },
             leftIcon() {
                 return this.getIconByAttempt(this.leftAttempt);
             },
@@ -65,7 +75,16 @@
                 return this.getStyleByAttempt(this.leftAttempt);
             },
             rightAttempt() {
-                return this.getAttemptByUser(this.mdlUserRight);
+                if (this.match.open === false) {
+                    return this.getAttemptByUser(this.mdlUserRight);
+                }
+                return null;
+            },
+            rightScore() {
+                if (this.rightAttempt) {
+                    return this.rightAttempt.score;
+                }
+                return "";
             },
             rightIcon() {
                 return this.getIconByAttempt(this.rightAttempt);
@@ -130,7 +149,7 @@
 </script>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
     .question-tile {
         min-height: 40px;
         padding: 10px;
@@ -138,6 +157,19 @@
         border: 1px solid #999;
         border-radius: 10px;
         color: #333;
+    }
+    .score {
+        width: 42px;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    .score-left {
+        margin-left: 10px;
+    }
+    .score-right {
+        margin-right: 10px;
     }
 </style>
 
