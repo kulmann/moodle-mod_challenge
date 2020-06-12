@@ -340,7 +340,7 @@ class match extends abstract_model {
     /**
      * @param bool $mdl_user_1_notified
      */
-    public function set_mdl_user_1_notified(bool $mdl_user_1_notified): void {
+    public function set_mdl_user_1_notified(bool $mdl_user_1_notified) {
         $this->mdl_user_1_notified = $mdl_user_1_notified;
     }
 
@@ -368,7 +368,7 @@ class match extends abstract_model {
     /**
      * @param bool $mdl_user_2_notified
      */
-    public function set_mdl_user_2_notified(bool $mdl_user_2_notified): void {
+    public function set_mdl_user_2_notified(bool $mdl_user_2_notified) {
         $this->mdl_user_2_notified = $mdl_user_2_notified;
     }
 
