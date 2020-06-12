@@ -110,6 +110,7 @@ class send_match_invitations extends scheduled_task {
         global $DB;
         $user_to = $DB->get_record('user', array('id' => $mdl_user_to));
         list($course, $cm) = get_course_and_cm_from_instance($game->get_id(), 'challenge');
+        cron_setup_user($user_to);
 
         // build message content
         $data = new stdClass();
