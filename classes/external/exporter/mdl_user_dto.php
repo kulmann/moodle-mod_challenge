@@ -116,6 +116,7 @@ class mdl_user_dto extends exporter {
 
         // Get the user's profile picture and make sure it is correct.
         $userpicture = new \user_picture($this->mdl_user);
+        $userpicture->size = true;// will cause f2 size (100px)
         return $userpicture->get_url($page, $renderer)->out(false);
     }
 }
