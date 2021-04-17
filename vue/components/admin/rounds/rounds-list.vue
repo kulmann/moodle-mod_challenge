@@ -46,8 +46,8 @@
                                     :labelSubmit="strings.admin_btn_confirm_stop",
                                     @onSubmit="stopRoundConfirm",
                                     @onCancel="stopConfirmationRoundId = null")
-            infoAlert(v-else, :message="strings.admin_rounds_empty")
-            btnAdd(@click="goToCreateRound")
+            info-alert(v-else, :message="strings.admin_rounds_empty")
+            btn-add(@click="goToCreateRound")
             datetime-popup(
                 v-if="datepicker.show",
                 :key="datepicker.key",
@@ -65,8 +65,8 @@
     import moment from 'moment';
     import LangMixins from '../../../mixins/lang-mixins';
     import TimeMixins from '../../../mixins/time-mixins';
-    import infoAlert from '../../helper/info-alert';
-    import btnAdd from '../btn-add';
+    import InfoAlert from '../../helper/info-alert';
+    import BtnAdd from '../btn-add';
     import VkGrid from "vuikit/src/library/grid/components/grid";
     import ConfirmationPanel from "../../helper/confirmation-panel";
     import {DatetimePopup} from "vue-datetime"
@@ -207,8 +207,8 @@
         components: {
             ConfirmationPanel,
             VkGrid,
-            infoAlert,
-            btnAdd,
+            InfoAlert,
+            BtnAdd,
             DatetimePopup,
         }
     }

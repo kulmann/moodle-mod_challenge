@@ -52,6 +52,9 @@ export default {
         isAdminUser: state => {
             return !!state.game.mdl_user_teacher;
         },
+        isRegularUser: state => {
+            return !state.game.mdl_user_teacher;
+        },
         isInitialized: (state, getters) => {
             if (!state.initialized) {
                 return false;

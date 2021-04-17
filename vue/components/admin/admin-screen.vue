@@ -2,7 +2,7 @@
     #challenge-admin_screen
         .uk-clearfix
         loadingAlert(v-if="!isInitialized", message="Loading Settings").uk-text-center
-        failureAlert(v-else-if="!isAdminUser", :message="strings.admin_not_allowed").uk-text-center
+        failureAlert(v-else-if="isRegularUser", :message="strings.admin_not_allowed").uk-text-center
         template(v-else)
             template(v-if="viewModeList")
                 ul.uk-tab.uk-margin-small-bottom
@@ -62,7 +62,7 @@
                 'mdlCategories'
             ]),
             ...mapGetters([
-                'isAdminUser',
+                'isRegularUser',
                 'isInitialized'
             ]),
             viewModeList() {
