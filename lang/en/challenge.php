@@ -80,21 +80,21 @@ $string['messageprovider:match'] = 'Invitation to a new quiz challenge match';
 $string['message_match_invitation_subject'] = 'Quiz Challenge invitation';
 $string['message_match_invitation_message_html'] = 'Hi {$a->fullname},<br />
 
-you have been challenged to a Quiz Challenge match.<br />
+you have been invited to round {$a->roundnumber} of the Quiz Challenge »{$a->gamename}« in your Moodle course »{$a->coursename}«.<br />
 
-<a href="{$a->matchurl}">Click here</a> to take up the challenge.<br />
+<a href="{$a->matchurl}">Click here</a> to see your questions for this round.<br />
 
 Good luck!';
-$string['message_match_invitation_message_plain'] = 'Hi {$a->username},
+$string['message_match_invitation_message_plain'] = 'Hi {$a->fullname},
 
-you have been challenged to a Quiz Challenge match.
+you have been invited to round {$a->roundnumber} of the Quiz Challenge »{$a->gamename}« in your Moodle course »{$a->coursename}«.
 
-Follow the link to take up the challenge:
+Follow the link to see your questions for this round:
 {$a->matchurl}
 
 Good luck!';
-$string['task_validate_rounds'] = 'Process scheduled game rounds';
-$string['task_send_match_invitations'] = 'Send out match invitations';
+$string['task_validate_rounds'] = 'Process scheduled Quiz Challenge game rounds';
+$string['task_send_match_invitations'] = 'Send out Quiz Challenge game round invitations';
 
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Loading Quiz Challenge...';

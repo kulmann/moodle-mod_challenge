@@ -76,25 +76,25 @@ $string['course_reset_include_progress'] = 'Fortschritt zurücksetzen (Highscore
 $string['course_reset_include_topics'] = 'Eingestellte Themen etc. zurücksetzen (Alles wird gelöscht!)';
 
 /* messaging */
-$string['messageprovider:match'] = 'Einladung zu einem Quiz Challenge Match';
-$string['message_match_invitation_subject'] = 'Quiz Challenge Einladung';
+$string['messageprovider:match'] = 'Einladung zu einer »Quiz Challenge«';
+$string['message_match_invitation_subject'] = '»Quiz Challenge« Einladung';
 $string['message_match_invitation_message_html'] = 'Hallo {$a->fullname},<br />
 
-Sie wurden zu einem Quiz Challenge Match herausgefordert.<br />
+Sie wurden im Moodle-Kurs »{$a->coursename}« zu Runde {$a->roundnumber} der Quiz Challenge »{$a->gamename}« herausgefordert.<br />
 
-<a href="{$a->matchurl}">Klicken Sie hier</a>, um sich der Herausforderung zu stellen.<br />
+<a href="{$a->matchurl}">Klicken Sie hier</a> um zu Ihren Fragen für diese Runde zu gelangen.<br />
 
 Viel Erfolg!';
-$string['message_match_invitation_message_plain'] = 'Hallo {$a->username},
+$string['message_match_invitation_message_plain'] = 'Hallo {$a->fullname},
 
-Sie wurden zu einem Quiz Challenge Match herausgefordert.
+Sie wurden im Moodle-Kurs »{$a->coursename}« zu Runde {$a->roundnumber} der Quiz Challenge »{$a->gamename}« herausgefordert. 
 
-Klicken Sie auf den folgenden Link, um sich der Herausforderung zu stellen:
+Klicken Sie auf den folgenden Link um zu Ihren Fragen für diese Runde zu gelangen:
 {$a->matchurl}
 
 Viel Erfolg!';
-$string['task_validate_rounds'] = 'Verarbeitung geplanter Spielrunden';
-$string['task_send_match_invitations'] = 'Versand von Match-Einladungen';
+$string['task_validate_rounds'] = 'Verarbeitung geplanter Quiz-Challenge Spielrunden';
+$string['task_send_match_invitations'] = 'Versand von Quiz-Challenge Spielrunden-Einladungen';
 
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';
