@@ -148,6 +148,7 @@ $string['admin_round_lbl_category_please_select'] = 'Kategorie auswählen';
 $string['admin_results_loading'] = 'Rundenergebnisse werden geladen';
 $string['admin_results_title'] = 'Ergebnisse Runde {$a}';
 $string['admin_results_btn_rounds'] = 'Zurück';
+$string['admin_results_pending'] = 'Paarungen und Ergebnisse für diese Runde können erst eingesehen werden, wenn die Runde gestartet wurde.';
 $string['admin_results_match_score_table_question'] = 'Frage {$a}';
 $string['admin_results_match_score_state_finished'] = 'Beendet';
 $string['admin_results_match_score_state_ongoing'] = 'Offen';

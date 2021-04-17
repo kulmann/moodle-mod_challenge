@@ -7,18 +7,20 @@
       .uk-card-header
         h3 {{ strings.admin_results_title | stringParams(round.number) }}
       .uk-card-body
-        div(v-for="match in matches", :key="`match-${match.id}`")
-          vk-grid(matched).uk-flex-middle.uk-margin-bottom
-            match-user.uk-width-1-5.uk-text-center(:user="getMatchUser1(match)")
-            match-score.uk-width-3-5.uk-text-center(
-              :round="round",
-              :match="match",
-              :user-left="getMatchUser1(match)",
-              :user-right="getMatchUser2(match)",
-              :questions="questions",
-              :attempts="attempts"
-            )
-            match-user.uk-width-1-5.uk-text-center(:user="getMatchUser2(match)")
+        info-alert(v-if="isRoundPending", :message="strings.admin_results_pending")
+        template(v-else)
+          div(v-for="match in matches", :key="`match-${match.id}`")
+            vk-grid(matched).uk-flex-middle.uk-margin-bottom
+              match-user.uk-width-1-5.uk-text-center(:user="getMatchUser1(match)")
+              match-score.uk-width-3-5.uk-text-center(
+                :round="round",
+                :match="match",
+                :user-left="getMatchUser1(match)",
+                :user-right="getMatchUser2(match)",
+                :questions="questions",
+                :attempts="attempts"
+              )
+              match-user.uk-width-1-5.uk-text-center(:user="getMatchUser2(match)")
       .uk-card-footer.uk-text-right
         button.btn.btn-default(@click="goToRoundList()").uk-margin-small-left
           v-icon(name="list-ol").uk-margin-small-right
@@ -34,9 +36,10 @@ import constants from "../../../constants";
 import UserAvatar from "../../helper/user-avatar";
 import MatchUser from "./results/match-user";
 import MatchScore from "./results/match-score";
+import InfoAlert from "../../helper/info-alert";
 
 export default {
-  components: { MatchScore, MatchUser, UserAvatar, LoadingAlert },
+  components: { InfoAlert, MatchScore, MatchUser, UserAvatar, LoadingAlert },
   mixins: [LangMixins],
   props: {
     round: {
@@ -55,6 +58,9 @@ export default {
   computed: {
     ...mapState(["strings"]),
     ...mapGetters(["getMdlUser"]),
+    isRoundPending() {
+      return this.round.state === "pending";
+    },
   },
   methods: {
     ...mapActions({

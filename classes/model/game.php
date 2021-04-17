@@ -253,7 +253,7 @@ class game extends abstract_model {
      *
      * @param round $round
      */
-    private function validate_round(round $round) {
+    public function validate_round(round $round) {
         // check if round needs to be started
         if ($round->get_state() === round::STATE_PENDING && $round->is_started()) {
             try {

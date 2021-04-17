@@ -148,6 +148,7 @@ $string['admin_round_msg_saving'] = 'Saving the round, please wait';
 $string['admin_results_loading'] = 'Loading round results';
 $string['admin_results_title'] = 'Results of round {$a}';
 $string['admin_results_btn_rounds'] = 'Go Back';
+$string['admin_results_pending'] = 'Pairings and results will be available after the round was started.';
 $string['admin_results_match_score_table_question'] = 'Question {$a}';
 $string['admin_results_match_score_state_finished'] = 'Finished';
 $string['admin_results_match_score_state_ongoing'] = 'Ongoing';
