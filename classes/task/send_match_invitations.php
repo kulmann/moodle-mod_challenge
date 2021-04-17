@@ -23,7 +23,6 @@ use core_user;
 use dml_exception;
 use mod_challenge\model\game;
 use mod_challenge\model\match;
-use mod_challenge\output\challenge_match_invitation;
 use mod_challenge\util;
 use moodle_exception;
 use moodle_url;
