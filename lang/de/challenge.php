@@ -121,8 +121,8 @@ $string['admin_avatar_alt'] = 'Foto von {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Runden';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
-$string['admin_rounds_intro'] = '';
-$string['admin_rounds_empty'] = 'Klicken Sie auf "Hinzufügen" um eine Runde zu erzeugen.';
+$string['admin_rounds_intro'] = 'Quiz-Challenges laufen in Runden ab. In jeder Runde werden Kursteilnehmer paarweise dazu aufgefordert, Fragen zu beantworten. Wählen Sie eine Zeitspanne aus, in der die Teilnahme an der Runde möglich sein soll. Wer nicht rechtzeitig teilnimmt erhält keine Punkte. Sie können die Quiz-Challenge fortlaufend spielen lassen, oder zu einem von Ihnen bestimmten Zeitpunkt den aktuell bestplatzierten Teilnehmer als Sieger küren.';
+$string['admin_rounds_empty'] = 'Sie haben noch keine Runden angelegt. Klicken Sie auf "Hinzufügen" um eine zu erzeugen.';
 $string['admin_rounds_list_th_no'] = 'Nr.';
 $string['admin_rounds_list_th_name'] = 'Name';
 $string['admin_rounds_list_th_timing'] = 'Zeit';

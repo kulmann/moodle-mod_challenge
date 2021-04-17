@@ -121,8 +121,8 @@ $string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Rounds';
 $string['admin_rounds_title'] = 'Manage rounds';
-$string['admin_rounds_intro'] = '';
-$string['admin_rounds_empty'] = 'Click on "Add" to create a round.';
+$string['admin_rounds_intro'] = 'A Quiz-Challenge consists of rounds. For each round, random pairs of course participants are invited to answer questions. You can select the timeframe for participation for each round. Not answering questions within that timeframe results in not gaining points. You can either let the participants compete against each other continously, or you can decide at any time to award the participant with the highest rank as winner and close the Quiz-Challenge session.';
+$string['admin_rounds_empty'] = 'You have not created any rounds, yet. Click on "Add" to create one.';
 $string['admin_rounds_list_th_no'] = 'No.';
 $string['admin_rounds_list_th_name'] = 'Name';
 $string['admin_rounds_list_th_timing'] = 'Timing';
@@ -141,7 +141,7 @@ $string['admin_round_categories_title'] = 'Edit question categories';
 $string['admin_round_lbl_category_open'] = 'Category {$a->number} - Since round {$a->round_first_number}';
 $string['admin_round_lbl_category_closed_range'] = 'Category {$a->number} - From round {$a->round_first_number} to {$a->round_last_number}';
 $string['admin_round_lbl_category_closed_same'] = 'Category {$a->number} - In round {$a->round_first_number} only';
-$string['admin_round_lbl_category_new'] = 'Category {$a} - Gerade hinzugefügt';
+$string['admin_round_lbl_category_new'] = 'Category {$a} - added just now';
 $string['admin_round_lbl_category_please_select'] = 'Select category';
 $string['admin_round_msg_saving'] = 'Saving the round, please wait';
 /* admin: round results */
