@@ -146,10 +146,10 @@ class match extends abstract_model {
         // if match is over, add empty questions and lost attempts where necessary
         if ($round->is_ended() && $finished !== $round->get_questions()) {
             // add empty questions
-            for ($index = $finished; $index < $round->get_questions(); $index++) {
+            for ($index = count($questions); $index < $round->get_questions(); $index++) {
                 $questions[] = $this->create_question($game, $round, $index + 1);
             }
-            // go through unfinished questions and add lost attempts
+            // go through unfinished questions (including the new ones) and add lost attempts where players didn't participate
             foreach ($questions as $question) {
                 if (!$question->is_finished()) {
                     $question->close_attempt($this->get_mdl_user_1());

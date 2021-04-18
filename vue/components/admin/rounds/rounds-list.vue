@@ -44,7 +44,7 @@
                 confirmationPanel(v-if="stopConfirmationRoundId",
                   :message="stringParams(strings.admin_round_stop_confirm, round.number)",
                   :labelSubmit="strings.admin_btn_confirm_stop",
-                  @onSubmit="stopRoundConfirm",
+                  @onSubmit="stopRoundConfirm(round)",
                   @onCancel="stopConfirmationRoundId = null")
       info-alert(v-else, :message="strings.admin_rounds_empty")
       btn-add(@click="goToCreateRound")

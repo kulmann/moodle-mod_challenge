@@ -332,12 +332,15 @@ class game extends abstract_model {
      * Ends the given round.
      *
      * @param round $round
+     * @param bool $force
      *
      * @throws dml_exception
      */
-    public function stop_round(round $round) {
+    public function stop_round(round $round, bool $force = false) {
         // stop round
-        $round->set_timeend(time());
+        if ($force || $round->get_timeend() === 0) {
+            $round->set_timeend(time());
+        }
         $round->set_state(round::STATE_FINISHED);
         $round->save();
 
