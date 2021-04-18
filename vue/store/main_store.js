@@ -18,6 +18,7 @@ export default {
     game: null,
     rounds: [],
     mdlUsers: [],
+    scores: [],
   },
   mutations: {
     updateTime(state) {
@@ -46,6 +47,9 @@ export default {
     },
     setMdlUsers(state, mdlUsers) {
       state.mdlUsers = mdlUsers;
+    },
+    setScores(state, scores) {
+      state.scores = scores;
     },
   },
   getters: {
@@ -218,6 +222,16 @@ export default {
       return sortBy(answers, function (answer) {
         return answer.label;
       });
+    },
+    /**
+     * Fetches the scores for the activity.
+     *
+     * @param context
+     * @returns {Promise<void>}
+     */
+    async fetchScores(context) {
+      const scores = await ajax("mod_challenge_main_get_scores");
+      context.commit("setScores", scores);
     },
   },
 };

@@ -118,8 +118,10 @@ $string['admin_btn_generate'] = 'Generate';
 $string['admin_btn_datepicker_cancel'] = "Cancel";
 $string['admin_btn_datepicker_submit'] = "Select";
 $string['admin_avatar_alt'] = 'Picture of {$a}';
+
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Rounds';
+$string['admin_nav_highscore'] = 'Leader Board';
 $string['admin_rounds_title'] = 'Manage rounds';
 $string['admin_rounds_intro'] = 'A Quiz-Challenge consists of rounds. For each round, random pairs of course participants are invited to answer questions. You can select the timeframe for participation for each round. Not answering questions within that timeframe results in not gaining points. You can create additional rounds at any time. They are allowed to overlap in time.';
 $string['admin_rounds_empty'] = 'You have not created any rounds, yet. Click on "Add" to create one.';
@@ -144,6 +146,7 @@ $string['admin_round_lbl_category_closed_same'] = 'Category {$a->number} - In ro
 $string['admin_round_lbl_category_new'] = 'Category {$a} - added just now';
 $string['admin_round_lbl_category_please_select'] = 'Select category';
 $string['admin_round_msg_saving'] = 'Saving the round, please wait';
+
 /* admin: round results */
 $string['admin_results_loading'] = 'Loading round results';
 $string['admin_results_title'] = 'Results of round {$a}';
@@ -155,6 +158,8 @@ $string['admin_results_match_score_state_ongoing'] = 'Ongoing';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
+$string['game_nav_play'] = 'Play';
+$string['game_nav_highscore'] = 'Leader Board';
 $string['game_not_allowed'] = 'You are not allowed to participate in a »Quiz Challenge«.';
 $string['game_not_started'] = 'This »Quiz Challenge« has not been started, yet. Please wait until the first round started.';
 $string['game_qtype_not_supported'] = 'The question type »{$a}« is not supported.';
@@ -162,6 +167,7 @@ $string['game_loading_question'] = 'Loading question details';
 $string['game_btn_continue'] = 'Continue';
 $string['game_btn_show'] = 'Show';
 $string['game_btn_answer'] = 'Answer';
+$string['game_match_step'] = 'Round {$a->step} / {$a->total}';
 $string['game_match_loading'] = 'Loading match data';
 $string['game_match_show_error'] = 'Something went wrong trying to show the selected match.';
 $string['game_match_versus'] = 'vs.';
@@ -172,3 +178,13 @@ $string['game_match_lbl_lost'] = 'lost';
 $string['game_match_lbl_question'] = 'Answer Question {$a}';
 $string['game_match_question_title'] = 'Question {$a}';
 $string['game_round_dates'] = 'Active from <b>{$a->start}</b> until <b>{$a->end}</b>';
+
+/* shared screens */
+$string['shared_highscore_title'] = 'Leader Board';
+$string['shared_highscore_loading'] = 'Loading leader board';
+$string['shared_highscore_loading_failed'] = 'An error occurred while loading the leader board.';
+$string['shared_highscore_empty'] = 'No one is on the leader board, yet.';
+$string['shared_highscore_rank'] = 'Rank';
+$string['shared_highscore_user'] = 'User';
+$string['shared_highscore_score_total'] = 'Score';
+$string['shared_highscore_score_best'] = 'Best Round';

@@ -79,9 +79,17 @@ class match_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'first moodle user of the match',
             ],
+            'mdl_user_1_completed' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether the first user has answered their questions for the match',
+            ],
             'mdl_user_2' => [
                 'type' => PARAM_INT,
                 'description' => 'second moodle user of the match',
+            ],
+            'mdl_user_2_completed' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether the second user has answered their questions for the match',
             ],
             'winner_mdl_user' => [
                 'type' => PARAM_INT,
@@ -90,14 +98,6 @@ class match_dto extends exporter {
             'winner_score' => [
                 'type' => PARAM_INT,
                 'description' => 'score of the moodle user who won this match',
-            ],
-            'finished_mdl_user_1' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether the first user has answered their questions for the match',
-            ],
-            'finished_mdl_user_2' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether the second user has answered their questions for the match',
             ],
             'open' => [
                 'type' => PARAM_BOOL,
@@ -126,8 +126,6 @@ class match_dto extends exporter {
             $this->match->to_array(),
             [
                 'open' => !$this->match->is_finished(),
-                'finished_mdl_user_1' => $this->match->is_mdl_user_1_finished($this->game->get_question_count()),
-                'finished_mdl_user_2' => $this->match->is_mdl_user_2_finished($this->game->get_question_count()),
             ]
         );
     }

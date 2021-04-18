@@ -10,6 +10,7 @@ export const ROUND_DELETED = "deleted";
 // views
 export const ROUTE_UNKNOWN = "unknown";
 export const ROUTE_ADMIN_ROUNDS = "admin-round-list";
+export const ROUTE_ADMIN_HIGHSCORE = "admin-highscore-list";
 export const ROUTE_ADMIN_ROUND_EDIT = "admin-round-edit";
 export const ROUTE_ADMIN_ROUND_RESULTS = "admin-round-results";
 
@@ -22,6 +23,7 @@ export default {
   // views
   ROUTE_UNKNOWN,
   ROUTE_ADMIN_ROUNDS,
+  ROUTE_ADMIN_HIGHSCORE,
   ROUTE_ADMIN_ROUND_EDIT,
   ROUTE_ADMIN_ROUND_RESULTS,
 };

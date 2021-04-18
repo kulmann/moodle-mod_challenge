@@ -47,7 +47,7 @@ export default {
       }
       // serve first unfinished match
       const unfinishedMatches = this.matches.filter(
-        (m) => !m.finished_mdl_user_1
+        (m) => !m.mdl_user_1_completed
       );
       if (unfinishedMatches.length > 0) {
         return first(unfinishedMatches).id;

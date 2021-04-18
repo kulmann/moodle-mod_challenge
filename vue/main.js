@@ -78,6 +78,10 @@ function init(coursemoduleid, contextid) {
           name: constants.ROUTE_ADMIN_ROUNDS,
         },
         {
+          path: "highscore",
+          name: constants.ROUTE_ADMIN_HIGHSCORE,
+        },
+        {
           path: "round/:roundId?",
           name: constants.ROUTE_ADMIN_ROUND_EDIT,
         },

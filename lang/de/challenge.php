@@ -118,8 +118,10 @@ $string['admin_btn_generate'] = 'Generieren';
 $string['admin_btn_datepicker_cancel'] = "Abbrechen";
 $string['admin_btn_datepicker_submit'] = "Auswählen";
 $string['admin_avatar_alt'] = 'Foto von {$a}';
+
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Runden';
+$string['admin_nav_highscore'] = 'Bestenliste';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
 $string['admin_rounds_intro'] = 'Quiz-Challenges laufen in Runden ab. In jeder Runde werden Kursteilnehmer paarweise dazu aufgefordert, Fragen zu beantworten. Wählen Sie eine Zeitspanne aus, in der die Teilnahme an der Runde möglich sein soll. Wer nicht rechtzeitig teilnimmt erhält keine Punkte. Sie können jederzeit neue Quiz-Challenge Runden erstellen, die sich auch zeitlich überlagern dürfen.';
 $string['admin_rounds_empty'] = 'Sie haben noch keine Runden angelegt. Klicken Sie auf "Hinzufügen" um eine zu erzeugen.';
@@ -144,6 +146,7 @@ $string['admin_round_lbl_category_closed_range'] = 'Kategorie {$a->number} - Von
 $string['admin_round_lbl_category_closed_same'] = 'Kategorie {$a->number} - Nur in Runde {$a->round_first_number}';
 $string['admin_round_lbl_category_new'] = 'Kategorie {$a} - Gerade hinzugefügt';
 $string['admin_round_lbl_category_please_select'] = 'Kategorie auswählen';
+
 /* admin: round results */
 $string['admin_results_loading'] = 'Rundenergebnisse werden geladen';
 $string['admin_results_title'] = 'Ergebnisse Runde {$a}';
@@ -155,6 +158,8 @@ $string['admin_results_match_score_state_ongoing'] = 'Offen';
 
 /* game screen in vue app */
 $string['game_screen_title'] = 'Spiele »Quiz Challenge«';
+$string['game_nav_play'] = 'Spielen';
+$string['game_nav_highscore'] = 'Bestenliste';
 $string['game_not_allowed'] = 'Sie können nicht an einer »Quiz Challenge« teilnehmen.';
 $string['game_not_started'] = 'Diese »Quiz Challenge« wurde noch nicht gestartet. Bitte gedulden Sie sich noch, bis die erste Runde beginnt.';
 $string['game_qtype_not_supported'] = 'Der Fragentyp »{$a}« wird nicht unterstützt.';
@@ -173,3 +178,13 @@ $string['game_match_lbl_lost'] = 'verloren';
 $string['game_match_lbl_question'] = 'Frage {$a} beantworten';
 $string['game_match_question_title'] = 'Frage {$a}';
 $string['game_round_dates'] = 'Aktiv von <b>{$a->start}</b> bis <b>{$a->end}</b>';
+
+/* shared screens */
+$string['shared_highscore_title'] = 'Bestenliste';
+$string['shared_highscore_loading'] = 'Bestenliste wird geladen';
+$string['shared_highscore_loading_failed'] = 'Beim Laden der Bestenliste ist ein Fehler aufgetreten.';
+$string['shared_highscore_empty'] = 'Es gibt noch keine Einträge in der Bestenliste.';
+$string['shared_highscore_rank'] = 'Platz';
+$string['shared_highscore_user'] = 'Nutzer';
+$string['shared_highscore_score_total'] = 'Punkte';
+$string['shared_highscore_score_best'] = 'Beste Runde';
