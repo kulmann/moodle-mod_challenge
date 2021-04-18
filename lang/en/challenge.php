@@ -121,7 +121,7 @@ $string['admin_avatar_alt'] = 'Picture of {$a}';
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Rounds';
 $string['admin_rounds_title'] = 'Manage rounds';
-$string['admin_rounds_intro'] = 'A Quiz-Challenge consists of rounds. For each round, random pairs of course participants are invited to answer questions. You can select the timeframe for participation for each round. Not answering questions within that timeframe results in not gaining points. You can either let the participants compete against each other continously, or you can decide at any time to award the participant with the highest rank as winner and close the Quiz-Challenge session.';
+$string['admin_rounds_intro'] = 'A Quiz-Challenge consists of rounds. For each round, random pairs of course participants are invited to answer questions. You can select the timeframe for participation for each round. Not answering questions within that timeframe results in not gaining points. You can create additional rounds at any time. They are allowed to overlap in time.';
 $string['admin_rounds_empty'] = 'You have not created any rounds, yet. Click on "Add" to create one.';
 $string['admin_rounds_list_th_no'] = 'No.';
 $string['admin_rounds_list_th_name'] = 'Name';
