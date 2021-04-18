@@ -33,5 +33,19 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_challenge_upgrade($oldversion = 0) {
     global $CFG, $DB;
 
+    $dbman = $DB->get_manager();
+    if ($oldversion < 2021041800) {
+        $table = new xmldb_table('challenge_matches');
+        $field1 = new xmldb_field('mdl_user_1_completed', XMLDB_TYPE_INTEGER, '1', true, null, null, '0');
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+        }
+        $field2 = new xmldb_field('mdl_user_2_completed', XMLDB_TYPE_INTEGER, '1', true, null, null, '0');
+        if (!$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field2);
+        }
+        upgrade_mod_savepoint(true, 2021041800, 'challenge');
+    }
+
     return true;
 }

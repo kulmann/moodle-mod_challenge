@@ -83,7 +83,7 @@ class admin_stop_round extends external_api {
         $renderer = $PAGE->get_renderer('core');
 
         // trigger stopping current round
-        $game->stop_round($round);
+        $game->stop_round($round, true);
 
         // return success response
         $exporter = new bool_dto(true, $ctx);

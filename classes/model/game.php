@@ -253,7 +253,7 @@ class game extends abstract_model {
      *
      * @param round $round
      */
-    private function validate_round(round $round) {
+    public function validate_round(round $round) {
         // check if round needs to be started
         if ($round->get_state() === round::STATE_PENDING && $round->is_started()) {
             try {
@@ -332,12 +332,15 @@ class game extends abstract_model {
      * Ends the given round.
      *
      * @param round $round
+     * @param bool $force
      *
      * @throws dml_exception
      */
-    public function stop_round(round $round) {
+    public function stop_round(round $round, bool $force = false) {
         // stop round
-        $round->set_timeend(time());
+        if ($force || $round->get_timeend() === 0) {
+            $round->set_timeend(time());
+        }
         $round->set_state(round::STATE_FINISHED);
         $round->save();
 

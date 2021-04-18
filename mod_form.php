@@ -100,10 +100,10 @@ class mod_challenge_mod_form extends moodleform_mod {
         $mform->setDefault('round_duration_value', 7);
         $mform->addHelpButton('round_duration_value', 'round_duration_value', 'challenge');
         // ... number of rounds
-        $mform->addElement('text', 'rounds', get_string('rounds', 'challenge'), ['size' => 5]);
-        $mform->setType('rounds', PARAM_INT);
-        $mform->setDefault('rounds', 10);
-        $mform->addHelpButton('rounds', 'rounds', 'challenge');
+//        $mform->addElement('text', 'rounds', get_string('rounds', 'challenge'), ['size' => 5]);
+//        $mform->setType('rounds', PARAM_INT);
+//        $mform->setDefault('rounds', 10);
+//        $mform->addHelpButton('rounds', 'rounds', 'challenge');
 
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();

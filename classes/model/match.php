@@ -50,6 +50,10 @@ class match extends abstract_model {
      */
     protected $mdl_user_1_notified;
     /**
+     * @var bool Whether or not the user has completed the match.
+     */
+    protected $mdl_user_1_completed;
+    /**
      * @var int The id of the second user.
      */
     protected $mdl_user_2;
@@ -57,6 +61,10 @@ class match extends abstract_model {
      * @var bool Whether or not the user has been notified.
      */
     protected $mdl_user_2_notified;
+    /**
+     * @var bool Whether or not the user has completed the match.
+     */
+    protected $mdl_user_2_completed;
     /**
      * @var int The user id of the winner of this match.
      */
@@ -76,8 +84,10 @@ class match extends abstract_model {
         $this->round = 0;
         $this->mdl_user_1 = 0;
         $this->mdl_user_1_notified = false;
+        $this->mdl_user_1_completed = false;
         $this->mdl_user_2 = 0;
         $this->mdl_user_2_notified = false;
+        $this->mdl_user_2_completed = false;
         $this->winner_mdl_user = 0;
         $this->winner_score = 0;
     }
@@ -94,15 +104,17 @@ class match extends abstract_model {
             $data = get_object_vars($data);
         }
         $this->id = isset($data['id']) ? $data['id'] : 0;
-        $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
-        $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
+        $this->timecreated = $data['timecreated'] ?? \time();
+        $this->timemodified = $data['timemodified'] ?? \time();
         $this->round = $data['round'];
         $this->mdl_user_1 = $data['mdl_user_1'];
-        $this->mdl_user_1_notified = isset($data['mdl_user_1_notified']) ? intval($data['mdl_user_1_notified']) === 1 : false;
+        $this->mdl_user_1_notified = isset($data['mdl_user_1_notified']) && intval($data['mdl_user_1_notified']) === 1;
+        $this->mdl_user_1_completed = isset($data['mdl_user_1_completed']) && intval($data['mdl_user_1_completed']) === 1;
         $this->mdl_user_2 = $data['mdl_user_2'];
-        $this->mdl_user_2_notified = isset($data['mdl_user_2_notified']) ? intval($data['mdl_user_2_notified']) === 1 : false;
-        $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
-        $this->winner_score = isset($data['winner_score']) ? $data['winner_score'] : 0;
+        $this->mdl_user_2_notified = isset($data['mdl_user_2_notified']) && intval($data['mdl_user_2_notified']) === 1;
+        $this->mdl_user_2_completed = isset($data['mdl_user_2_completed']) && intval($data['mdl_user_2_completed']) === 1;
+        $this->winner_mdl_user = $data['winner_mdl_user'] ?? 0;
+        $this->winner_score = $data['winner_score'] ?? 0;
     }
 
     /**
@@ -146,10 +158,10 @@ class match extends abstract_model {
         // if match is over, add empty questions and lost attempts where necessary
         if ($round->is_ended() && $finished !== $round->get_questions()) {
             // add empty questions
-            for ($index = $finished; $index < $round->get_questions(); $index++) {
+            for ($index = count($questions); $index < $round->get_questions(); $index++) {
                 $questions[] = $this->create_question($game, $round, $index + 1);
             }
-            // go through unfinished questions and add lost attempts
+            // go through unfinished questions (including the new ones) and add lost attempts where players didn't participate
             foreach ($questions as $question) {
                 if (!$question->is_finished()) {
                     $question->close_attempt($this->get_mdl_user_1());
@@ -162,6 +174,19 @@ class match extends abstract_model {
                     }
                 }
             }
+        }
+
+        // update 'completed' info on match for both users
+        if (count($questions) === $game->get_question_count()) {
+            $completed_questions_mdl_user_1 = $this->get_count_completed_questions($this->get_mdl_user_1(), $questions);
+            if ($completed_questions_mdl_user_1 === $game->get_question_count()) {
+                $this->set_mdl_user_1_completed(true);
+            }
+            $completed_questions_mdl_user_2 = $this->get_count_completed_questions($this->get_mdl_user_2(), $questions);
+            if ($completed_questions_mdl_user_2 === $game->get_question_count()) {
+                $this->set_mdl_user_2_completed(true);
+            }
+            $this->save();
         }
 
         // check if the finished questions match the required number of questions
@@ -193,6 +218,24 @@ class match extends abstract_model {
 
         // save the changes
         $this->save();
+    }
+
+    /**
+     * Counts the number of completed questions for the given user id.
+     *
+     * @param int $mdl_user
+     * @param question[] $questions
+     * @return int
+     */
+    private function get_count_completed_questions(int $mdl_user, array $questions) {
+        $completed = 0;
+        foreach($questions as $question) {
+            $attempt = $question->get_attempt_by_user($mdl_user);
+            if ($attempt !== null && $attempt->is_finished()) {
+                $completed++;
+            }
+        }
+        return $completed;
     }
 
     /**
@@ -345,6 +388,20 @@ class match extends abstract_model {
     }
 
     /**
+     * @return bool
+     */
+    public function is_mdl_user_1_completed(): bool {
+        return $this->mdl_user_1_completed;
+    }
+
+    /**
+     * @param bool $mdl_user_1_completed
+     */
+    public function set_mdl_user_1_completed(bool $mdl_user_1_completed): void {
+        $this->mdl_user_1_completed = $mdl_user_1_completed;
+    }
+
+    /**
      * @return int
      */
     public function get_mdl_user_2(): int {
@@ -373,6 +430,20 @@ class match extends abstract_model {
     }
 
     /**
+     * @return bool
+     */
+    public function is_mdl_user_2_completed(): bool {
+        return $this->mdl_user_2_completed;
+    }
+
+    /**
+     * @param bool $mdl_user_2_completed
+     */
+    public function set_mdl_user_2_completed(bool $mdl_user_2_completed): void {
+        $this->mdl_user_2_completed = $mdl_user_2_completed;
+    }
+
+    /**
      * @return int
      */
     public function get_winner_mdl_user(): int {
@@ -393,6 +464,50 @@ class match extends abstract_model {
      */
     public function is_finished() {
         return $this->winner_mdl_user > 0;
+    }
+
+    /**
+     * Returns whether the first user has answered their questions for the match.
+     *
+     * @param int $question_count The number of questions that are needed for this match.
+     *
+     * @return bool
+     */
+    public function is_mdl_user_1_finished(int $question_count): bool {
+        return $this->is_mdl_user_finished($this->mdl_user_1, $question_count);
+    }
+
+    /**
+     * Returns whether the second user has answered their questions for the match.
+     *
+     * @param int $question_count The number of questions that are needed for this match.
+     *
+     * @return bool
+     */
+    public function is_mdl_user_2_finished(int $question_count): bool {
+        return $this->is_mdl_user_finished($this->mdl_user_2, $question_count);
+    }
+
+    /**
+     * Returns whether the given user has answered their questions for the match.
+     *
+     * @param int $user_id The id of the user to check the finished state for.
+     * @param int $question_count The number of questions that are needed for this match.
+     *
+     * @return bool
+     */
+    private function is_mdl_user_finished(int $user_id, int $question_count): bool {
+        $questions = $this->get_questions();
+        if (count($questions) < $question_count) {
+            return false;
+        }
+        foreach($questions as $question) {
+            $attempt = $question->get_attempt_by_user($user_id);
+            if($attempt === null || !$attempt->is_finished()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

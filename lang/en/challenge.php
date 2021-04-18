@@ -80,21 +80,21 @@ $string['messageprovider:match'] = 'Invitation to a new quiz challenge match';
 $string['message_match_invitation_subject'] = 'Quiz Challenge invitation';
 $string['message_match_invitation_message_html'] = 'Hi {$a->fullname},<br />
 
-you have been challenged to a Quiz Challenge match.<br />
+you have been invited to round {$a->roundnumber} of the Quiz Challenge »{$a->gamename}« in your Moodle course »{$a->coursename}«.<br />
 
-<a href="{$a->matchurl}">Click here</a> to take up the challenge.<br />
+<a href="{$a->matchurl}">Click here</a> to see your questions for this round.<br />
 
 Good luck!';
-$string['message_match_invitation_message_plain'] = 'Hi {$a->username},
+$string['message_match_invitation_message_plain'] = 'Hi {$a->fullname},
 
-you have been challenged to a Quiz Challenge match.
+you have been invited to round {$a->roundnumber} of the Quiz Challenge »{$a->gamename}« in your Moodle course »{$a->coursename}«.
 
-Follow the link to take up the challenge:
+Follow the link to see your questions for this round:
 {$a->matchurl}
 
 Good luck!';
-$string['task_validate_rounds'] = 'Process scheduled game rounds';
-$string['task_send_match_invitations'] = 'Send out match invitations';
+$string['task_validate_rounds'] = 'Process scheduled Quiz Challenge game rounds';
+$string['task_send_match_invitations'] = 'Send out Quiz Challenge game round invitations';
 
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Loading Quiz Challenge...';
@@ -118,11 +118,13 @@ $string['admin_btn_generate'] = 'Generate';
 $string['admin_btn_datepicker_cancel'] = "Cancel";
 $string['admin_btn_datepicker_submit'] = "Select";
 $string['admin_avatar_alt'] = 'Picture of {$a}';
+
 /* admin: rounds */
 $string['admin_nav_rounds'] = 'Rounds';
+$string['admin_nav_highscore'] = 'Leader Board';
 $string['admin_rounds_title'] = 'Manage rounds';
-$string['admin_rounds_intro'] = '';
-$string['admin_rounds_empty'] = 'Click on "Add" to create a round.';
+$string['admin_rounds_intro'] = 'A Quiz-Challenge consists of rounds. For each round, random pairs of course participants are invited to answer questions. You can select the timeframe for participation for each round. Not answering questions within that timeframe results in not gaining points. You can create additional rounds at any time. They are allowed to overlap in time.';
+$string['admin_rounds_empty'] = 'You have not created any rounds, yet. Click on "Add" to create one.';
 $string['admin_rounds_list_th_no'] = 'No.';
 $string['admin_rounds_list_th_name'] = 'Name';
 $string['admin_rounds_list_th_timing'] = 'Timing';
@@ -141,19 +143,23 @@ $string['admin_round_categories_title'] = 'Edit question categories';
 $string['admin_round_lbl_category_open'] = 'Category {$a->number} - Since round {$a->round_first_number}';
 $string['admin_round_lbl_category_closed_range'] = 'Category {$a->number} - From round {$a->round_first_number} to {$a->round_last_number}';
 $string['admin_round_lbl_category_closed_same'] = 'Category {$a->number} - In round {$a->round_first_number} only';
-$string['admin_round_lbl_category_new'] = 'Category {$a} - Gerade hinzugefügt';
+$string['admin_round_lbl_category_new'] = 'Category {$a} - added just now';
 $string['admin_round_lbl_category_please_select'] = 'Select category';
 $string['admin_round_msg_saving'] = 'Saving the round, please wait';
+
 /* admin: round results */
 $string['admin_results_loading'] = 'Loading round results';
 $string['admin_results_title'] = 'Results of round {$a}';
 $string['admin_results_btn_rounds'] = 'Go Back';
+$string['admin_results_pending'] = 'Pairings and results will be available after the round was started.';
 $string['admin_results_match_score_table_question'] = 'Question {$a}';
 $string['admin_results_match_score_state_finished'] = 'Finished';
 $string['admin_results_match_score_state_ongoing'] = 'Ongoing';
 
 /* game gui */
 $string['game_screen_title'] = 'Play »Quiz Challenge«';
+$string['game_nav_play'] = 'Play';
+$string['game_nav_highscore'] = 'Leader Board';
 $string['game_not_allowed'] = 'You are not allowed to participate in a »Quiz Challenge«.';
 $string['game_not_started'] = 'This »Quiz Challenge« has not been started, yet. Please wait until the first round started.';
 $string['game_qtype_not_supported'] = 'The question type »{$a}« is not supported.';
@@ -161,6 +167,7 @@ $string['game_loading_question'] = 'Loading question details';
 $string['game_btn_continue'] = 'Continue';
 $string['game_btn_show'] = 'Show';
 $string['game_btn_answer'] = 'Answer';
+$string['game_match_step'] = 'Round {$a->step} / {$a->total}';
 $string['game_match_loading'] = 'Loading match data';
 $string['game_match_show_error'] = 'Something went wrong trying to show the selected match.';
 $string['game_match_versus'] = 'vs.';
@@ -171,3 +178,13 @@ $string['game_match_lbl_lost'] = 'lost';
 $string['game_match_lbl_question'] = 'Answer Question {$a}';
 $string['game_match_question_title'] = 'Question {$a}';
 $string['game_round_dates'] = 'Active from <b>{$a->start}</b> until <b>{$a->end}</b>';
+
+/* shared screens */
+$string['shared_highscore_title'] = 'Leader Board';
+$string['shared_highscore_loading'] = 'Loading leader board';
+$string['shared_highscore_loading_failed'] = 'An error occurred while loading the leader board.';
+$string['shared_highscore_empty'] = 'No one is on the leader board, yet.';
+$string['shared_highscore_rank'] = 'Rank';
+$string['shared_highscore_user'] = 'User';
+$string['shared_highscore_score_total'] = 'Score';
+$string['shared_highscore_score_best'] = 'Best Round';

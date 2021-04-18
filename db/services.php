@@ -123,6 +123,13 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_main_get_scores' => [
+        'classname' => 'mod_challenge\external\main_get_scores',
+        'methodname' => 'request',
+        'description' => 'Retrieves the scores for the given game',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     // PLAYER FUNCTIONS
     'mod_challenge_player_get_match_attempts' => [
         'classname' => 'mod_challenge\external\player_get_match_attempts',

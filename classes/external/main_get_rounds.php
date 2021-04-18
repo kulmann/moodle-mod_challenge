@@ -90,6 +90,7 @@ class main_get_rounds extends external_api {
         $ctx = $coursemodule->context;
         $result = [];
         foreach($rounds as $round) {
+            $game->validate_round($round);
             $round_dto = new round_dto($round, $game, $ctx);
             $result[] = $round_dto->export($renderer);
         }

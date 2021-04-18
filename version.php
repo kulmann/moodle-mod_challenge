@@ -21,7 +21,7 @@
  * See https://docs.moodle.org/dev/version.php for more info.
  *
  * @package    mod_challenge
- * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2021 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,5 +30,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'mod_challenge';
 $plugin->requires = 2017111302;
 $plugin->maturity = MATURITY_BETA;
-$plugin->version = 2020061200;
-$plugin->release = '0.5.3';
+$plugin->version = 2021041800;
+$plugin->release = '0.6.0';

@@ -96,6 +96,7 @@ class admin_schedule_round extends external_api {
 
         // schedule round
         $game->schedule_round($round, $timestart, $timeend);
+        $game->validate_round($round);
 
         // return success response
         $exporter = new bool_dto(true, $ctx);

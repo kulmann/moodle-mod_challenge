@@ -79,9 +79,17 @@ class match_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'first moodle user of the match',
             ],
+            'mdl_user_1_completed' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether the first user has answered their questions for the match',
+            ],
             'mdl_user_2' => [
                 'type' => PARAM_INT,
                 'description' => 'second moodle user of the match',
+            ],
+            'mdl_user_2_completed' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether the second user has answered their questions for the match',
             ],
             'winner_mdl_user' => [
                 'type' => PARAM_INT,
@@ -105,7 +113,7 @@ class match_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        // make sure, logged in user is always the first one
+        // make sure, logged in user is always represented as the first one
         $mdl_user_1 = $this->match->get_mdl_user_1();
         $mdl_user_2 = $this->match->get_mdl_user_2();
         global $USER;

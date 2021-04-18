@@ -1,15 +1,15 @@
 <template lang="pug">
-    .uk-alert.uk-alert-success(uk-alert)
-        p
-            v-icon(v-if="icon", :name="icon").uk-margin-small-right
-            span {{ message }}
+  .uk-alert.uk-alert-success(uk-alert)
+    p
+      v-icon(v-if="icon", :name="icon").uk-margin-small-right
+      span {{ message }}
 </template>
 
 <script>
-    export default {
-        props: {
-            icon: String,
-            message: String
-        }
-    }
+export default {
+  props: {
+    icon: String,
+    message: String,
+  },
+};
 </script>
