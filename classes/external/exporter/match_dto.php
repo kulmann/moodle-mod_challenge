@@ -91,6 +91,14 @@ class match_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'score of the moodle user who won this match',
             ],
+            'finished_mdl_user_1' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether the first user has answered their questions for the match',
+            ],
+            'finished_mdl_user_2' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether the second user has answered their questions for the match',
+            ],
             'open' => [
                 'type' => PARAM_BOOL,
                 'description' => 'whether this match is still open or ongoing',
@@ -105,7 +113,7 @@ class match_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        // make sure, logged in user is always the first one
+        // make sure, logged in user is always represented as the first one
         $mdl_user_1 = $this->match->get_mdl_user_1();
         $mdl_user_2 = $this->match->get_mdl_user_2();
         global $USER;
@@ -118,6 +126,8 @@ class match_dto extends exporter {
             $this->match->to_array(),
             [
                 'open' => !$this->match->is_finished(),
+                'finished_mdl_user_1' => $this->match->is_mdl_user_1_finished($this->game->get_question_count()),
+                'finished_mdl_user_2' => $this->match->is_mdl_user_2_finished($this->game->get_question_count()),
             ]
         );
     }

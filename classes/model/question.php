@@ -158,7 +158,7 @@ class question extends abstract_model {
      * @return attempt|null
      * @throws dml_exception
      */
-    private function get_attempt_by_user(int $userid) {
+    public function get_attempt_by_user(int $userid) {
         global $DB;
         $record = $DB->get_record('challenge_attempts', ['question' => $this->get_id(), 'mdl_user' => $userid]);
         if ($record !== false) {

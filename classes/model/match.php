@@ -396,6 +396,50 @@ class match extends abstract_model {
     }
 
     /**
+     * Returns whether the first user has answered their questions for the match.
+     *
+     * @param int $question_count The number of questions that are needed for this match.
+     *
+     * @return bool
+     */
+    public function is_mdl_user_1_finished(int $question_count): bool {
+        return $this->is_mdl_user_finished($this->mdl_user_1, $question_count);
+    }
+
+    /**
+     * Returns whether the second user has answered their questions for the match.
+     *
+     * @param int $question_count The number of questions that are needed for this match.
+     *
+     * @return bool
+     */
+    public function is_mdl_user_2_finished(int $question_count): bool {
+        return $this->is_mdl_user_finished($this->mdl_user_2, $question_count);
+    }
+
+    /**
+     * Returns whether the given user has answered their questions for the match.
+     *
+     * @param int $user_id The id of the user to check the finished state for.
+     * @param int $question_count The number of questions that are needed for this match.
+     *
+     * @return bool
+     */
+    private function is_mdl_user_finished(int $user_id, int $question_count): bool {
+        $questions = $this->get_questions();
+        if (count($questions) < $question_count) {
+            return false;
+        }
+        foreach($questions as $question) {
+            $attempt = $question->get_attempt_by_user($user_id);
+            if($attempt === null || !$attempt->is_finished()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @return int
      */
     public function get_winner_score(): int {

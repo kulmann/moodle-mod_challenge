@@ -12,6 +12,7 @@ import langMixins from "../../../mixins/lang-mixins";
 import { mapActions, mapGetters, mapState } from "vuex";
 import isNil from "lodash/isNil";
 import last from "lodash/last";
+import first from "lodash/first";
 import FailureAlert from "../../helper/failure-alert";
 import LoadingAlert from "../../helper/loading-alert";
 import MatchShow from "./match-show";
@@ -44,6 +45,14 @@ export default {
       if (!isNil(this.$route.params.forcedMatchId)) {
         return parseInt(this.$route.params.forcedMatchId);
       }
+      // serve first unfinished match
+      const unfinishedMatches = this.matches.filter(
+        (m) => !m.finished_mdl_user_1
+      );
+      if (unfinishedMatches.length > 0) {
+        return first(unfinishedMatches).id;
+      }
+      // fall back to last match, if all are finished
       if (this.matches.length > 0) {
         return last(this.matches).id;
       }
@@ -53,7 +62,7 @@ export default {
       if (this.matchId) {
         return this.getMatchById(this.matchId);
       }
-      return last(this.matches);
+      return undefined;
     },
     round() {
       if (!isNil(this.match)) {
