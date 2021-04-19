@@ -112,12 +112,14 @@ class admin_save_round extends external_api {
 
             // add new categories
             foreach ($addedcategories as $categoryData) {
-                $category = new category();
-                $category->set_game($game->get_id());
-                $category->set_includes_subcategories($categoryData['subcategories']);
-                $category->set_round_first($round->get_id());
-                $category->set_mdl_category($categoryData['mdlcategory']);
-                $category->save();
+                if (!empty($categoryData['mdlcategory'])) {
+                    $category = new category();
+                    $category->set_game($game->get_id());
+                    $category->set_includes_subcategories($categoryData['subcategories']);
+                    $category->set_round_first($round->get_id());
+                    $category->set_mdl_category($categoryData['mdlcategory']);
+                    $category->save();
+                }
             }
 
             // delete removed categories
