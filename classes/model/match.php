@@ -141,17 +141,13 @@ class match extends abstract_model {
             return;
         }
 
-        // make sure that the questions have the most recent winner-state already
+        // make sure that the questions have the most recent winner-state already and count finished questions
         $questions = $this->get_questions();
         $finished = 0;
-        $win_counts = [];
-        $score_sum = [];
         foreach ($questions as $question) {
             $question->check_winner($game);
             if ($question->is_finished()) {
                 $finished++;
-                $win_counts[$question->get_winner_mdl_user()]++;
-                $score_sum[$question->get_winner_mdl_user()] += $question->get_winner_score();
             }
         }
 
@@ -169,8 +165,6 @@ class match extends abstract_model {
                     $question->check_winner($game);
                     if ($question->is_finished()) {
                         $finished++;
-                        $win_counts[$question->get_winner_mdl_user()]++;
-                        $score_sum[$question->get_winner_mdl_user()] += $question->get_winner_score();
                     }
                 }
             }
@@ -192,6 +186,18 @@ class match extends abstract_model {
         // check if the finished questions match the required number of questions
         if ($finished !== $round->get_questions()) {
             return;
+        }
+
+        // calculate score sum from finished questions
+        $win_counts = [];
+        $score_sum = [];
+        foreach ($questions as $question) {
+            if ($question->is_finished()) {
+                $win_counts[$question->get_winner_mdl_user()]++;
+                foreach($question->get_attempts() as $attempt) {
+                    $score_sum[$attempt->get_mdl_user()] += $attempt->get_score();
+                }
+            }
         }
 
         // check if there's a winner by win count
@@ -256,7 +262,7 @@ class match extends abstract_model {
 
         // set moodle question
         $active_categories = $game->get_categories_by_round($this->get_round());
-        $mdl_question = $round->get_random_mdl_question($active_categories);
+        $mdl_question = $round->get_random_mdl_question($active_categories, [$this->get_mdl_user_1(), $this->get_mdl_user_2()]);
         $question->set_mdl_question($mdl_question->id);
 
         // fixate the answer order
