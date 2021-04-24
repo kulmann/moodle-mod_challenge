@@ -124,12 +124,13 @@ class round extends abstract_model {
      * Returns one random question out of the categories that are assigned to this level.
      *
      * @param category[] $active_categories
+     * @param int[] $mdl_user_ids Ids of moodle users participating in this question
      *
      * @return \question_definition
      * @throws \dml_exception
      * @throws \coding_exception
      */
-    public function get_random_mdl_question($active_categories): \question_definition {
+    public function get_random_mdl_question($active_categories, $mdl_user_ids = []): \question_definition {
         global $DB;
 
         // collect all moodle question categories
@@ -139,7 +140,7 @@ class round extends abstract_model {
         }
         list($cat_sql, $cat_params) = $DB->get_in_or_equal($mdl_category_ids);
 
-        // build query for moodle question selection
+        // collect all moodle questions which are available for selection
         $sql = "
             SELECT q.id
               FROM {question} q 
@@ -147,18 +148,50 @@ class round extends abstract_model {
              WHERE q.qtype = ? AND qmo.single = ? AND q.category $cat_sql 
         ";
         $params = \array_merge(["multichoice", 1], $cat_params);
-
-        // Get all available questions.
         $available_ids = $DB->get_records_sql($sql, $params);
-        if (!empty($available_ids)) {
-            // Shuffle here because SQL RAND() can't be used.
-            shuffle($available_ids);
-            // Take the first one in the array.
-            $id = \reset($available_ids)->id;
-            return \question_bank::load_question($id, false);
-        } else {
+        if (empty($available_ids)) {
             throw new \dml_exception('no question available');
         }
+
+        // collect all questions the given users were involved in so far
+        $used_questions = [];
+        if (!empty($mdl_user_ids)) {
+            $sql_questions = "
+       SELECT DISTINCT cq.mdl_question, cq.timecreated
+                  FROM {challenge_questions} cq
+            INNER JOIN {challenge_matches} cm ON cq.matchid=cm.id
+                 WHERE cm.mdl_user_1 IN (?) OR cm.mdl_user_2 IN (?)
+            ";
+            $params = [implode(',', $mdl_user_ids), implode(',', $mdl_user_ids)];
+            $used_questions = $DB->get_records_sql($sql_questions, $params);
+        }
+
+        // Shuffle here because SQL RAND() can't be used.
+        shuffle($available_ids);
+
+        // if there are used questions, prefer the unused ones
+        if (!empty($used_questions)) {
+            $used_questions_map = [];
+            foreach($used_questions as $q) {
+                $used_questions_map[$q->mdl_question] = $q->timecreated;
+            }
+            usort($available_ids, function($qid1, $qid2) use ($used_questions_map) {
+                if (isset($used_questions_map[$qid1]) && isset($used_questions_map[$qid2])) {
+                    return $used_questions_map[$qid1] <=> $used_questions_map[$qid2];
+                }
+                if (isset($used_questions_map[$qid1])) {
+                    return 1;
+                }
+                if (isset($used_questions_map[$qid2])) {
+                    return -1;
+                }
+                return 0;
+            });
+        }
+
+        // Take the first one in the array.
+        $id = \reset($available_ids)->id;
+        return \question_bank::load_question($id, false);
     }
 
     /**

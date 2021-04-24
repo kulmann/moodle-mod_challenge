@@ -256,7 +256,7 @@ class match extends abstract_model {
 
         // set moodle question
         $active_categories = $game->get_categories_by_round($this->get_round());
-        $mdl_question = $round->get_random_mdl_question($active_categories);
+        $mdl_question = $round->get_random_mdl_question($active_categories, [$this->get_mdl_user_1(), $this->get_mdl_user_2()]);
         $question->set_mdl_question($mdl_question->id);
 
         // fixate the answer order
