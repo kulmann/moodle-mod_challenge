@@ -42,6 +42,10 @@ class match extends abstract_model {
      */
     protected $round;
     /**
+     * @var bool Whether or not the match is completed (either ended or answered by both participants).
+     */
+    protected $completed;
+    /**
      * @var int The id of the first user.
      */
     protected $mdl_user_1;
@@ -82,6 +86,7 @@ class match extends abstract_model {
         $this->timecreated = \time();
         $this->timemodified = \time();
         $this->round = 0;
+        $this->completed = false;
         $this->mdl_user_1 = 0;
         $this->mdl_user_1_notified = false;
         $this->mdl_user_1_completed = false;
@@ -107,6 +112,7 @@ class match extends abstract_model {
         $this->timecreated = $data['timecreated'] ?? \time();
         $this->timemodified = $data['timemodified'] ?? \time();
         $this->round = $data['round'];
+        $this->completed = isset($data['completed']) && intval($data['completed']) === 1;
         $this->mdl_user_1 = $data['mdl_user_1'];
         $this->mdl_user_1_notified = isset($data['mdl_user_1_notified']) && intval($data['mdl_user_1_notified']) === 1;
         $this->mdl_user_1_completed = isset($data['mdl_user_1_completed']) && intval($data['mdl_user_1_completed']) === 1;
@@ -134,7 +140,7 @@ class match extends abstract_model {
      */
     public function check_winner(game $game, round $round) {
         // early returns for performance
-        if ($this->is_finished()) {
+        if ($this->is_completed()) {
             return;
         }
         if (!$round->is_started()) {
@@ -170,15 +176,20 @@ class match extends abstract_model {
             }
         }
 
-        // update 'completed' info on match for both users
+        // update 'completed' info on match for both users and the match itself
         if (count($questions) === $game->get_question_count()) {
-            $completed_questions_mdl_user_1 = $this->get_count_completed_questions($this->get_mdl_user_1(), $questions);
-            if ($completed_questions_mdl_user_1 === $game->get_question_count()) {
+            $answered_questions_mdl_user_1 = $this->get_count_answered_questions($this->get_mdl_user_1(), $questions);
+            if ($answered_questions_mdl_user_1 === $game->get_question_count()) {
                 $this->set_mdl_user_1_completed(true);
             }
-            $completed_questions_mdl_user_2 = $this->get_count_completed_questions($this->get_mdl_user_2(), $questions);
-            if ($completed_questions_mdl_user_2 === $game->get_question_count()) {
+            $answered_questions_mdl_user_2 = $this->get_count_answered_questions($this->get_mdl_user_2(), $questions);
+            if ($answered_questions_mdl_user_2 === $game->get_question_count()) {
                 $this->set_mdl_user_2_completed(true);
+            }
+            $completed_questions_mdl_user_1 = $this->get_count_completed_questions($this->get_mdl_user_1(), $questions);
+            $completed_questions_mdl_user_2 = $this->get_count_completed_questions($this->get_mdl_user_2(), $questions);
+            if ($completed_questions_mdl_user_1 === $game->get_question_count() && $completed_questions_mdl_user_2 === $game->get_question_count()) {
+                $this->set_completed(true);
             }
             $this->save();
         }
@@ -194,7 +205,7 @@ class match extends abstract_model {
         foreach ($questions as $question) {
             if ($question->is_finished()) {
                 $win_counts[$question->get_winner_mdl_user()]++;
-                foreach($question->get_attempts() as $attempt) {
+                foreach ($question->get_attempts() as $attempt) {
                     $score_sum[$attempt->get_mdl_user()] += $attempt->get_score();
                 }
             }
@@ -235,13 +246,31 @@ class match extends abstract_model {
      */
     private function get_count_completed_questions(int $mdl_user, array $questions) {
         $completed = 0;
-        foreach($questions as $question) {
+        foreach ($questions as $question) {
             $attempt = $question->get_attempt_by_user($mdl_user);
             if ($attempt !== null && $attempt->is_finished()) {
                 $completed++;
             }
         }
         return $completed;
+    }
+
+    /**
+     * Counts the number of answered questions for the given user id.
+     *
+     * @param int $mdl_user
+     * @param question[] $questions
+     * @return int
+     */
+    private function get_count_answered_questions(int $mdl_user, array $questions) {
+        $answered = 0;
+        foreach ($questions as $question) {
+            $attempt = $question->get_attempt_by_user($mdl_user);
+            if ($attempt !== null && $attempt->is_answered()) {
+                $answered++;
+            }
+        }
+        return $answered;
     }
 
     /**
@@ -366,6 +395,20 @@ class match extends abstract_model {
     }
 
     /**
+     * @return bool
+     */
+    public function is_completed(): bool {
+        return $this->completed;
+    }
+
+    /**
+     * @param bool $completed
+     */
+    public function set_completed(bool $completed) {
+        $this->completed = $completed;
+    }
+
+    /**
      * @return int
      */
     public function get_mdl_user_1(): int {
@@ -464,15 +507,6 @@ class match extends abstract_model {
     }
 
     /**
-     * Returns whether this match is already finished.
-     *
-     * @return bool
-     */
-    public function is_finished() {
-        return $this->winner_mdl_user > 0;
-    }
-
-    /**
      * Returns whether the first user has answered their questions for the match.
      *
      * @param int $question_count The number of questions that are needed for this match.
@@ -507,9 +541,9 @@ class match extends abstract_model {
         if (count($questions) < $question_count) {
             return false;
         }
-        foreach($questions as $question) {
+        foreach ($questions as $question) {
             $attempt = $question->get_attempt_by_user($user_id);
-            if($attempt === null || !$attempt->is_finished()) {
+            if ($attempt === null || !$attempt->is_answered()) {
                 return false;
             }
         }

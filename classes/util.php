@@ -161,6 +161,19 @@ class util {
     }
 
     /**
+     * Gets a game instance by the given $roundid from the database.
+     *
+     * @param int $roundid
+     *
+     * @return game
+     * @throws dml_exception
+     */
+    public static function get_game_by_roundid($roundid): game {
+        $round = self::get_round($roundid);
+        return self::get_game_by_id($round->get_game());
+    }
+
+    /**
      * Gets the round instance for the given $roundid from the database.
      *
      * @param int $roundid
@@ -244,56 +257,58 @@ class util {
      * @throws dml_exception
      */
     public static function check_match_winner(match $match, game $game) {
+        if ($match->is_completed()) {
+            return;
+        }
+
         // load all questions related to this match and check if they timed out
-        if (!$match->is_finished()) {
-            $questions = $match->get_questions();
-            // check if user 1 answered enough questions
-            $user1 = $match->get_mdl_user_1();
-            $questions_user1 = \array_filter($questions, function (question $question) use ($user1) {
-                return $question->get_mdl_user() === $user1;
-            });
-            $answer_count_user1 = \count($questions_user1);
-            if ($answer_count_user1 < $game->get_question_count()) {
-                return;
-            }
-            // check if user 2 answered enough questions
-            $user2 = $match->get_mdl_user_2();
-            $questions_user2 = \array_filter($questions, function (question $question) use ($user2) {
-                return $question->get_mdl_user() === $user2;
-            });
-            $answer_count_user2 = \count($questions_user2);
-            if ($answer_count_user2 < $game->get_question_count()) {
-                return;
-            }
-            // check which user won
-            $win_count_user1 = \count(\array_filter($questions_user1, function (question $question) {
-                return $question->is_correct();
-            }));
-            $win_count_user2 = \count(\array_filter($questions_user2, function (question $question) {
-                return $question->is_correct();
-            }));
-            if ($win_count_user1 > $win_count_user2) {
-                $match->set_winner_mdl_user($user1);
-                $match->save();
-                return;
-            }
-            if ($win_count_user2 > $win_count_user1) {
-                $match->set_winner_mdl_user($user2);
-                $match->save();
-                return;
-            }
-            if ($win_count_user1 === $win_count_user2) {
-                // tie breaking rule is the earlier participation
-                $datetime_sum_user1 = \array_sum(\array_map(function (question $question) {
-                    return $question->get_timecreated();
-                }, $questions_user1));
-                $datetime_sum_user2 = \array_sum(\array_map(function (question $question) {
-                    return $question->get_timecreated();
-                }, $questions_user2));
-                $match->set_winner_mdl_user(($datetime_sum_user1 < $datetime_sum_user2) ? $user1 : $user2);
-                $match->save();
-                return;
-            }
+        $questions = $match->get_questions();
+        // check if user 1 answered enough questions
+        $user1 = $match->get_mdl_user_1();
+        $questions_user1 = \array_filter($questions, function (question $question) use ($user1) {
+            return $question->get_mdl_user() === $user1;
+        });
+        $answer_count_user1 = \count($questions_user1);
+        if ($answer_count_user1 < $game->get_question_count()) {
+            return;
+        }
+        // check if user 2 answered enough questions
+        $user2 = $match->get_mdl_user_2();
+        $questions_user2 = \array_filter($questions, function (question $question) use ($user2) {
+            return $question->get_mdl_user() === $user2;
+        });
+        $answer_count_user2 = \count($questions_user2);
+        if ($answer_count_user2 < $game->get_question_count()) {
+            return;
+        }
+        // check which user won
+        $win_count_user1 = \count(\array_filter($questions_user1, function (question $question) {
+            return $question->is_correct();
+        }));
+        $win_count_user2 = \count(\array_filter($questions_user2, function (question $question) {
+            return $question->is_correct();
+        }));
+        if ($win_count_user1 > $win_count_user2) {
+            $match->set_winner_mdl_user($user1);
+            $match->save();
+            return;
+        }
+        if ($win_count_user2 > $win_count_user1) {
+            $match->set_winner_mdl_user($user2);
+            $match->save();
+            return;
+        }
+        if ($win_count_user1 === $win_count_user2) {
+            // tie breaking rule is the earlier participation
+            $datetime_sum_user1 = \array_sum(\array_map(function (question $question) {
+                return $question->get_timecreated();
+            }, $questions_user1));
+            $datetime_sum_user2 = \array_sum(\array_map(function (question $question) {
+                return $question->get_timecreated();
+            }, $questions_user2));
+            $match->set_winner_mdl_user(($datetime_sum_user1 < $datetime_sum_user2) ? $user1 : $user2);
+            $match->save();
+            return;
         }
     }
 }

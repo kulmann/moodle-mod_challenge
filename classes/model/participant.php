@@ -82,12 +82,10 @@ class participant {
     public function get_attended_round_ids(int $game) {
         global $DB;
         $sql = "SELECT DISTINCT r.id
-                FROM {challenge_attempts} a
-                JOIN {challenge_questions} q ON a.question = q.id
-                JOIN {challenge_matches} m ON q.matchid = m.id
+                FROM {challenge_matches} m
                 JOIN {challenge_rounds} r ON m.round = r.id
-                WHERE r.game = :game AND a.mdl_user = :user AND a.mdl_answer > 0";
-        $params = ['game' => $game, 'user' => $this->get_id()];
+                WHERE r.game = :game AND ((m.mdl_user_1 = :user1 AND m.mdl_user_1_completed > 0) OR (m.mdl_user_2 = :user2 AND m.mdl_user_2_completed > 0))";
+        $params = ['game' => $game, 'user1' => $this->get_id(), 'user2' => $this->get_id()];
         return $DB->get_fieldset_sql($sql, $params);
     }
 

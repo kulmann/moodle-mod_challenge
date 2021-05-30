@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_challenge\util;
+
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -45,6 +47,32 @@ function xmldb_challenge_upgrade($oldversion = 0) {
             $dbman->add_field($table, $field2);
         }
         upgrade_mod_savepoint(true, 2021041800, 'challenge');
+    }
+
+    if ($oldversion < 2021053001) {
+        $table = new xmldb_table('challenge_matches');
+        $field1 = new xmldb_field('completed', XMLDB_TYPE_INTEGER, '1', true, null, null, '0');
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+        }
+        upgrade_mod_savepoint(true, 2021053001, 'challenge');
+    }
+
+    if ($oldversion < 2021053002) {
+        // (re-)calculate the "completed", "mdl_user_1_completed" and "mdl_user_2_completed" columns
+        $matchids = $DB->get_fieldset_sql("SELECT id FROM {challenge_matches}");
+        foreach($matchids as $matchid) {
+            $match = util::get_match($matchid);
+            $game = util::get_game_by_roundid($match->get_round());
+            if (!$match->is_completed()) {
+                // up to this point in time, matches were set to "completed" for both users when time ran out.
+                $match->set_completed($match->is_mdl_user_1_completed() && $match->is_mdl_user_2_completed());
+            }
+            $match->set_mdl_user_1_completed($match->is_mdl_user_1_finished($game->get_question_count()));
+            $match->set_mdl_user_2_completed($match->is_mdl_user_2_finished($game->get_question_count()));
+            $match->save();
+        }
+        upgrade_mod_savepoint(true, 2021053002, 'challenge');
     }
 
     return true;
