@@ -1,43 +1,58 @@
 <template lang="pug">
-  .uk-card.uk-card-default
-    .uk-card-body(v-if="data === null || categories === null")
-      loading-alert(:message="strings.admin_round_loading")
-    template(v-else)
-      .uk-card-body
-        form.uk-form-stacked(@submit.prevent="save")
-          h3 {{ strings['admin_round_edit_title_' + (data.id ? 'edit' : 'add')] | stringParams(data.number) }}
+.uk-card.uk-card-default
+  .uk-card-body(v-if="data === null || categories === null")
+    loading-alert(:message="strings.admin_round_loading")
+  template(v-else)
+    .uk-card-body
+      form.uk-form-stacked(@submit.prevent="save")
+        h3 {{ strings['admin_round_edit_title_' + (data.id ? 'edit' : 'add')] | stringParams(data.number) }}
 
-          .uk-margin-small
-            label.uk-form-label {{ strings.admin_round_lbl_name }}
-            .uk-form-controls
-              input.uk-input(v-model="data.name", required)
+        .uk-margin-small
+          label.uk-form-label {{ strings.admin_round_lbl_name }}
+          .uk-form-controls
+            input.uk-input(v-model="data.name", required)
 
-          h3 {{ strings.admin_round_categories_title }}
-          p {{ strings.admin_round_edit_description }}
-          .uk-margin-small(v-for="(category, index) in activeCategories", :key="index")
-            label.uk-form-label {{ getCategoryLabel(category, index) }}
-            .uk-form-controls
-              .uk-flex
-                select.uk-select(v-model="category.mdl_category", :disabled="!!category.id")
-                  option(:disabled="true", value="") {{ strings.admin_round_lbl_category_please_select }}
-                  option(v-for="mdl_category in mdlCategories", :key="mdl_category.category_id",
-                    v-bind:value="mdl_category.category_id", :disabled="!mdl_category.category_id",
-                    v-html="mdl_category.category_name")
-                button.btn.btn-default(type="button", @click="removeCategory(category)")
-                  v-icon(name="trash")
-          btn-add(@click="createCategory", align="left")
-      .uk-card-footer.uk-text-right
-        button.btn.btn-primary(@click="save()", :disabled="saving")
-          v-icon(name="save").uk-margin-small-right
-          span {{ strings.admin_btn_save }}
-        button.btn.btn-default(@click="goToRoundList()", :disabled="saving").uk-margin-small-left
-          v-icon(name="ban").uk-margin-small-right
-          span {{ strings.admin_btn_cancel }}
-        .uk-alert.uk-alert-primary.uk-text-center(uk-alert, v-if="saving")
-          p
-            span {{ strings.admin_round_msg_saving }}
-            loading-icon
-
+        h3 {{ strings.admin_round_categories_title }}
+        p {{ strings.admin_round_edit_description }}
+        .uk-margin-small(
+          v-for="(category, index) in activeCategories",
+          :key="index"
+        )
+          label.uk-form-label {{ getCategoryLabel(category, index) }}
+          .uk-form-controls
+            .uk-flex
+              select.uk-select(
+                v-model="category.mdl_category",
+                :disabled="!!category.id"
+              )
+                option(:disabled="true", value="") {{ strings.admin_round_lbl_category_please_select }}
+                option(
+                  v-for="mdl_category in mdlCategories",
+                  :key="mdl_category.category_id",
+                  v-bind:value="mdl_category.category_id",
+                  :disabled="!mdl_category.category_id",
+                  v-html="mdl_category.category_name"
+                )
+              button.btn.btn-default(
+                type="button",
+                @click="removeCategory(category)"
+              )
+                v-icon(name="trash")
+        btn-add(@click="createCategory", align="left")
+    .uk-card-footer.uk-text-right
+      button.btn.btn-primary(@click="save()", :disabled="saving")
+        v-icon.uk-margin-small-right(name="save")
+        span {{ strings.admin_btn_save }}
+      button.btn.btn-default.uk-margin-small-left(
+        @click="goToRoundList()",
+        :disabled="saving"
+      )
+        v-icon.uk-margin-small-right(name="ban")
+        span {{ strings.admin_btn_cancel }}
+      .uk-alert.uk-alert-primary.uk-text-center(uk-alert, v-if="saving")
+        p
+          span {{ strings.admin_round_msg_saving }}
+          loading-icon
 </template>
 
 <script>

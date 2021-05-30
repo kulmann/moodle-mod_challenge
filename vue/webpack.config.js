@@ -3,8 +3,6 @@ var webpack = require("webpack");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
-const isDevServer = process.argv.find((v) => v.includes("webpack-dev-server"));
-
 module.exports = (env, options) => {
   exports = {
     entry: "./main.js",

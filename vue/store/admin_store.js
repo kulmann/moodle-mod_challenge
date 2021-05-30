@@ -6,6 +6,7 @@ export default {
     initialized: false,
     categories: [],
     mdlCategories: [],
+    users: [],
   },
   mutations: {
     setAdminInitialized(state, initialized) {
@@ -16,6 +17,9 @@ export default {
     },
     setMdlCategories(state, mdl_categories) {
       state.mdlCategories = mdl_categories;
+    },
+    setUsers(state, users) {
+      state.users = users;
     },
   },
   actions: {
@@ -28,6 +32,7 @@ export default {
       return Promise.all([
         context.dispatch("fetchCategories"),
         context.dispatch("fetchMdlCategories"),
+        context.dispatch("fetchUsers"),
       ]).then(() => {
         context.commit("setAdminInitialized", true);
       });
@@ -55,6 +60,17 @@ export default {
     async fetchMdlCategories(context) {
       const categories = await ajax("mod_challenge_admin_get_mdl_categories");
       context.commit("setMdlCategories", categories);
+    },
+    /**
+     * Fetches all users (i.e. participants and teachers) which exist for this game, together
+     * with a list of attended round ids per user.
+     *
+     * @param context
+     * @returns {Promise<void>}
+     */
+    async fetchUsers(context) {
+      const users = await ajax("mod_challenge_admin_get_users");
+      context.commit("setUsers", users);
     },
     /**
      * Updates the data of a round, including category additions/deletions.

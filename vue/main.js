@@ -15,6 +15,7 @@ import constants from "./constants";
 
 function init(coursemoduleid, contextid) {
   // We need to overwrite the variable for lazy loading.
+  // eslint-disable-next-line no-undef
   __webpack_public_path__ = M.cfg.wwwroot + "/mod/challenge/amd/build/";
 
   Vue.use(Vuikit);
@@ -78,6 +79,10 @@ function init(coursemoduleid, contextid) {
           name: constants.ROUTE_ADMIN_ROUNDS,
         },
         {
+          path: "users",
+          name: constants.ROUTE_ADMIN_USERS,
+        },
+        {
           path: "highscore",
           name: constants.ROUTE_ADMIN_HIGHSCORE,
         },
@@ -114,8 +119,11 @@ function init(coursemoduleid, contextid) {
 
   router.beforeEach((to, from, next) => {
     // Find a translation for the title.
-    if (to.hasOwnProperty("meta") && to.meta.hasOwnProperty("title")) {
-      if (store.state.strings.hasOwnProperty(to.meta.title)) {
+    if (
+      Object.hasOwnProperty.call(to, "meta") &&
+      Object.hasOwnProperty.call(to.meta, "title")
+    ) {
+      if (Object.hasOwnProperty.call(store.state.strings, to.meta.title)) {
         document.title = store.state.strings[to.meta.title];
       }
     }
