@@ -151,6 +151,8 @@ $string['admin_round_msg_saving'] = 'Saving the round, please wait';
 /* admin: users */
 $string['admin_users_participants_title'] = 'Manage Participants';
 $string['admin_users_participants_intro'] = 'Keep track of which course participants are actively involved in this Quiz-Challenge.';
+$string['admin_users_participants_thead_user'] = 'Name';
+$string['admin_users_participants_thead_round'] = 'Round {$a}';
 $string['admin_users_teachers_title'] = 'Teachers';
 $string['admin_users_teachers_intro'] = 'The following users have edit permissions for this course. They don\'t qualify as participants.';
 

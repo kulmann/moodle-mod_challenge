@@ -151,6 +151,8 @@ $string['admin_round_lbl_category_please_select'] = 'Kategorie auswählen';
 /* admin: users */
 $string['admin_users_participants_title'] = 'Teilnehmer verwalten';
 $string['admin_users_participants_intro'] = 'Verfolgen Sie, welche Kursteilnehmer aktiv an dieser Quiz-Challenge teilnehmen.';
+$string['admin_users_participants_thead_user'] = 'Name';
+$string['admin_users_participants_thead_round'] = 'Runde {$a}';
 $string['admin_users_teachers_title'] = 'Moderatoren';
 $string['admin_users_teachers_intro'] = 'Folgende Nutzer haben Moderationsrechte für diesen Kurs. Sie sind automatisch als Teilnehmer disqualifiziert.';
 
