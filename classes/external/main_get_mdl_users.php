@@ -24,6 +24,7 @@ use external_multiple_structure;
 use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\mdl_user_dto;
+use mod_challenge\model\participant;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -85,10 +86,11 @@ class main_get_mdl_users extends external_api {
         $game = util::get_game($coursemodule);
 
         // get the users and transform to output
-        $mdl_users = $game->get_mdl_users();
+        $mdl_users = $game->get_mdl_participants();
         $result = [];
         foreach($mdl_users as $mdl_user) {
-            $exporter = new mdl_user_dto($mdl_user, $ctx);
+            $participant = new participant($mdl_user);
+            $exporter = new mdl_user_dto($participant, $ctx);
             $result[] = $exporter->export($renderer);
         }
         return $result;

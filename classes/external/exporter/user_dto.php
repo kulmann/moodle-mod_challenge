@@ -16,9 +16,7 @@
 
 namespace mod_challenge\external\exporter;
 
-global $CFG;
-require_once($CFG->libdir . '/outputcomponents.php');
-
+use coding_exception;
 use context;
 use core\external\exporter;
 use mod_challenge\model\participant;
@@ -27,28 +25,33 @@ use renderer_base;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class mdl_user_dto
+ * Class user_dto
  *
  * @package    mod_challenge\external\exporter
- * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2021 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mdl_user_dto extends exporter {
+class user_dto extends exporter {
+
+    const TYPE_TEACHER = 'teacher';
+    const TYPE_PARTICIPANT = 'participant';
 
     /**
-     * @var participant
+     * @var int The id of the game.
      */
-    protected $participant;
-
+    private $game;
     /**
-     * mdl_user_dto constructor.
-     *
-     * @param participant $participant
-     * @param context $context
-     *
-     * @throws \coding_exception
+     * @var string The type of user. Can be 'teacher' or 'participant'.
      */
-    public function __construct(participant $participant, context $context) {
+    private $type;
+    /**
+     * @var participant The user represented as participant object
+     */
+    private $participant;
+
+    public function __construct(int $game, string $type, participant $participant, context $context) {
+        $this->game = $game;
+        $this->type = $type;
         $this->participant = $participant;
         parent::__construct([], ['context' => $context]);
     }
@@ -59,18 +62,22 @@ class mdl_user_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'moodle user id',
             ],
-            'firstname' => [
-                'type' => PARAM_TEXT,
-                'description' => 'first name of the user',
+            'type' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'type of user, can be "teacher" or "participant"',
             ],
-            'lastname' => [
+            'fullname' => [
                 'type' => PARAM_TEXT,
-                'description' => 'last name of the user',
+                'description' => 'first and last name of the user',
             ],
             'image' => [
                 'type' => PARAM_TEXT,
                 'description' => 'url of the profile image',
             ],
+            'attended_rounds' => [
+                'type' => PARAM_NOTAGS,
+                'description' => 'comma separated list of round ids the user participated in',
+            ]
         ];
     }
 
@@ -80,19 +87,13 @@ class mdl_user_dto extends exporter {
         ];
     }
 
-    /**
-     * @param renderer_base $output
-     *
-     * @return array
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
     protected function get_other_values(renderer_base $output) {
         return [
             'id' => $this->participant->get_id(),
-            'firstname' => $this->participant->get_firstname(),
-            'lastname' => $this->participant->get_lastname(),
+            'type' => $this->type,
+            'fullname' => $this->participant->get_full_name(),
             'image' => $this->participant->get_user_picture_url(),
+            'attended_rounds' => implode(',', $this->participant->get_attended_round_ids($this->game)),
         ];
     }
 }

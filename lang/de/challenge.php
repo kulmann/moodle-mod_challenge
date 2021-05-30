@@ -118,10 +118,11 @@ $string['admin_btn_generate'] = 'Generieren';
 $string['admin_btn_datepicker_cancel'] = "Abbrechen";
 $string['admin_btn_datepicker_submit'] = "Auswählen";
 $string['admin_avatar_alt'] = 'Foto von {$a}';
+$string['admin_nav_rounds'] = 'Runden';
+$string['admin_nav_users'] = 'Teilnehmer';
+$string['admin_nav_highscore'] = 'Bestenliste';
 
 /* admin: rounds */
-$string['admin_nav_rounds'] = 'Runden';
-$string['admin_nav_highscore'] = 'Bestenliste';
 $string['admin_rounds_title'] = 'Spielrunden verwalten';
 $string['admin_rounds_intro'] = 'Quiz-Challenges laufen in Runden ab. In jeder Runde werden Kursteilnehmer paarweise dazu aufgefordert, Fragen zu beantworten. Wählen Sie eine Zeitspanne aus, in der die Teilnahme an der Runde möglich sein soll. Wer nicht rechtzeitig teilnimmt erhält keine Punkte. Sie können jederzeit neue Quiz-Challenge Runden erstellen, die sich auch zeitlich überlagern dürfen.';
 $string['admin_rounds_empty'] = 'Sie haben noch keine Runden angelegt. Klicken Sie auf "Hinzufügen" um eine zu erzeugen.';
@@ -146,6 +147,12 @@ $string['admin_round_lbl_category_closed_range'] = 'Kategorie {$a->number} - Von
 $string['admin_round_lbl_category_closed_same'] = 'Kategorie {$a->number} - Nur in Runde {$a->round_first_number}';
 $string['admin_round_lbl_category_new'] = 'Kategorie {$a} - Gerade hinzugefügt';
 $string['admin_round_lbl_category_please_select'] = 'Kategorie auswählen';
+
+/* admin: users */
+$string['admin_users_participants_title'] = 'Teilnehmer verwalten';
+$string['admin_users_participants_intro'] = 'Verfolgen Sie, welche Kursteilnehmer aktiv an dieser Quiz-Challenge teilnehmen.';
+$string['admin_users_teachers_title'] = 'Moderatoren';
+$string['admin_users_teachers_intro'] = 'Folgende Nutzer haben Moderationsrechte für diesen Kurs. Sie sind automatisch als Teilnehmer disqualifiziert.';
 
 /* admin: round results */
 $string['admin_results_loading'] = 'Rundenergebnisse werden geladen';

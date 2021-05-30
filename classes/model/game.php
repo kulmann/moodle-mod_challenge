@@ -167,7 +167,7 @@ class game extends abstract_model {
     }
 
     /**
-     * Select all users within the given course.
+     * Select all participants within the given course.
      * Important: this excludes teachers!
      *
      * @return stdClass[]
@@ -175,7 +175,32 @@ class game extends abstract_model {
      * @throws moodle_exception
      * @throws dml_exception
      */
-    public function get_mdl_users() {
+    public function get_mdl_participants() {
+        return $this->get_mdl_users_and_teachers(true, false);
+    }
+
+    /**
+     * Select all teachers within the given course.
+     * Important: this excludes regular users!
+     *
+     * @return stdClass[]
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws dml_exception
+     */
+    public function get_mdl_teachers() {
+        return $this->get_mdl_users_and_teachers(false, true);
+    }
+
+    /**
+     * Select users within the given course.
+     *
+     * @return stdClass[]
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws dml_exception
+     */
+    private function get_mdl_users_and_teachers(bool $include_users, bool $include_teachers) {
         list($course, $coursemodule) = get_course_and_cm_from_instance($this->get_id(), 'challenge');
         $ctx = $coursemodule->context;
         global $DB;
@@ -189,8 +214,11 @@ class game extends abstract_model {
         $users = $DB->get_records_sql($sql, $params);
         $result = [];
         foreach ($users as $user) {
-            if (util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $user->id)) {
-                // skip teachers
+            $teacher = util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $user->id);
+            if ($include_users && $teacher) {
+                continue;
+            }
+            if ($include_teachers && !$teacher) {
                 continue;
             }
             $result[] = $user;
@@ -294,7 +322,7 @@ class game extends abstract_model {
 
         // get participants
         // TODO: restrict participants. for now pick all.
-        $mdl_users = $this->get_mdl_users();
+        $mdl_users = $this->get_mdl_participants();
         \shuffle($mdl_users);
 
         // create matches
