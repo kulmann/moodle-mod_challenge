@@ -1,4 +1,5 @@
 import { ajax } from "./index";
+import findIndex from "lodash/findIndex";
 
 export default {
   namespaced: true,
@@ -20,6 +21,14 @@ export default {
     },
     setUsers(state, users) {
       state.users = users;
+    },
+    setUserStatus(state, { id, status }) {
+      const users = [...state.users];
+      const index = findIndex(users, (u) => u.id === id);
+      if (index > -1) {
+        users[index].status = status;
+        state.users = users;
+      }
     },
   },
   actions: {
@@ -161,6 +170,21 @@ export default {
     async saveMatches(context, payload) {
       const result = await ajax("mod_challenge_admin_save_matches", payload);
       // TODO: anything to re-fetch after saving matches?
+      return result.result;
+    },
+    /**
+     * Updates the status of a user.
+     *
+     * @param context
+     * @param payload
+     * @returns {Promise<*>}
+     */
+    async saveUserStatus(context, { id, status }) {
+      context.commit("setUserStatus", { id, status });
+      const result = await ajax("mod_challenge_admin_save_user_status", {
+        id,
+        status,
+      });
       return result.result;
     },
   },

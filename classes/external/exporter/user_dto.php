@@ -74,6 +74,10 @@ class user_dto extends exporter {
                 'type' => PARAM_TEXT,
                 'description' => 'url of the profile image',
             ],
+            'status' => [
+                'type' => PARAM_ALPHA,
+                'description' => 'current status of the user (' . \implode(', ', participant::STATUS) . ')'
+            ],
             'attended_rounds' => [
                 'type' => PARAM_NOTAGS,
                 'description' => 'comma separated list of round ids the user participated in',
@@ -93,6 +97,7 @@ class user_dto extends exporter {
             'type' => $this->type,
             'fullname' => $this->participant->get_full_name(),
             'image' => $this->participant->get_user_picture_url(),
+            'status' => $this->participant->get_status(),
             'attended_rounds' => implode(',', $this->participant->get_attended_round_ids($this->game)),
         ];
     }

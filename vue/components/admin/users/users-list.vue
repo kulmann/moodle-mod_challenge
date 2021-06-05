@@ -9,6 +9,7 @@ div
         thead
           tr
             th {{ strings.admin_users_participants_thead_user }}
+            th.uk-text-center {{ strings.admin_users_participants_thead_status }}
             th.uk-text-center(
               v-for="round in startedRounds",
               :key="`thead-round-${round.number}`"
@@ -21,6 +22,12 @@ div
             td
               user-avatar(:size="30", :user="participant")
               span {{ participant.fullname }}
+            td.uk-text-center
+              user-status-edit(
+                :id="participant.id",
+                :value="participant.status",
+                @input="saveUserStatus"
+              )
             td.uk-text-center(
               v-for="round in startedRounds",
               :key="`participant-${participant.id}-round-${round.number}`"
@@ -44,16 +51,17 @@ div
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import LangMixins from "../../../mixins/lang-mixins";
 import UserAvatar from "../../helper/user-avatar";
+import UserStatusEdit from "./user-status-edit";
 
-const finished = "finished";
-const pending = "pending";
-const skipped = "skipped";
+const PROGRESS_FINISHED = "finished";
+const PROGRESS_PENDING = "pending";
+const PROGRESS_SKIPPED = "skipped";
 
 export default {
-  components: { UserAvatar },
+  components: { UserStatusEdit, UserAvatar },
   mixins: [LangMixins],
   computed: {
     ...mapState(["strings", "rounds"]),
@@ -75,33 +83,31 @@ export default {
     },
   },
   methods: {
+    ...mapActions("admin", ["saveUserStatus"]),
     getAttendanceState(participant, round) {
       const attendedRoundIds = participant.attended_rounds
         .split(",")
         .map((value) => parseInt(value));
       if (attendedRoundIds.includes(round.id)) {
-        return finished;
+        return PROGRESS_FINISHED;
       }
       if (round.timeend > Math.floor(Date.now() / 1000)) {
-        return pending;
+        return PROGRESS_PENDING;
       }
-      return skipped;
+      return PROGRESS_SKIPPED;
     },
     getAttendanceIcon(participant, round) {
       const state = this.getAttendanceState(participant, round);
       switch (state) {
-        case finished:
+        case PROGRESS_FINISHED:
           return "check-circle";
-        case pending:
+        case PROGRESS_PENDING:
           return "hourglass";
-        case skipped:
+        case PROGRESS_SKIPPED:
         default:
           return "times-circle";
       }
     },
-  },
-  mounted() {
-    console.log(this.users);
   },
 };
 </script>

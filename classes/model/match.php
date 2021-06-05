@@ -21,7 +21,7 @@ use mod_challenge\util;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class tournament_match
+ * Class match
  *
  * @package    mod_challenge\model
  * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>

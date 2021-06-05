@@ -80,6 +80,13 @@ $functions = [
         'type' => 'write',
         'ajax' => true,
     ],
+    'mod_challenge_admin_save_user_status' => [
+        'classname' => 'mod_challenge\external\admin_save_user_status',
+        'methodname' => 'request',
+        'description' => 'Saves the user status.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'mod_challenge_admin_schedule_round' => [
         'classname' => 'mod_challenge\external\admin_schedule_round',
         'methodname' => 'request',

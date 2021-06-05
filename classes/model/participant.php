@@ -25,24 +25,40 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2021 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class participant {
+class participant extends abstract_model {
+
+    const STATUS_ENABLED = "enabled";
+    const STATUS_DISABLED = "disabled";
+    const STATUS = [self::STATUS_ENABLED, self::STATUS_DISABLED];
 
     /**
      * @var \stdClass
      */
-    private $mdl_user;
+    protected $mdl_user;
+
+    /**
+     * @var string The status of the user, out of `enabled` and `disabled`
+     */
+    protected $status;
 
     public function __construct(\stdClass $mdl_user) {
+        parent::__construct('challenge_users', \intval($mdl_user->id));
         $this->mdl_user = $mdl_user;
     }
 
     /**
-     * Returns the id of the user.
+     * Apply data to this object from an associative array or an object.
      *
-     * @return int
+     * @param mixed $data
+     *
+     * @return void
      */
-    public function get_id() {
-        return \intval($this->mdl_user->id);
+    public function apply($data) {
+        if (\is_object($data)) {
+            $data = get_object_vars($data);
+        }
+        // don't set the id from $data here. Already present from constructor.
+        $this->status = isset($data['status']) ? $data['status'] : self::STATUS_ENABLED;
     }
 
     /**
@@ -107,5 +123,25 @@ class participant {
         $userpicture = new \user_picture($this->mdl_user);
         $userpicture->size = true;// will cause f2 size (100px)
         return $userpicture->get_url($page, $renderer)->out(false);
+    }
+
+    /**
+     * @return string
+     */
+    public function get_status(): string {
+        if ($this->status === null) {
+            return self::STATUS_ENABLED;
+        }
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function set_status(string $status) {
+        if (!in_array($status, self::STATUS)) {
+            return;
+        }
+        $this->status = $status;
     }
 }
