@@ -359,7 +359,7 @@ class game extends abstract_model {
      * @throws dml_exception
      * @throws moodle_exception
      */
-    private function disable_inactive_participants(round $max_round) {
+    public function disable_inactive_participants(round $max_round) {
         // get previous (up to) 2 finished rounds + all started rounds between the last finished and the new max round
         // e.g. max_round = 10, then the result could be [6,7] as finished rounds and [8,9] as started but unfinished rounds
         // never pick more than 2 finished rounds.
@@ -408,7 +408,7 @@ class game extends abstract_model {
         $mdl_users = $this->get_mdl_participants(true);
         foreach ($mdl_users as $mdl_user) {
             $participant = util::get_user($mdl_user, $this->get_id());
-            if (\indexOf($participant->get_mdl_user(), $participant_ids) === false) {
+            if (\array_search($participant->get_mdl_user(), $participant_ids) === false) {
                 $participant->set_status(participant::STATUS_DISABLED);
                 $participant->save();
             }

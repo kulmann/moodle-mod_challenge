@@ -84,6 +84,7 @@ class admin_stop_round extends external_api {
 
         // trigger stopping current round
         $game->stop_round($round, true);
+        $game->disable_inactive_participants($round);
 
         // return success response
         $exporter = new bool_dto(true, $ctx);
