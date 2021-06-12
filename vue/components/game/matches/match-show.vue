@@ -1,27 +1,28 @@
 <template lang="pug">
-  div
-    vk-grid(matched).uk-text-middle.uk-margin-bottom.uk-grid-small
-      .uk-width-1-3.uk-text-center
-        span
-          userAvatar(:size="80", :user="user1")
-        b {{ user1.firstname }} {{ user1.lastname }}
-      .uk-width-1-3.uk-text-center.uk-flex-middle.match-versus
-        span(v-if="finished") {{ user1Score }} : {{ user2Score }}
-        span(v-else) {{ user1Score }} : ?
-      .uk-width-1-3.uk-text-center
-        span
-          userAvatar(:size="80", :user="user2")
-        b {{ user2.firstname }} {{ user2.lastname }}
-    template(v-for="question in questionMocks")
-      question-row(:key="`match-${match.id}-question-row-${question.number}`",
-        :question="question",
-        :match="match",
-        :mdlUserLeft="match.mdl_user_1",
-        :mdlUserRight="match.mdl_user_2",
-        :attempts="attempts"
-        :ownUserId="ownUserId"
-      )
-      .uk-heading-divider.uk-margin-small-bottom(v-if="!isLastRow(question)")
+div
+  vk-grid.uk-text-middle.uk-margin-bottom.uk-grid-small(matched)
+    .uk-width-1-3.uk-text-center
+      span
+        userAvatar(:size="80", :user="user1")
+      b {{ user1.firstname }} {{ user1.lastname }}
+    .uk-width-1-3.uk-text-center.uk-flex-middle.match-versus
+      span(v-if="finished") {{ user1Score }} : {{ user2Score }}
+      span(v-else) {{ user1Score }} : ?
+    .uk-width-1-3.uk-text-center
+      span
+        userAvatar(:size="80", :user="user2")
+      b {{ user2.firstname }} {{ user2.lastname }}
+  template(v-for="question in questionMocks")
+    question-row(
+      :key="`match-${match.id}-question-row-${question.number}`",
+      :question="question",
+      :match="match",
+      :mdlUserLeft="match.mdl_user_1",
+      :mdlUserRight="match.mdl_user_2",
+      :attempts="attempts",
+      :ownUserId="ownUserId"
+    )
+    .uk-heading-divider.uk-margin-small-bottom(v-if="!isLastRow(question)")
 </template>
 
 <script>
@@ -82,7 +83,7 @@ export default {
       return questions;
     },
     finished() {
-      return this.match.open === false;
+      return this.match.completed;
     },
     user1Score() {
       return this.getScoreSum(this.match.mdl_user_1);

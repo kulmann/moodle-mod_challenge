@@ -1,20 +1,22 @@
 <template lang="pug">
-  router-link(:to="{name: 'player-question-play', params: {matchId: match.id, questionNumber: question.number}}")
-    vk-grid(matched, :class="{'_pointer': !isQuestionAnswered}").uk-flex-middle
-      .uk-width-1-5
-        .uk-flex.uk-flex-middle.uk-flex-center
-          v-icon(:name="leftIcon", :scale="2", :style="leftStyle")
-          .score.score-left {{ leftScore }}
-      .uk-width-3-5
-        .question-tile.uk-text-center.uk-text-middle
-          template(v-if="isQuestionAnswered")
-            span(v-if="mdlQuestion", v-html="mdlQuestion.questiontext")
-            loadingIcon(v-else)
-          span(v-else) {{ strings.game_match_lbl_question | stringParams(question.number) }}
-      .uk-width-1-5
-        .uk-flex.uk-flex-middle.uk-flex-center
-          .score.score-right {{ rightScore }}
-          v-icon(:name="rightIcon", :scale="2", :style="rightStyle")
+router-link(
+  :to="{ name: 'player-question-play', params: { matchId: match.id, questionNumber: question.number } }"
+)
+  vk-grid.uk-flex-middle(matched, :class="{ _pointer: !isQuestionAnswered }")
+    .uk-width-1-5
+      .uk-flex.uk-flex-middle.uk-flex-center
+        v-icon(:name="leftIcon", :scale="2", :style="leftStyle")
+        .score.score-left {{ leftScore }}
+    .uk-width-3-5
+      .question-tile.uk-text-center.uk-text-middle
+        template(v-if="isQuestionAnswered")
+          span(v-if="mdlQuestion", v-html="mdlQuestion.questiontext")
+          loadingIcon(v-else)
+        span(v-else) {{ strings.game_match_lbl_question | stringParams(question.number) }}
+    .uk-width-1-5
+      .uk-flex.uk-flex-middle.uk-flex-center
+        .score.score-right {{ rightScore }}
+        v-icon(:name="rightIcon", :scale="2", :style="rightStyle")
 </template>
 
 <script>
@@ -75,7 +77,7 @@ export default {
       return this.getStyleByAttempt(this.leftAttempt);
     },
     rightAttempt() {
-      if (this.match.open === false) {
+      if (this.match.completed) {
         return this.getAttemptByUser(this.mdlUserRight);
       }
       return null;

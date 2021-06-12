@@ -1,8 +1,8 @@
 <template lang="pug">
-  div
-    span
-      user-avatar(:size="80", :user="user")
-    b {{ user.firstname }} {{ user.lastname }}
+div
+  span
+    user-avatar(:size="80", :user="user")
+  b {{ user.firstname }} {{ user.lastname }}
 </template>
 
 <script>

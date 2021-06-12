@@ -203,7 +203,7 @@ class match extends abstract_model {
         $win_counts = [];
         $score_sum = [];
         foreach ($questions as $question) {
-            if ($question->is_finished()) {
+            if ($question->get_winner_score() > 0) {
                 $win_counts[$question->get_winner_mdl_user()]++;
                 foreach ($question->get_attempts() as $attempt) {
                     $score_sum[$attempt->get_mdl_user()] += $attempt->get_score();
@@ -211,29 +211,31 @@ class match extends abstract_model {
             }
         }
 
-        // check if there's a winner by win count
-        if (max($win_counts) !== min($win_counts)) {
-            $winner_as_array = array_keys($win_counts, max($win_counts));
-            $mdl_user_winner = reset($winner_as_array);
-            $this->set_winner_mdl_user($mdl_user_winner);
-            $this->set_winner_score($score_sum[$mdl_user_winner]);
-        }
-
         // check if there's a winner by score sum
         if (max($score_sum) !== min($score_sum)) {
             $winner_as_array = array_keys($score_sum, max($score_sum));
             $mdl_user_winner = reset($winner_as_array);
             $this->set_winner_mdl_user($mdl_user_winner);
-            $this->set_winner_score($score_sum[$mdl_user_winner]);
+            $this->set_winner_score($score_sum[$mdl_user_winner] || 0);
+            $this->save();
+            return;
+        }
+
+        // check if there's a winner by win count
+        if (max($win_counts) !== min($win_counts)) {
+            $winner_as_array = array_keys($win_counts, max($win_counts));
+            $mdl_user_winner = reset($winner_as_array);
+            $this->set_winner_mdl_user($mdl_user_winner);
+            $this->set_winner_score($score_sum[$mdl_user_winner] || 0);
+            $this->save();
+            return;
         }
 
         // not likely, but if there is no winner by win count or score, pick first one
         $winner_as_array = array_keys($win_counts);
         $mdl_user_winner = reset($winner_as_array);
         $this->set_winner_mdl_user($mdl_user_winner);
-        $this->set_winner_score($score_sum[$mdl_user_winner]);
-
-        // save the changes
+        $this->set_winner_score($score_sum[$mdl_user_winner] || 0);
         $this->save();
     }
 

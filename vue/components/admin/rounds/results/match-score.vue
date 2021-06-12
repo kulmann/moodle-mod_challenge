@@ -1,37 +1,44 @@
 <template lang="pug">
-  div
-    table.uk-table.uk-table-small.score-table
-      tbody
-        tr(v-for="row in rowData", :key="`${match.id}-score-row-${row.index}`")
-          td.uk-table-shrink.uk-text-right(:class="{'match-winner': leftWinner, 'match-loser': leftLoser}")
-            span(v-if="row.left.correct")
-              span.uk-text-bold.uk-margin-small-right {{ row.left.score }}
-              v-icon(name="check-circle").uk-text-success
-            span(v-else-if="row.left.finished")
-              v-icon(name="times-circle").uk-text-danger
-            span(v-else)
-              v-icon(name="minus-circle").uk-text-meta
-          td.uk-table-shrink {{ strings.admin_results_match_score_table_question | stringParams(row.index + 1) }}
-          td.uk-table-shrink.uk-text-left(:class="{'match-winner': rightWinner, 'match-loser': rightLoser}")
-            span(v-if="row.right.correct")
-              v-icon(name="check-circle").uk-text-success
-              span.uk-text-bold.uk-margin-small-left {{ row.right.score }}
-            span(v-else-if="row.right.finished")
-              v-icon(name="times-circle").uk-text-danger
-            span(v-else)
-              v-icon(name="minus-circle").uk-text-meta
-      tfoot
-        tr
-          td.uk-text-bold.uk-table-shrink.uk-text-right(:class="{'match-winner': leftWinner, 'match-loser': leftLoser}")
-            span(v-if="leftScore > 0").uk-text-large {{ leftScore }}
-            span(v-else) -
-          td.uk-text-bold.uk-table-shrink
-            span(v-if="match.winner_mdl_user") {{ strings.admin_results_match_score_state_finished }}
-            span(v-else) {{ strings.admin_results_match_score_state_ongoing }}
-          td.uk-text-bold.uk-table-shrink.uk-text-left(:class="{'match-winner': rightWinner, 'match-loser': rightLoser}")
-            span(v-if="rightScore > 0").uk-text-large {{ rightScore }}
-            span(v-else) -
-
+div
+  table.uk-table.uk-table-small.score-table
+    tbody
+      tr(v-for="row in rowData", :key="`${match.id}-score-row-${row.index}`")
+        td.uk-table-shrink.uk-text-right(
+          :class="{ 'match-winner': leftWinner, 'match-loser': leftLoser }"
+        )
+          span(v-if="row.left.correct")
+            span.uk-text-bold.uk-margin-small-right {{ row.left.score }}
+            v-icon.uk-text-success(name="check-circle")
+          span(v-else-if="row.left.finished")
+            v-icon.uk-text-danger(name="times-circle")
+          span(v-else)
+            v-icon.uk-text-meta(name="minus-circle")
+        td.uk-table-shrink {{ strings.admin_results_match_score_table_question | stringParams(row.index + 1) }}
+        td.uk-table-shrink.uk-text-left(
+          :class="{ 'match-winner': rightWinner, 'match-loser': rightLoser }"
+        )
+          span(v-if="row.right.correct")
+            v-icon.uk-text-success(name="check-circle")
+            span.uk-text-bold.uk-margin-small-left {{ row.right.score }}
+          span(v-else-if="row.right.finished")
+            v-icon.uk-text-danger(name="times-circle")
+          span(v-else)
+            v-icon.uk-text-meta(name="minus-circle")
+    tfoot
+      tr
+        td.uk-text-bold.uk-table-shrink.uk-text-right(
+          :class="{ 'match-winner': leftWinner, 'match-loser': leftLoser }"
+        )
+          span.uk-text-large(v-if="leftScore > 0") {{ leftScore }}
+          span(v-else) -
+        td.uk-text-bold.uk-table-shrink
+          span(v-if="match.completed") {{ strings.admin_results_match_score_state_finished }}
+          span(v-else) {{ strings.admin_results_match_score_state_ongoing }}
+        td.uk-text-bold.uk-table-shrink.uk-text-left(
+          :class="{ 'match-winner': rightWinner, 'match-loser': rightLoser }"
+        )
+          span.uk-text-large(v-if="rightScore > 0") {{ rightScore }}
+          span(v-else) -
 </template>
 
 <script>
@@ -115,16 +122,10 @@ export default {
       return this.match.winner_mdl_user === this.userRight.id;
     },
     leftLoser() {
-      return (
-        this.match.winner_mdl_user > 0 &&
-        this.match.winner_mdl_user !== this.userLeft.id
-      );
+      return this.match.completed && !this.leftWinner;
     },
     rightLoser() {
-      return (
-        this.match.winner_mdl_user > 0 &&
-        this.match.winner_mdl_user !== this.userRight.id
-      );
+      return this.match.completed && !this.rightWinner;
     },
   },
   methods: {

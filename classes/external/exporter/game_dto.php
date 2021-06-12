@@ -139,6 +139,7 @@ class game_dto extends exporter {
         return \array_merge(
             $this->game->to_array(),
             [
+                'winner_mdl_user' => $this->game->get_winner_score() > 0 ? $this->game->get_winner_mdl_user() : 0,
                 'mdl_user' => $this->user->id,
                 'mdl_user_teacher' => util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $this->ctx, $this->user->id),
                 'round_duration_seconds' => $this->game->calculate_round_duration_seconds(),

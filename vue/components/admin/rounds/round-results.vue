@@ -1,31 +1,37 @@
 <template lang="pug">
-  .uk-card.uk-card-default
-    template(v-if="loading")
-      .uk-card-body
-        loading-alert(:message="strings.admin_results_loading").uk-text-center
-    template(v-else)
-      .uk-card-header
-        h3 {{ strings.admin_results_title | stringParams(round.number) }}
-      .uk-card-body
-        info-alert(v-if="isRoundPending", :message="strings.admin_results_pending")
-        template(v-else)
-          div(v-for="match in matches", :key="`match-${match.id}`")
-            vk-grid(matched).uk-flex-middle.uk-margin-bottom
-              match-user.uk-width-1-5.uk-text-center(:user="getMatchUser1(match)")
-              match-score.uk-width-3-5.uk-text-center(
-                :round="round",
-                :match="match",
-                :user-left="getMatchUser1(match)",
-                :user-right="getMatchUser2(match)",
-                :questions="questions",
-                :attempts="attempts"
-              )
-              match-user.uk-width-1-5.uk-text-center(:user="getMatchUser2(match)")
-      .uk-card-footer.uk-text-right
-        button.btn.btn-default(@click="goToRoundList()").uk-margin-small-left
-          v-icon(name="list-ol").uk-margin-small-right
-          span {{ strings.admin_results_btn_rounds }}
-
+.uk-card.uk-card-default
+  template(v-if="loading")
+    .uk-card-body
+      loading-alert.uk-text-center(:message="strings.admin_results_loading")
+  template(v-else)
+    .uk-card-header
+      h3 {{ strings.admin_results_title | stringParams(round.number) }}
+    .uk-card-body
+      info-alert(
+        v-if="isRoundPending",
+        :message="strings.admin_results_pending"
+      )
+      template(v-else)
+        div(v-for="match in matches", :key="`match-${match.id}`")
+          vk-grid.uk-flex-middle.uk-margin-bottom(matched)
+            match-user.uk-width-1-5.uk-text-center(
+              :user="getMatchUser1(match)"
+            )
+            match-score.uk-width-3-5.uk-text-center(
+              :round="round",
+              :match="match",
+              :user-left="getMatchUser1(match)",
+              :user-right="getMatchUser2(match)",
+              :questions="questions",
+              :attempts="attempts"
+            )
+            match-user.uk-width-1-5.uk-text-center(
+              :user="getMatchUser2(match)"
+            )
+    .uk-card-footer.uk-text-right
+      button.btn.btn-default.uk-margin-small-left(@click="goToRoundList()")
+        v-icon.uk-margin-small-right(name="list-ol")
+        span {{ strings.admin_results_btn_rounds }}
 </template>
 
 <script>

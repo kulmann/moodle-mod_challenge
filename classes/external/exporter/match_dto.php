@@ -103,10 +103,6 @@ class match_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'score of the moodle user who won this match',
             ],
-            'open' => [
-                'type' => PARAM_BOOL,
-                'description' => 'whether this match is still open or ongoing',
-            ]
         ];
     }
 
@@ -129,7 +125,7 @@ class match_dto extends exporter {
         return \array_merge(
             $this->match->to_array(),
             [
-                'open' => !$this->match->is_completed(),
+                'winner_mdl_user' => $this->match->get_winner_score() > 0 ? $this->match->get_winner_mdl_user() : 0,
             ]
         );
     }
