@@ -80,11 +80,11 @@ class admin_get_users extends external_api {
         $ctx = $coursemodule->context;
         $result = [];
         foreach($teachers as $teacher) {
-            $user_dto = new user_dto($game->get_id(), user_dto::TYPE_TEACHER, util::get_user($teacher), $ctx);
+            $user_dto = new user_dto(user_dto::TYPE_TEACHER, util::get_user($teacher, $game->get_id()), $ctx);
             $result[] = $user_dto->export($renderer);
         }
         foreach($participants as $participant) {
-            $user_dto = new user_dto($game->get_id(), user_dto::TYPE_PARTICIPANT, util::get_user($participant), $ctx);
+            $user_dto = new user_dto(user_dto::TYPE_PARTICIPANT, util::get_user($participant, $game->get_id()), $ctx);
             $result[] = $user_dto->export($renderer);
         }
         return $result;

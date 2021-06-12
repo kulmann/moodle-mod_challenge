@@ -234,16 +234,20 @@ class util {
      * Creates a user object from the given std object and augments it with
      * metadata from the database if present.
      *
-     * @param \stdClass $mdl_user
+     * @param \stdClass $raw_user
+     * @param int $game A game id
      *
      * @return participant
+     * @throws dml_exception
      */
-    public static function get_user(\stdClass $mdl_user): participant {
-        $user = new participant($mdl_user);
+    public static function get_user(\stdClass $raw_user, int $game): participant {
+        $user = new participant($raw_user);
         try {
-            $user->load_data_by_id($user->get_id());
+            $user->load_data_by_game($game);
         } catch (dml_exception $ignored) {
-            // the metadata is optional. fail silently if not found and rely on the class defaults.
+            $user->set_game($game);
+            $user->set_status(participant::STATUS_ENABLED);
+            $user->save();
         }
         return $user;
     }

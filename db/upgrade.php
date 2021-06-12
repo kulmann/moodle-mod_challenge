@@ -75,12 +75,15 @@ function xmldb_challenge_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2021053002, 'challenge');
     }
 
-    if ($oldversion < 2021060500) {
+    if ($oldversion < 2021061100) {
         $table = new xmldb_table('challenge_users');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', true, null, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', true, null, true, null);
+        $table->add_field('mdl_user', XMLDB_TYPE_INTEGER, '10', true, null, null, null);
+        $table->add_field('game', XMLDB_TYPE_INTEGER, '10', true, null, null, null);
         $table->add_field('status', XMLDB_TYPE_CHAR, '50', null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $dbman->create_table($table);
-        upgrade_mod_savepoint(true, 2021060500, 'challenge');
+        upgrade_mod_savepoint(true, 2021061100, 'challenge');
     }
 
     return true;

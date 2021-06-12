@@ -89,7 +89,7 @@ class mdl_user_dto extends exporter {
      */
     protected function get_other_values(renderer_base $output) {
         return [
-            'id' => $this->participant->get_id(),
+            'id' => $this->participant->get_mdl_user(),
             'firstname' => $this->participant->get_firstname(),
             'lastname' => $this->participant->get_lastname(),
             'image' => $this->participant->get_user_picture_url(),

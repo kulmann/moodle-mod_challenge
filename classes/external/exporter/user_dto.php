@@ -37,10 +37,6 @@ class user_dto extends exporter {
     const TYPE_PARTICIPANT = 'participant';
 
     /**
-     * @var int The id of the game.
-     */
-    private $game;
-    /**
      * @var string The type of user. Can be 'teacher' or 'participant'.
      */
     private $type;
@@ -49,8 +45,7 @@ class user_dto extends exporter {
      */
     private $participant;
 
-    public function __construct(int $game, string $type, participant $participant, context $context) {
-        $this->game = $game;
+    public function __construct(string $type, participant $participant, context $context) {
         $this->type = $type;
         $this->participant = $participant;
         parent::__construct([], ['context' => $context]);
@@ -93,12 +88,12 @@ class user_dto extends exporter {
 
     protected function get_other_values(renderer_base $output) {
         return [
-            'id' => $this->participant->get_id(),
+            'id' => $this->participant->get_mdl_user(),
             'type' => $this->type,
             'fullname' => $this->participant->get_full_name(),
             'image' => $this->participant->get_user_picture_url(),
             'status' => $this->participant->get_status(),
-            'attended_rounds' => implode(',', $this->participant->get_attended_round_ids($this->game)),
+            'attended_rounds' => implode(',', $this->participant->get_attended_round_ids()),
         ];
     }
 }

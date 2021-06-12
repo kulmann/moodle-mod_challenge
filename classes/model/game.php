@@ -149,21 +149,21 @@ class game extends abstract_model {
         if (\is_object($data)) {
             $data = get_object_vars($data);
         }
-        $this->id = isset($data['id']) ? $data['id'] : 0;
-        $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
-        $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
-        $this->course = isset($data['course']) ? $data['course'] : 0;
-        $this->name = isset($data['name']) ? $data['name'] : '';
-        $this->question_count = isset($data['question_count']) ? $data['question_count'] : 3;
-        $this->question_duration = isset($data['question_duration']) ? $data['question_duration'] : 30;
-        $this->review_duration = isset($data['review_duration']) ? $data['review_duration'] : 2;
-        $this->question_shuffle_answers = isset($data['question_shuffle_answers']) ? ($data['question_shuffle_answers'] == 1) : true;
-        $this->round_duration_unit = isset($data['round_duration_unit']) ? $data['round_duration_unit'] : self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
-        $this->round_duration_value = isset($data['round_duration_value']) ? $data['round_duration_value'] : 7;
-        $this->rounds = isset($data['rounds']) ? $data['rounds'] : 10;
-        $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
-        $this->winner_score = isset($data['winner_score']) ? $data['winner_score'] : 0;
-        $this->state = isset($data['state']) ? $data['state'] : self::STATE_UNPUBLISHED;
+        $this->id = $data['id'] ?? 0;
+        $this->timecreated = $data['timecreated'] ?? \time();
+        $this->timemodified = $data['timemodified'] ?? \time();
+        $this->course = $data['course'] ?? 0;
+        $this->name = $data['name'] ?? '';
+        $this->question_count = $data['question_count'] ?? 3;
+        $this->question_duration = $data['question_duration'] ?? 30;
+        $this->review_duration = $data['review_duration'] ?? 2;
+        $this->question_shuffle_answers = !isset($data['question_shuffle_answers']) || $data['question_shuffle_answers'] == 1;
+        $this->round_duration_unit = $data['round_duration_unit'] ?? self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
+        $this->round_duration_value = $data['round_duration_value'] ?? 7;
+        $this->rounds = $data['rounds'] ?? 10;
+        $this->winner_mdl_user = $data['winner_mdl_user'] ?? 0;
+        $this->winner_score = $data['winner_score'] ?? 0;
+        $this->state = $data['state'] ?? self::STATE_UNPUBLISHED;
     }
 
     /**
@@ -182,7 +182,7 @@ class game extends abstract_model {
         }
 
         return \array_filter($mdl_users, function (\stdClass $mdl_user) {
-            $participant = util::get_user($mdl_user);
+            $participant = util::get_user($mdl_user, $this->get_id());
             return $participant->is_enabled();
         });
     }
@@ -407,8 +407,8 @@ class game extends abstract_model {
         // disable users who didn't have at least one attempt within the rounds from above
         $mdl_users = $this->get_mdl_participants(true);
         foreach ($mdl_users as $mdl_user) {
-            $participant = util::get_user($mdl_user);
-            if (\indexOf($participant->get_id(), $participant_ids) === false) {
+            $participant = util::get_user($mdl_user, $this->get_id());
+            if (\indexOf($participant->get_mdl_user(), $participant_ids) === false) {
                 $participant->set_status(participant::STATUS_DISABLED);
                 $participant->save();
             }

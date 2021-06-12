@@ -34,16 +34,48 @@ class participant extends abstract_model {
     /**
      * @var \stdClass
      */
+    protected $raw_user;
+
+    /**
+     * @var int
+     */
     protected $mdl_user;
+
+    /**
+     * @var int
+     */
+    protected $game;
 
     /**
      * @var string The status of the user, out of `enabled` and `disabled`
      */
     protected $status;
 
-    public function __construct(\stdClass $mdl_user) {
-        parent::__construct('challenge_users', \intval($mdl_user->id));
-        $this->mdl_user = $mdl_user;
+    public function __construct(\stdClass $raw_user) {
+        parent::__construct('challenge_users', 0);
+        $this->raw_user = $raw_user;
+        $this->mdl_user = \intval($raw_user->id);
+    }
+
+    /**
+     * Loads the data of this participant by its id and the provided game id.
+     *
+     * @param int $game
+     *
+     * @return void The loaded data will be set inside this object.
+     * @throws \dml_exception
+     */
+    public function load_data_by_game(int $game) {
+        global $DB;
+        $record = $DB->get_record(
+            $this->get_table_name(),
+            ['mdl_user' => $this->get_mdl_user(), 'game' => $game]
+        );
+        if ($record) {
+            $this->apply($record);
+            return;
+        }
+        throw new \dml_exception("something went wrong loading a user by id " . $this->get_mdl_user() . " and game $game");
     }
 
     /**
@@ -57,8 +89,9 @@ class participant extends abstract_model {
         if (\is_object($data)) {
             $data = get_object_vars($data);
         }
-        // don't set the id from $data here. Already present from constructor.
-        $this->status = isset($data['status']) ? $data['status'] : self::STATUS_ENABLED;
+        $this->id = $data['id'] ?? 0;
+        $this->status = $data['status'] ?? self::STATUS_ENABLED;
+        $this->game = $data['game'] ?? 0;
     }
 
     /**
@@ -67,7 +100,7 @@ class participant extends abstract_model {
      * @return string
      */
     public function get_firstname() {
-        return $this->mdl_user->firstname;
+        return $this->raw_user->firstname;
     }
 
     /**
@@ -76,7 +109,7 @@ class participant extends abstract_model {
      * @return string
      */
     public function get_lastname() {
-        return $this->mdl_user->lastname;
+        return $this->raw_user->lastname;
     }
 
     /**
@@ -95,13 +128,13 @@ class participant extends abstract_model {
      * @return array
      * @throws \dml_exception
      */
-    public function get_attended_round_ids(int $game) {
+    public function get_attended_round_ids() {
         global $DB;
         $sql = "SELECT DISTINCT r.id
                 FROM {challenge_matches} m
                 JOIN {challenge_rounds} r ON m.round = r.id
                 WHERE r.game = :game AND ((m.mdl_user_1 = :user1 AND m.mdl_user_1_completed > 0) OR (m.mdl_user_2 = :user2 AND m.mdl_user_2_completed > 0))";
-        $params = ['game' => $game, 'user1' => $this->get_id(), 'user2' => $this->get_id()];
+        $params = ['game' => $this->get_game(), 'user1' => $this->get_mdl_user(), 'user2' => $this->get_mdl_user()];
         return $DB->get_fieldset_sql($sql, $params);
     }
 
@@ -120,7 +153,7 @@ class participant extends abstract_model {
         $renderer = $page->get_renderer('core');
 
         // Get the user's profile picture and make sure it is correct.
-        $userpicture = new \user_picture($this->mdl_user);
+        $userpicture = new \user_picture($this->raw_user);
         $userpicture->size = true;// will cause f2 size (100px)
         return $userpicture->get_url($page, $renderer)->out(false);
     }
@@ -150,5 +183,33 @@ class participant extends abstract_model {
             return;
         }
         $this->status = $status;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_mdl_user(): int {
+        return $this->mdl_user;
+    }
+
+    /**
+     * @param int $mdl_user
+     */
+    public function set_mdl_user(int $mdl_user): void {
+        $this->mdl_user = $mdl_user;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_game(): int {
+        return $this->game;
+    }
+
+    /**
+     * @param int $game
+     */
+    public function set_game(int $game) {
+        $this->game = $game;
     }
 }

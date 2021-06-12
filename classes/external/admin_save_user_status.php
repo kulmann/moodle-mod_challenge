@@ -78,11 +78,12 @@ class admin_save_user_status extends external_api {
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context(($ctx = $coursemodule->context));
         util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
+        $game = util::get_game($coursemodule);
 
         // save user status
         $mdl_user = new \stdClass();
         $mdl_user->id = $id;
-        $user = util::get_user($mdl_user);
+        $user = util::get_user($mdl_user, $game->get_id());
         $user->set_status($status);
         $user->save();
 
