@@ -24,7 +24,6 @@ use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\bool_dto;
-use mod_challenge\model\round;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;

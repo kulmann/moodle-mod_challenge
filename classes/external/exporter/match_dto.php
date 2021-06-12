@@ -75,6 +75,10 @@ class match_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'id of the game round this match takes place in',
             ],
+            'completed' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether the match is completed (finished by both participants or ended)',
+            ],
             'mdl_user_1' => [
                 'type' => PARAM_INT,
                 'description' => 'first moodle user of the match',
@@ -125,7 +129,7 @@ class match_dto extends exporter {
         return \array_merge(
             $this->match->to_array(),
             [
-                'open' => !$this->match->is_finished(),
+                'open' => !$this->match->is_completed(),
             ]
         );
     }

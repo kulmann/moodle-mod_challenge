@@ -129,6 +129,15 @@ class attempt extends abstract_model {
     }
 
     /**
+     * Asserts whether this attempt is an actual question answer or just for filling up the question on match end.
+     *
+     * @return bool
+     */
+    public function is_answered() {
+        return $this->mdl_answer > 0;
+    }
+
+    /**
      * @return int
      */
     public function get_timecreated(): int {

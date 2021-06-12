@@ -1,63 +1,79 @@
 <template lang="pug">
-  .uk-card.uk-card-default
-    .uk-card-header
-      h3 {{ strings.admin_rounds_title }}
-    .uk-card-body
-      p {{ strings.admin_rounds_intro }}
-      table.uk-table.uk-table-small.uk-table-striped(v-if="rounds.length > 0")
-        thead
-          tr
-            th.uk-table-shrink {{ strings.admin_rounds_list_th_no }}
-            th.uk-table-expand {{ strings.admin_rounds_list_th_name }}
-            th.uk-table-shrink {{ strings.admin_rounds_list_th_timing }}
-            th.uk-table-shrink {{ strings.admin_rounds_list_th_actions }}
-        tbody
-          template(v-for="round in rounds")
-            tr.uk-text-nowrap(:key="round.number")
-              td.uk-text-center.uk-text-middle
-                b {{ round.number }}
-              td.uk-text-left.uk-text-middle {{ round.name }}
-              td.uk-text-left.uk-text-middle
-                span(v-if="isRoundScheduled(round)")
-                  span {{ getRoundTimingFrom(round) }}
-                  br
-                  span {{ getRoundTimingTo(round) }}
-                span(v-else) -
-              td.uk-text-right.uk-preserve-width
-                button.btn.btn-primary(@click="pickSchedule(round)", v-if="!isRoundStarted(round)")
-                  v-icon(name="clock")
-                button.btn.btn-danger(@click="stopRoundAsk(round)", v-if="isActiveRound(round)")
-                  v-icon(name="stop")
-                button.btn.btn-success(@click="goToRoundResults(round)", :disabled="!isRoundStarted(round)")
-                  v-icon(name="chart-line")
-                button.btn.btn-default(@click="goToEditRound(round)")
-                  v-icon(name="regular/edit")
-                button.btn.btn-default(@click="deleteRoundAsk(round)", :disabled="isRoundStarted(round)")
-                  v-icon(name="trash")
-            tr(v-if="isConfirmationShown(round)")
-              td(:colspan="4").uk-table-expand
-                confirmationPanel(v-if="deleteConfirmationRoundId",
-                  :message="stringParams(strings.admin_round_delete_confirm, round.number)",
-                  :labelSubmit="strings.admin_btn_confirm_delete",
-                  @onSubmit="deleteRoundConfirm(round)",
-                  @onCancel="deleteConfirmationRoundId = null")
-                confirmationPanel(v-if="stopConfirmationRoundId",
-                  :message="stringParams(strings.admin_round_stop_confirm, round.number)",
-                  :labelSubmit="strings.admin_btn_confirm_stop",
-                  @onSubmit="stopRoundConfirm(round)",
-                  @onCancel="stopConfirmationRoundId = null")
-      info-alert(v-else, :message="strings.admin_rounds_empty")
-      btn-add(@click="goToCreateRound")
-      datetime-popup(
-        v-if="datepicker.show",
-        :key="datepicker.key",
-        type="datetime",
-        :datetime="datepicker.value",
-        :title="datepicker.title",
-        :phrases="datepickerPhrases"
-        @cancel="onResetDatepicker",
-        @confirm="onInputDatepicker"
-      )
+.uk-card.uk-card-default
+  .uk-card-header
+    h3 {{ strings.admin_rounds_title }}
+  .uk-card-body
+    p {{ strings.admin_rounds_intro }}
+    table.uk-table.uk-table-small.uk-table-striped(v-if="rounds.length > 0")
+      thead
+        tr
+          th.uk-table-shrink {{ strings.admin_rounds_list_th_no }}
+          th.uk-table-expand {{ strings.admin_rounds_list_th_name }}
+          th.uk-table-shrink {{ strings.admin_rounds_list_th_timing }}
+          th.uk-table-shrink {{ strings.admin_rounds_list_th_actions }}
+      tbody
+        template(v-for="round in rounds")
+          tr.uk-text-nowrap(:key="round.number")
+            td.uk-text-center.uk-text-middle
+              b {{ round.number }}
+            td.uk-text-left.uk-text-middle {{ round.name }}
+            td.uk-text-left.uk-text-middle
+              span(v-if="isRoundScheduled(round)")
+                span {{ getRoundTimingFrom(round) }}
+                br
+                span {{ getRoundTimingTo(round) }}
+              span(v-else) -
+            td.uk-text-right.uk-preserve-width
+              button.btn.btn-primary(
+                @click="pickSchedule(round)",
+                v-if="!isRoundStarted(round)"
+              )
+                v-icon(name="clock")
+              button.btn.btn-danger(
+                @click="stopRoundAsk(round)",
+                v-if="isActiveRound(round)"
+              )
+                v-icon(name="stop")
+              button.btn.btn-success(
+                @click="goToRoundResults(round)",
+                :disabled="!isRoundStarted(round)"
+              )
+                v-icon(name="chart-line")
+              button.btn.btn-default(@click="goToEditRound(round)")
+                v-icon(name="regular/edit")
+              button.btn.btn-default(
+                @click="deleteRoundAsk(round)",
+                :disabled="isRoundStarted(round)"
+              )
+                v-icon(name="trash")
+          tr(v-if="isConfirmationShown(round)")
+            td.uk-table-expand(:colspan="4")
+              confirmationPanel(
+                v-if="deleteConfirmationRoundId",
+                :message="stringParams(strings.admin_round_delete_confirm, round.number)",
+                :labelSubmit="strings.admin_btn_confirm_delete",
+                @onSubmit="deleteRoundConfirm(round)",
+                @onCancel="deleteConfirmationRoundId = null"
+              )
+              confirmationPanel(
+                v-if="stopConfirmationRoundId",
+                :message="stringParams(strings.admin_round_stop_confirm, round.number)",
+                :labelSubmit="strings.admin_btn_confirm_stop",
+                @onSubmit="stopRoundConfirm(round)",
+                @onCancel="stopConfirmationRoundId = null"
+              )
+    info-alert(v-else, :message="strings.admin_rounds_empty")
+    btn-add(@click="goToCreateRound")
+    datetime-popup(
+      v-if="datepicker.show",
+      :key="datepicker.key",
+      type="datetime",
+      :datetime="datepicker.value",
+      :title="datepicker.title",
+      :phrases="datepickerPhrases",
+      @cancel="onResetDatepicker",
+      @confirm="onInputDatepicker"
+    )
 </template>
 
 <script>

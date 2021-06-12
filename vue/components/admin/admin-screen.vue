@@ -1,37 +1,51 @@
 <template lang="pug">
-  #challenge-admin_screen
-    .uk-clearfix
-    loadingAlert(v-if="!isInitialized", message="Loading Settings").uk-text-center
-    failureAlert(v-else-if="isRegularUser", :message="strings.admin_not_allowed").uk-text-center
+#challenge-admin_screen
+  .uk-clearfix
+  loadingAlert.uk-text-center(
+    v-if="!isInitialized",
+    message="Loading Settings"
+  )
+  failureAlert.uk-text-center(
+    v-else-if="isRegularUser",
+    :message="strings.admin_not_allowed"
+  )
+  template(v-else)
+    template(v-if="viewModeList")
+      ul.uk-tab.uk-margin-small-bottom
+        li(:class="{ 'uk-active': viewMode === VIEW_MODE_ROUNDS }")
+          a(@click="setViewMode(VIEW_MODE_ROUNDS)")
+            v-icon.uk-margin-small-right(name="cog")
+            span {{ strings.admin_nav_rounds }}
+        li(:class="{ 'uk-active': viewMode === VIEW_MODE_USERS }")
+          a(@click="setViewMode(VIEW_MODE_USERS)")
+            v-icon.uk-margin-small-right(name="users")
+            span {{ strings.admin_nav_users }}
+        li(:class="{ 'uk-active': viewMode === VIEW_MODE_HIGHSCORE }")
+          a(@click="setViewMode(VIEW_MODE_HIGHSCORE)")
+            v-icon.uk-margin-small-right(name="chart-line")
+            span {{ strings.admin_nav_highscore }}
+      rounds-list(
+        v-if="viewMode === VIEW_MODE_ROUNDS",
+        :rounds="rounds",
+        :categories="categories",
+        :mdlCategories="mdlCategories",
+        key="rounds"
+      )
+      users-list(v-if="viewMode === VIEW_MODE_USERS", key="users")
+      highscores(v-else-if="viewMode === VIEW_MODE_HIGHSCORE", key="highscore")
     template(v-else)
-      template(v-if="viewModeList")
-        ul.uk-tab.uk-margin-small-bottom
-          li(:class="{'uk-active': viewMode === VIEW_MODE_ROUNDS}")
-            a(@click="setViewMode(VIEW_MODE_ROUNDS)")
-              v-icon(name="cog").uk-margin-small-right
-              span {{ strings.admin_nav_rounds }}
-          li(:class="{'uk-active': viewMode === VIEW_MODE_HIGHSCORE}")
-            a(@click="setViewMode(VIEW_MODE_HIGHSCORE)")
-              v-icon(name="chart-line").uk-margin-small-right
-              span {{ strings.admin_nav_highscore }}
-        rounds-list(v-if="viewMode === VIEW_MODE_ROUNDS",
-          :rounds="rounds",
-          :categories="categories",
-          :mdlCategories="mdlCategories",
-          key="rounds"
-        )
-        highscores(v-else-if="viewMode === VIEW_MODE_HIGHSCORE", key="highscore")
-      template(v-else)
-        round-edit(v-if="viewMode === VIEW_MODE_ROUND_EDIT",
-          :round="roundForEditing",
-          :categories="categories",
-          :mdlCategories="mdlCategories",
-          :rounds="rounds"
-        )
-        round-results(v-else-if="viewMode === VIEW_MODE_ROUND_RESULTS",
-          :round="roundForEditing",
-          :rounds="rounds"
-        )
+      round-edit(
+        v-if="viewMode === VIEW_MODE_ROUND_EDIT",
+        :round="roundForEditing",
+        :categories="categories",
+        :mdlCategories="mdlCategories",
+        :rounds="rounds"
+      )
+      round-results(
+        v-else-if="viewMode === VIEW_MODE_ROUND_RESULTS",
+        :round="roundForEditing",
+        :rounds="rounds"
+      )
 </template>
 
 <script>
@@ -45,10 +59,10 @@ import loadingAlert from "../helper/loading-alert";
 import failureAlert from "../helper/failure-alert";
 import RoundsList from "./rounds/rounds-list";
 import RoundEdit from "./rounds/round-edit";
-
-import constants from "../../constants";
+import UsersList from "./users/users-list";
 import RoundResults from "./rounds/round-results";
 import Highscores from "../shared/highscore/highscores";
+import constants from "../../constants";
 
 export default {
   mixins: [langMixins],
@@ -58,6 +72,7 @@ export default {
       VIEW_MODE_ROUNDS: constants.ROUTE_ADMIN_ROUNDS,
       VIEW_MODE_ROUND_EDIT: constants.ROUTE_ADMIN_ROUND_EDIT,
       VIEW_MODE_ROUND_RESULTS: constants.ROUTE_ADMIN_ROUND_RESULTS,
+      VIEW_MODE_USERS: constants.ROUTE_ADMIN_USERS,
       VIEW_MODE_HIGHSCORE: constants.ROUTE_ADMIN_HIGHSCORE,
     };
   },
@@ -71,6 +86,7 @@ export default {
     viewMode() {
       const routes = [
         this.VIEW_MODE_ROUNDS,
+        this.VIEW_MODE_USERS,
         this.VIEW_MODE_HIGHSCORE,
         this.VIEW_MODE_ROUND_EDIT,
         this.VIEW_MODE_ROUND_RESULTS,
@@ -98,6 +114,9 @@ export default {
           case this.VIEW_MODE_ROUNDS:
             this.$router.push({ name: constants.ROUTE_ADMIN_ROUNDS });
             break;
+          case this.VIEW_MODE_USERS:
+            this.$router.push({ name: constants.ROUTE_ADMIN_USERS });
+            break;
           case this.VIEW_MODE_HIGHSCORE:
             this.$router.push({ name: constants.ROUTE_ADMIN_HIGHSCORE });
             break;
@@ -112,6 +131,7 @@ export default {
     }
   },
   components: {
+    UsersList,
     Highscores,
     RoundResults,
     RoundsList,

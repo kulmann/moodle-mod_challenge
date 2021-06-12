@@ -20,10 +20,13 @@ use coding_exception;
 use dml_exception;
 use external_api;
 use external_function_parameters;
+use external_multiple_structure;
 use external_single_structure;
 use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\bool_dto;
+use mod_challenge\model\category;
+use mod_challenge\model\round;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -31,7 +34,7 @@ use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-class admin_stop_round extends external_api {
+class admin_save_user_status extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -41,7 +44,8 @@ class admin_stop_round extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'roundid' => new external_value(PARAM_INT, 'round id')
+            'id' => new external_value(PARAM_INT, 'moodle user id', false),
+            'status' => new external_value(PARAM_ALPHA, 'status', false),
         ]);
     }
 
@@ -53,10 +57,11 @@ class admin_stop_round extends external_api {
     }
 
     /**
-     * Stop the current round.
+     * Save a user status
      *
      * @param int $coursemoduleid
-     * @param int $roundid
+     * @param int $id
+     * @param string $status
      *
      * @return stdClass
      * @throws coding_exception
@@ -65,8 +70,8 @@ class admin_stop_round extends external_api {
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid, $roundid) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'roundid' => $roundid];
+    public static function request($coursemoduleid, $id, $status) {
+        $params = ['coursemoduleid' => $coursemoduleid, 'id' => $id, 'status' => $status];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
@@ -74,19 +79,17 @@ class admin_stop_round extends external_api {
         self::validate_context(($ctx = $coursemodule->context));
         util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
         $game = util::get_game($coursemodule);
-        $round = util::get_round($roundid);
-        util::validate_round($game, $round);
-        util::validate_round_running($round);
 
-        // start renderer
+        // save user status
+        $mdl_user = new \stdClass();
+        $mdl_user->id = $id;
+        $user = util::get_user($mdl_user, $game->get_id());
+        $user->set_status($status);
+        $user->save();
+
+        // return result
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
-
-        // trigger stopping current round
-        $game->stop_round($round, true);
-        $game->disable_inactive_participants($round);
-
-        // return success response
         $exporter = new bool_dto(true, $ctx);
         return $exporter->export($renderer);
     }

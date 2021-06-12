@@ -1,10 +1,28 @@
 <template lang="pug">
-  .uk-card.uk-card-default.uk-card-body
-    loading-alert(v-if="loading", :message="strings.game_match_loading").uk-text-center
-    template(v-else)
-      match-nav(:own-user-id="ownUserId", :round="round", :match="match", :matches="matches")
-      failure-alert(v-if="match === null", :message="strings.game_match_show_error")
-      match-show(v-else, :round="round", :match="match", :questions="questions", :attempts="attempts", :own-user-id="ownUserId" )
+.uk-card.uk-card-default.uk-card-body
+  loading-alert.uk-text-center(
+    v-if="loading",
+    :message="strings.game_match_loading"
+  )
+  template(v-else)
+    match-nav(
+      :own-user-id="ownUserId",
+      :round="round",
+      :match="match",
+      :matches="matches"
+    )
+    failure-alert(
+      v-if="match === null",
+      :message="strings.game_match_show_error"
+    )
+    match-show(
+      v-else,
+      :round="round",
+      :match="match",
+      :questions="questions",
+      :attempts="attempts",
+      :own-user-id="ownUserId"
+    )
 </template>
 
 <script>
@@ -47,7 +65,7 @@ export default {
       }
       // serve first unfinished match
       const unfinishedMatches = this.matches.filter(
-        (m) => !m.mdl_user_1_completed
+        (m) => !m.completed && !m.mdl_user_1_completed
       );
       if (unfinishedMatches.length > 0) {
         return first(unfinishedMatches).id;

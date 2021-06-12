@@ -20,18 +20,18 @@ use coding_exception;
 use dml_exception;
 use external_api;
 use external_function_parameters;
-use external_single_structure;
+use external_multiple_structure;
 use external_value;
 use invalid_parameter_exception;
-use mod_challenge\external\exporter\bool_dto;
+use mod_challenge\external\exporter\user_dto;
+use mod_challenge\model\participant;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
-use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-class admin_stop_round extends external_api {
+class admin_get_users extends external_api {
 
     /**
      * Definition of parameters for {@see request}.
@@ -41,53 +41,52 @@ class admin_stop_round extends external_api {
     public static function request_parameters() {
         return new external_function_parameters([
             'coursemoduleid' => new external_value(PARAM_INT, 'course module id'),
-            'roundid' => new external_value(PARAM_INT, 'round id')
         ]);
     }
 
     /**
-     * @return external_single_structure
+     * @return external_multiple_structure
      */
     public static function request_returns() {
-        return bool_dto::get_read_structure();
+        return new external_multiple_structure(user_dto::get_read_structure());
     }
 
     /**
-     * Stop the current round.
+     * Get all users that can be involved in the given game.
      *
      * @param int $coursemoduleid
-     * @param int $roundid
      *
-     * @return stdClass
+     * @return array
      * @throws coding_exception
      * @throws dml_exception
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @throws restricted_context_exception
      */
-    public static function request($coursemoduleid, $roundid) {
-        $params = ['coursemoduleid' => $coursemoduleid, 'roundid' => $roundid];
+    public static function request($coursemoduleid) {
+        $params = ['coursemoduleid' => $coursemoduleid];
         self::validate_parameters(self::request_parameters(), $params);
 
         // load context
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
-        self::validate_context(($ctx = $coursemodule->context));
-        util::require_user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx);
+        self::validate_context($coursemodule->context);
         $game = util::get_game($coursemodule);
-        $round = util::get_round($roundid);
-        util::validate_round($game, $round);
-        util::validate_round_running($round);
+        $participants = $game->get_mdl_participants(false);
+        $teachers = $game->get_mdl_teachers();
 
-        // start renderer
+        // construct result
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
-
-        // trigger stopping current round
-        $game->stop_round($round, true);
-        $game->disable_inactive_participants($round);
-
-        // return success response
-        $exporter = new bool_dto(true, $ctx);
-        return $exporter->export($renderer);
+        $ctx = $coursemodule->context;
+        $result = [];
+        foreach($teachers as $teacher) {
+            $user_dto = new user_dto(user_dto::TYPE_TEACHER, util::get_user($teacher, $game->get_id()), $ctx);
+            $result[] = $user_dto->export($renderer);
+        }
+        foreach($participants as $participant) {
+            $user_dto = new user_dto(user_dto::TYPE_PARTICIPANT, util::get_user($participant, $game->get_id()), $ctx);
+            $result[] = $user_dto->export($renderer);
+        }
+        return $result;
     }
 }

@@ -38,6 +38,13 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
+    'mod_challenge_admin_get_mdl_categories' => [
+        'classname' => 'mod_challenge\external\admin_get_mdl_categories',
+        'methodname' => 'request',
+        'description' => 'Retrieves the moodle question categories which are applicable for this game.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     'mod_challenge_admin_get_round_attempts' => [
         'classname' => 'mod_challenge\external\admin_get_round_attempts',
         'methodname' => 'request',
@@ -59,10 +66,10 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
-    'mod_challenge_admin_get_mdl_categories' => [
-        'classname' => 'mod_challenge\external\admin_get_mdl_categories',
+    'mod_challenge_admin_get_users' => [
+        'classname' => 'mod_challenge\external\admin_get_users',
         'methodname' => 'request',
-        'description' => 'Retrieves the moodle question categories which are applicable for this game.',
+        'description' => 'Retrieves the users of a certain game.',
         'type' => 'read',
         'ajax' => true,
     ],
@@ -70,6 +77,13 @@ $functions = [
         'classname' => 'mod_challenge\external\admin_save_round',
         'methodname' => 'request',
         'description' => 'Saves the given round.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'mod_challenge_admin_save_user_status' => [
+        'classname' => 'mod_challenge\external\admin_save_user_status',
+        'methodname' => 'request',
+        'description' => 'Saves the user status.',
         'type' => 'write',
         'ajax' => true,
     ],

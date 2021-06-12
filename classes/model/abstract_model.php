@@ -100,6 +100,8 @@ abstract class abstract_model extends \stdClass {
         if ($this->get_id() === null || $this->get_id() === 0) {
             $insertedid = $DB->insert_record($this->get_table_name(), $this->to_data_object());
             $this->set_id($insertedid);
+        } elseif (!$DB->record_exists($this->table_name, ['id' => $this->get_id()])) {
+            $DB->import_record($this->get_table_name(), $this->to_data_object());
         } else {
             $DB->update_record($this->get_table_name(), $this->to_data_object());
         }

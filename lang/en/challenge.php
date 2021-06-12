@@ -118,10 +118,11 @@ $string['admin_btn_generate'] = 'Generate';
 $string['admin_btn_datepicker_cancel'] = "Cancel";
 $string['admin_btn_datepicker_submit'] = "Select";
 $string['admin_avatar_alt'] = 'Picture of {$a}';
+$string['admin_nav_rounds'] = 'Rounds';
+$string['admin_nav_users'] = 'Participants';
+$string['admin_nav_highscore'] = 'Leader Board';
 
 /* admin: rounds */
-$string['admin_nav_rounds'] = 'Rounds';
-$string['admin_nav_highscore'] = 'Leader Board';
 $string['admin_rounds_title'] = 'Manage rounds';
 $string['admin_rounds_intro'] = 'A Quiz-Challenge consists of rounds. For each round, random pairs of course participants are invited to answer questions. You can select the timeframe for participation for each round. Not answering questions within that timeframe results in not gaining points. You can create additional rounds at any time. They are allowed to overlap in time.';
 $string['admin_rounds_empty'] = 'You have not created any rounds, yet. Click on "Add" to create one.';
@@ -146,6 +147,17 @@ $string['admin_round_lbl_category_closed_same'] = 'Category {$a->number} - In ro
 $string['admin_round_lbl_category_new'] = 'Category {$a} - added just now';
 $string['admin_round_lbl_category_please_select'] = 'Select category';
 $string['admin_round_msg_saving'] = 'Saving the round, please wait';
+
+/* admin: users */
+$string['admin_users_participants_title'] = 'Manage Participants';
+$string['admin_users_participants_intro'] = 'Keep track of which course participants are actively involved in this Quiz-Challenge.';
+$string['admin_users_participants_thead_user'] = 'Name';
+$string['admin_users_participants_thead_status'] = 'Status';
+$string['admin_users_participants_thead_round'] = 'Round {$a}';
+$string['admin_users_participants_status_enabled'] = 'Active';
+$string['admin_users_participants_status_disabled'] = 'Banned';
+$string['admin_users_teachers_title'] = 'Teachers';
+$string['admin_users_teachers_intro'] = 'The following users have edit permissions for this course. They don\'t qualify as participants.';
 
 /* admin: round results */
 $string['admin_results_loading'] = 'Loading round results';

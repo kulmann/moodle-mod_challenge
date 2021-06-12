@@ -149,25 +149,25 @@ class game extends abstract_model {
         if (\is_object($data)) {
             $data = get_object_vars($data);
         }
-        $this->id = isset($data['id']) ? $data['id'] : 0;
-        $this->timecreated = isset($data['timecreated']) ? $data['timecreated'] : \time();
-        $this->timemodified = isset($data['timemodified']) ? $data['timemodified'] : \time();
-        $this->course = isset($data['course']) ? $data['course'] : 0;
-        $this->name = isset($data['name']) ? $data['name'] : '';
-        $this->question_count = isset($data['question_count']) ? $data['question_count'] : 3;
-        $this->question_duration = isset($data['question_duration']) ? $data['question_duration'] : 30;
-        $this->review_duration = isset($data['review_duration']) ? $data['review_duration'] : 2;
-        $this->question_shuffle_answers = isset($data['question_shuffle_answers']) ? ($data['question_shuffle_answers'] == 1) : true;
-        $this->round_duration_unit = isset($data['round_duration_unit']) ? $data['round_duration_unit'] : self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
-        $this->round_duration_value = isset($data['round_duration_value']) ? $data['round_duration_value'] : 7;
-        $this->rounds = isset($data['rounds']) ? $data['rounds'] : 10;
-        $this->winner_mdl_user = isset($data['winner_mdl_user']) ? $data['winner_mdl_user'] : 0;
-        $this->winner_score = isset($data['winner_score']) ? $data['winner_score'] : 0;
-        $this->state = isset($data['state']) ? $data['state'] : self::STATE_UNPUBLISHED;
+        $this->id = $data['id'] ?? 0;
+        $this->timecreated = $data['timecreated'] ?? \time();
+        $this->timemodified = $data['timemodified'] ?? \time();
+        $this->course = $data['course'] ?? 0;
+        $this->name = $data['name'] ?? '';
+        $this->question_count = $data['question_count'] ?? 3;
+        $this->question_duration = $data['question_duration'] ?? 30;
+        $this->review_duration = $data['review_duration'] ?? 2;
+        $this->question_shuffle_answers = !isset($data['question_shuffle_answers']) || $data['question_shuffle_answers'] == 1;
+        $this->round_duration_unit = $data['round_duration_unit'] ?? self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
+        $this->round_duration_value = $data['round_duration_value'] ?? 7;
+        $this->rounds = $data['rounds'] ?? 10;
+        $this->winner_mdl_user = $data['winner_mdl_user'] ?? 0;
+        $this->winner_score = $data['winner_score'] ?? 0;
+        $this->state = $data['state'] ?? self::STATE_UNPUBLISHED;
     }
 
     /**
-     * Select all users within the given course.
+     * Select all participants within the given course.
      * Important: this excludes teachers!
      *
      * @return stdClass[]
@@ -175,7 +175,40 @@ class game extends abstract_model {
      * @throws moodle_exception
      * @throws dml_exception
      */
-    public function get_mdl_users() {
+    public function get_mdl_participants(bool $only_enabled) {
+        $mdl_users = $this->get_mdl_users_and_teachers(true, false);
+        if (!$only_enabled) {
+            return $mdl_users;
+        }
+
+        return \array_filter($mdl_users, function (\stdClass $mdl_user) {
+            $participant = util::get_user($mdl_user, $this->get_id());
+            return $participant->is_enabled();
+        });
+    }
+
+    /**
+     * Select all teachers within the given course.
+     * Important: this excludes regular users!
+     *
+     * @return stdClass[]
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws dml_exception
+     */
+    public function get_mdl_teachers() {
+        return $this->get_mdl_users_and_teachers(false, true);
+    }
+
+    /**
+     * Select users within the given course.
+     *
+     * @return stdClass[]
+     * @throws coding_exception
+     * @throws moodle_exception
+     * @throws dml_exception
+     */
+    private function get_mdl_users_and_teachers(bool $include_users, bool $include_teachers) {
         list($course, $coursemodule) = get_course_and_cm_from_instance($this->get_id(), 'challenge');
         $ctx = $coursemodule->context;
         global $DB;
@@ -189,8 +222,11 @@ class game extends abstract_model {
         $users = $DB->get_records_sql($sql, $params);
         $result = [];
         foreach ($users as $user) {
-            if (util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $user->id)) {
-                // skip teachers
+            $teacher = util::user_has_capability(MOD_CHALLENGE_CAP_MANAGE, $ctx, $user->id);
+            if ($include_users && $teacher) {
+                continue;
+            }
+            if ($include_teachers && !$teacher) {
                 continue;
             }
             $result[] = $user;
@@ -266,6 +302,7 @@ class game extends abstract_model {
         if ($round->get_state() === round::STATE_ACTIVE && $round->is_ended()) {
             try {
                 $this->stop_round($round);
+                $this->disable_inactive_participants($round);
             } catch (moodle_exception $ignored) {
             }
         }
@@ -293,8 +330,7 @@ class game extends abstract_model {
         $round->save();
 
         // get participants
-        // TODO: restrict participants. for now pick all.
-        $mdl_users = $this->get_mdl_users();
+        $mdl_users = $this->get_mdl_participants(true);
         \shuffle($mdl_users);
 
         // create matches
@@ -310,6 +346,73 @@ class game extends abstract_model {
             $matches[] = $match;
         }
         return $round;
+    }
+
+    /**
+     * Goes through the rounds before the provided round and disables all participants that were inactive during the last 2 finished rounds.
+     * Does nothing if there are less than 2 finished rounds.
+     * If there are unfinished, started rounds in between the last 2 finished rounds and the provided round, activity in those unfinished, started
+     * rounds is counted as well.
+     *
+     * @param round $max_round
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    public function disable_inactive_participants(round $max_round) {
+        // get previous (up to) 2 finished rounds + all started rounds between the last finished and the new max round
+        // e.g. max_round = 10, then the result could be [6,7] as finished rounds and [8,9] as started but unfinished rounds
+        // never pick more than 2 finished rounds.
+        $rounds = \array_filter($this->get_rounds(), function(round $round) use ($max_round) {
+            if (!$round->is_started()) {
+                return false;
+            }
+            return $round->get_number() < $max_round->get_number();
+        });
+        $rounds = \array_reverse($rounds);
+        $started_rounds = [];
+        $finished_rounds = [];
+        foreach($rounds as $round) {
+            \assert($round instanceof round);
+            if ($round->is_ended()) {
+                $finished_rounds[] = $round;
+            } else {
+                $started_rounds[] = $round;
+            }
+            if (\count($finished_rounds) >= 2) {
+                break;
+            }
+        }
+
+        // skip if we didn't have at least 2 finished rounds
+        if (count($finished_rounds) < 2) {
+            return;
+        }
+
+        // load participant ids who had at least one attempt within the rounds from above
+        $participant_ids = [];
+        foreach(\array_merge($finished_rounds, $started_rounds) as $round) {
+            \assert($round instanceof round);
+            $attempts = $round->get_match_attempts();
+            foreach ($attempts as $attempt) {
+                \assert($attempt instanceof attempt);
+                if (!$attempt->is_answered()) {
+                    continue;
+                }
+                $participant_ids[] = $attempt->get_mdl_user();
+            }
+        }
+        $participant_ids = \array_unique($participant_ids);
+
+        // disable users who didn't have at least one attempt within the rounds from above
+        $mdl_users = $this->get_mdl_participants(true);
+        foreach ($mdl_users as $mdl_user) {
+            $participant = util::get_user($mdl_user, $this->get_id());
+            if (\array_search($participant->get_mdl_user(), $participant_ids) === false) {
+                $participant->set_status(participant::STATUS_DISABLED);
+                $participant->save();
+            }
+        }
     }
 
     /**
