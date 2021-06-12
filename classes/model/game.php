@@ -181,7 +181,7 @@ class game extends abstract_model {
             return $mdl_users;
         }
 
-        return \array_filter($mdl_users, function(\stdClass $mdl_user) {
+        return \array_filter($mdl_users, function (\stdClass $mdl_user) {
             $participant = util::get_user($mdl_user);
             return $participant->is_enabled();
         });
@@ -302,6 +302,7 @@ class game extends abstract_model {
         if ($round->get_state() === round::STATE_ACTIVE && $round->is_ended()) {
             try {
                 $this->stop_round($round);
+                $this->disable_inactive_participants($round);
             } catch (moodle_exception $ignored) {
             }
         }
@@ -345,6 +346,73 @@ class game extends abstract_model {
             $matches[] = $match;
         }
         return $round;
+    }
+
+    /**
+     * Goes through the rounds before the provided round and disables all participants that were inactive during the last 2 finished rounds.
+     * Does nothing if there are less than 2 finished rounds.
+     * If there are unfinished, started rounds in between the last 2 finished rounds and the provided round, activity in those unfinished, started
+     * rounds is counted as well.
+     *
+     * @param round $max_round
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    private function disable_inactive_participants(round $max_round) {
+        // get previous (up to) 2 finished rounds + all started rounds between the last finished and the new max round
+        // e.g. max_round = 10, then the result could be [6,7] as finished rounds and [8,9] as started but unfinished rounds
+        // never pick more than 2 finished rounds.
+        $rounds = \array_filter($this->get_rounds(), function(round $round) use ($max_round) {
+            if (!$round->is_started()) {
+                return false;
+            }
+            return $round->get_number() < $max_round->get_number();
+        });
+        $rounds = \array_reverse($rounds);
+        $started_rounds = [];
+        $finished_rounds = [];
+        foreach($rounds as $round) {
+            \assert($round instanceof round);
+            if ($round->is_ended()) {
+                $finished_rounds[] = $round;
+            } else {
+                $started_rounds[] = $round;
+            }
+            if (\count($finished_rounds) >= 2) {
+                break;
+            }
+        }
+
+        // skip if we didn't have at least 2 finished rounds
+        if (count($finished_rounds) < 2) {
+            return;
+        }
+
+        // load participant ids who had at least one attempt within the rounds from above
+        $participant_ids = [];
+        foreach(\array_merge($finished_rounds, $started_rounds) as $round) {
+            \assert($round instanceof round);
+            $attempts = $round->get_match_attempts();
+            foreach ($attempts as $attempt) {
+                \assert($attempt instanceof attempt);
+                if (!$attempt->is_answered()) {
+                    continue;
+                }
+                $participant_ids[] = $attempt->get_mdl_user();
+            }
+        }
+        $participant_ids = \array_unique($participant_ids);
+
+        // disable users who didn't have at least one attempt within the rounds from above
+        $mdl_users = $this->get_mdl_participants(true);
+        foreach ($mdl_users as $mdl_user) {
+            $participant = util::get_user($mdl_user);
+            if (\indexOf($participant->get_id(), $participant_ids) === false) {
+                $participant->set_status(participant::STATUS_DISABLED);
+                $participant->save();
+            }
+        }
     }
 
     /**

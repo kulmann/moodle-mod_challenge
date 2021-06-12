@@ -243,7 +243,7 @@ class util {
         try {
             $user->load_data_by_id($user->get_id());
         } catch (dml_exception $ignored) {
-            // the metadata is optional. fail silently if not found.
+            // the metadata is optional. fail silently if not found and rely on the class defaults.
         }
         return $user;
     }
