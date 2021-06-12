@@ -1,7 +1,7 @@
 <template lang="pug">
-span
+div
   span._pointer.uk-flex.uk-flex-middle(v-if="!editMode", @click="onClickLabel")
-    span {{ selectedLabel }}
+    user-status-label(:status="value")
     v-icon.uk-margin-small-left.uk-preserve-width(name="edit")
   span(v-else)
     ul.uk-list
@@ -13,17 +13,19 @@ span
             :checked="status === value",
             @change="onSelectStatus(status)"
           )
-          span {{ getStatusLabel(status) }}
+          user-status-label(:status="status")
 </template>
 
 <script>
 import { mapState } from "vuex";
+import UserStatusLabel from "./user-status-label";
 
 const STATUS_ENABLED = "enabled";
 const STATUS_DISABLED = "disabled";
 
 export default {
   name: "UserStatusEdit",
+  components: { UserStatusLabel },
   props: {
     id: {
       type: Number,
@@ -41,17 +43,11 @@ export default {
   },
   computed: {
     ...mapState(["strings"]),
-    selectedLabel() {
-      return this.getStatusLabel(this.value);
-    },
     statusItems() {
       return [STATUS_ENABLED, STATUS_DISABLED];
     },
   },
   methods: {
-    getStatusLabel(status) {
-      return this.strings["admin_users_participants_status_" + status];
-    },
     onClickLabel() {
       this.editMode = true;
     },

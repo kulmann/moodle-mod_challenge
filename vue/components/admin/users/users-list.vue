@@ -9,7 +9,7 @@ div
         thead
           tr
             th {{ strings.admin_users_participants_thead_user }}
-            th.uk-text-center {{ strings.admin_users_participants_thead_status }}
+            th {{ strings.admin_users_participants_thead_status }}
             th.uk-text-center(
               v-for="round in startedRounds",
               :key="`thead-round-${round.number}`"
@@ -22,7 +22,7 @@ div
             td
               user-avatar(:size="30", :user="participant")
               span {{ participant.fullname }}
-            td.uk-text-center
+            td
               user-status-edit(
                 :id="participant.id",
                 :value="participant.status",
