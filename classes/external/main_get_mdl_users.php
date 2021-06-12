@@ -86,7 +86,7 @@ class main_get_mdl_users extends external_api {
         $game = util::get_game($coursemodule);
 
         // get the users and transform to output
-        $mdl_users = $game->get_mdl_participants();
+        $mdl_users = $game->get_mdl_participants(false);
         $result = [];
         foreach($mdl_users as $mdl_user) {
             $participant = util::get_user($mdl_user);

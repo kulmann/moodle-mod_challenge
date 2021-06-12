@@ -71,7 +71,7 @@ class admin_get_users extends external_api {
         list($course, $coursemodule) = get_course_and_cm_from_cmid($coursemoduleid, 'challenge');
         self::validate_context($coursemodule->context);
         $game = util::get_game($coursemodule);
-        $participants = $game->get_mdl_participants();
+        $participants = $game->get_mdl_participants(false);
         $teachers = $game->get_mdl_teachers();
 
         // construct result

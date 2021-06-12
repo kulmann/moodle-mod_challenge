@@ -126,6 +126,13 @@ class participant extends abstract_model {
     }
 
     /**
+     * @return bool
+     */
+    public function is_enabled(): bool {
+        return $this->get_status() === self::STATUS_ENABLED;
+    }
+
+    /**
      * @return string
      */
     public function get_status(): string {

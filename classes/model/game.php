@@ -175,8 +175,16 @@ class game extends abstract_model {
      * @throws moodle_exception
      * @throws dml_exception
      */
-    public function get_mdl_participants() {
-        return $this->get_mdl_users_and_teachers(true, false);
+    public function get_mdl_participants(bool $only_enabled) {
+        $mdl_users = $this->get_mdl_users_and_teachers(true, false);
+        if (!$only_enabled) {
+            return $mdl_users;
+        }
+
+        return \array_filter($mdl_users, function(\stdClass $mdl_user) {
+            $participant = util::get_user($mdl_user);
+            return $participant->is_enabled();
+        });
     }
 
     /**
@@ -321,8 +329,7 @@ class game extends abstract_model {
         $round->save();
 
         // get participants
-        // TODO: restrict participants. for now pick all.
-        $mdl_users = $this->get_mdl_participants();
+        $mdl_users = $this->get_mdl_participants(true);
         \shuffle($mdl_users);
 
         // create matches
