@@ -21,7 +21,7 @@ div
           )
             td
               user-avatar(:size="30", :user="participant")
-              span {{ participant.fullname }}
+              a(:href="getProfileUrl(participant.id)", target="_blank") {{ participant.fullname }}
             td
               user-status-edit(
                 :id="participant.id",
@@ -107,6 +107,10 @@ export default {
         default:
           return "times-circle";
       }
+    },
+    getProfileUrl(userId) {
+      const baseUrl = window.location.origin;
+      return `${baseUrl}/user/profile.php?id=${userId}`;
     },
   },
 };
