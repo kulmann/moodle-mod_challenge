@@ -79,7 +79,7 @@ export default {
       }, {});
     },
     matchNumbers() {
-      return Object.keys(this.matchesByNumbers).sort();
+      return Object.keys(this.matchesByNumbers).sort().reverse();
     },
   },
   methods: {
