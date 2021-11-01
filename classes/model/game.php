@@ -304,6 +304,14 @@ class game extends abstract_model {
             }
         }
 
+        // check if matches need to be generated
+        if ($round->are_next_matches_needed()) {
+            try {
+                $this->create_next_matches($round);
+            } catch (moodle_exception $ignored) {
+            }
+        }
+
         // check if round needs to be ended
         if ($round->get_state() === round::STATE_ACTIVE && $round->is_ended()) {
             try {
@@ -319,7 +327,6 @@ class game extends abstract_model {
      * - set start and end date
      * - set state to active
      * - select participants
-     * - create matches
      *
      * @param round $round
      *
@@ -335,13 +342,26 @@ class game extends abstract_model {
         $round->set_questions($this->get_question_count());
         $round->set_matches($this->get_round_matches());
         $round->save();
+        return $round;
+    }
 
+    /**
+     * Creates a set of matches for the given round.
+     *
+     * @param round $round
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    private function create_next_matches(round $round) {
         // get participants
         $mdl_users = $this->get_mdl_participants(true);
         \shuffle($mdl_users);
 
-        // create first set of matches
-        $matches = [];
+        // todo: filter outer participants who have an unfinished match!
+
+        // create a set of matches
+        $match_number = $round->get_matches_created() + 1;
         while (count($mdl_users) > 1) {
             $mdl_user_1 = array_shift($mdl_users);
             $mdl_user_2 = array_shift($mdl_users);
@@ -349,10 +369,13 @@ class game extends abstract_model {
             $match->set_mdl_user_1($mdl_user_1->id);
             $match->set_mdl_user_2($mdl_user_2->id);
             $match->set_round($round->get_id());
+            $match->set_number($match_number);
             $match->save();
-            $matches[] = $match;
         }
-        return $round;
+
+        // track number of created matches in round
+        $round->set_matches_created($match_number);
+        $round->save();
     }
 
     /**

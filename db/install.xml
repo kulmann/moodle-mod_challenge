@@ -58,6 +58,8 @@
                 <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="matches" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false"
                        COMMENT="max. number of matches in this round"/>
+                <FIELD NAME="matches_created" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="already generated number of matches in this round"/>
                 <FIELD NAME="questions" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false"
                        COMMENT="number of questions per match in this round"/>
             </FIELDS>
@@ -88,6 +90,7 @@
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="round" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="number" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="completed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_1_notified" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>

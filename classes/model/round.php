@@ -43,7 +43,7 @@ class round extends abstract_model {
      */
     protected $game;
     /**
-     * @var int The number of this round within the game.
+     * @var int The number of this round within the game (1-based).
      */
     protected $number;
     /**
@@ -63,9 +63,13 @@ class round extends abstract_model {
      */
     protected $name;
     /**
-     * @var int The number of matches this round will have.
+     * @var int The max. number of matches this round will have.
      */
     protected $matches;
+    /**
+     * @var int The number of already created within this round.
+     */
+    protected $matches_created;
     /**
      * @var int The number of questions this round requires.
      */
@@ -77,12 +81,13 @@ class round extends abstract_model {
     function __construct() {
         parent::__construct('challenge_rounds', 0);
         $this->game = 0;
-        $this->number = 0;
+        $this->number = 1;
         $this->timestart = 0;
         $this->timeend = 0;
         $this->state = self::STATE_PENDING;
         $this->name = '';
         $this->matches = 1;
+        $this->matches_created = 0;
         $this->questions = 0;
     }
 
@@ -97,15 +102,16 @@ class round extends abstract_model {
         if (\is_object($data)) {
             $data = get_object_vars($data);
         }
-        $this->id = isset($data['id']) ? $data['id'] : 0;
+        $this->id = $data['id'] ?? 0;
         $this->game = $data['game'];
-        $this->number = isset($data['number']) ? $data['number'] : 0;
-        $this->timestart = isset($data['timestart']) ? $data['timestart'] : 0;
-        $this->timeend = isset($data['timeend']) ? $data['timeend'] : 0;
-        $this->state = isset($data['state']) ? $data['state'] : self::STATE_PENDING;
-        $this->name = isset($data['name']) ? $data['name'] : '';
-        $this->matches = isset($data['matches']) ? $data['matches'] : 1;
-        $this->questions = isset($data['questions'])  ? $data['questions'] : 0;
+        $this->number = $data['number'] ?? 1;
+        $this->timestart = $data['timestart'] ?? 0;
+        $this->timeend = $data['timeend'] ?? 0;
+        $this->state = $data['state'] ?? self::STATE_PENDING;
+        $this->name = $data['name'] ?? '';
+        $this->matches = $data['matches'] ?? 1;
+        $this->matches_created = $data['matches_created'] ?? 0;
+        $this->questions = $data['questions'] ?? 0;
     }
 
     /**
@@ -113,7 +119,7 @@ class round extends abstract_model {
      *
      * @return bool
      */
-    public function is_started() {
+    public function is_started(): bool {
         return $this->get_timestart() !== 0 && $this->get_timestart() <= time();
     }
 
@@ -122,7 +128,7 @@ class round extends abstract_model {
      *
      * @return bool
      */
-    public function is_ended() {
+    public function is_ended(): bool {
         return $this->get_timeend() !== 0 && $this->get_timeend() <= time();
     }
 
@@ -141,7 +147,7 @@ class round extends abstract_model {
 
         // collect all moodle question categories
         $mdl_category_ids = [];
-        foreach($active_categories as $category) {
+        foreach ($active_categories as $category) {
             $mdl_category_ids = \array_merge($mdl_category_ids, $category->get_mdl_category_ids());
         }
         list($cat_sql, $cat_params) = $DB->get_in_or_equal($mdl_category_ids);
@@ -178,10 +184,10 @@ class round extends abstract_model {
         // if there are used questions, prefer the unused ones
         if (!empty($used_questions)) {
             $used_questions_map = [];
-            foreach($used_questions as $q) {
+            foreach ($used_questions as $q) {
                 $used_questions_map[$q->mdl_question] = $q->timecreated;
             }
-            usort($available_ids, function($qid1, $qid2) use ($used_questions_map) {
+            usort($available_ids, function ($qid1, $qid2) use ($used_questions_map) {
                 if (isset($used_questions_map[$qid1]) && isset($used_questions_map[$qid2])) {
                     return $used_questions_map[$qid1] <=> $used_questions_map[$qid2];
                 }
@@ -201,6 +207,28 @@ class round extends abstract_model {
     }
 
     /**
+     * Checks if next set of matches needs to be generated.
+     *
+     * @return bool
+     */
+    public function are_next_matches_needed(): bool {
+        if ($this->is_ended()) {
+            return false;
+        }
+
+        if ($this->get_matches_created() >= $this->get_matches()) {
+            return false;
+        }
+
+        // for now matches are evenly distributed across the round runtime. Check if next timeslot is reached.
+        $round_duration = $this->timeend - $this->timestart;
+        $match_duration = $round_duration / $this->get_matches();
+        $time_passed = min(\time(), $this->timeend) - $this->timestart;
+        $reached_match_starts = \ceil($time_passed / $match_duration);
+        return $this->get_matches_created() < $reached_match_starts;
+    }
+
+    /**
      * Loads all matches of this round.
      *
      * @return match[]
@@ -209,7 +237,7 @@ class round extends abstract_model {
     public function get_match_entities(): array {
         global $DB;
         $records = $DB->get_records('challenge_matches', ['round' => $this->get_id()]);
-        return \array_map(function($record) {
+        return \array_map(function ($record) {
             $match = new match();
             $match->apply($record);
             return $match;
@@ -359,7 +387,7 @@ class round extends abstract_model {
      * @return int
      */
     public function get_matches(): int {
-        return $this->matches;
+        return $this->matches ?? 1;
     }
 
     /**
@@ -367,6 +395,20 @@ class round extends abstract_model {
      */
     public function set_matches(int $matches) {
         $this->matches = $matches;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_matches_created(): int {
+        return $this->matches_created;
+    }
+
+    /**
+     * @param int $matches_created
+     */
+    public function set_matches_created(int $matches_created) {
+        $this->matches_created = $matches_created;
     }
 
     /**

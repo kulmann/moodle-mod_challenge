@@ -42,6 +42,10 @@ class match extends abstract_model {
      */
     protected $round;
     /**
+     * @var int The number of this match within its round (1-based).
+     */
+    protected $number;
+    /**
      * @var bool Whether or not the match is completed (either ended or answered by both participants).
      */
     protected $completed;
@@ -86,6 +90,7 @@ class match extends abstract_model {
         $this->timecreated = \time();
         $this->timemodified = \time();
         $this->round = 0;
+        $this->number = 1;
         $this->completed = false;
         $this->mdl_user_1 = 0;
         $this->mdl_user_1_notified = false;
@@ -108,10 +113,11 @@ class match extends abstract_model {
         if (\is_object($data)) {
             $data = get_object_vars($data);
         }
-        $this->id = isset($data['id']) ? $data['id'] : 0;
+        $this->id = $data['id'] ?? 0;
         $this->timecreated = $data['timecreated'] ?? \time();
         $this->timemodified = $data['timemodified'] ?? \time();
         $this->round = $data['round'];
+        $this->number = $data['number'] ?? 1;
         $this->completed = isset($data['completed']) && intval($data['completed']) === 1;
         $this->mdl_user_1 = $data['mdl_user_1'];
         $this->mdl_user_1_notified = isset($data['mdl_user_1_notified']) && intval($data['mdl_user_1_notified']) === 1;
@@ -394,6 +400,20 @@ class match extends abstract_model {
      */
     public function set_round(int $round) {
         $this->round = $round;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_number(): int {
+        return $this->number;
+    }
+
+    /**
+     * @param int $number
+     */
+    public function set_number(int $number) {
+        $this->number = $number;
     }
 
     /**
