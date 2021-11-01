@@ -1,16 +1,15 @@
 <template lang="pug">
 div
   .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom
-    button.btn.btn-default(:disabled="isFirstMatch", @click="goToPrevMatch")
+    button.btn.btn-default(:disabled="isFirstRound", @click="goToPrevRound")
       v-icon(name="chevron-left")
     div
-      b.uk-margin-small-left.uk-margin-small-right {{ strings.game_match_step | stringParams({ step: matchIndex + 1, total: matches.length }) }}
-      template(v-if="match")
+      b.uk-margin-small-left.uk-margin-small-right {{ strings.game_match_step | stringParams({ step: roundIndex + 1, total: roundIds.length }) }}
+      template(v-if="round")
         br
-        i(v-if="isMatchOpen") {{ strings.game_match_lbl_open }}
-        b.uk-text-success(v-else-if="isMatchWon") {{ strings.game_match_lbl_won }}
-        b.uk-text-danger(v-else) {{ strings.game_match_lbl_lost }}
-    button.btn.btn-default(:disabled="isLastMatch", @click="goToNextMatch")
+        i(v-if="isRoundOpen") {{ strings.game_match_lbl_round_open }}
+        b(v-else) {{ strings.game_match_lbl_round_ended }}
+    button.btn.btn-default(:disabled="isLastRound", @click="goToNextRound")
       v-icon(name="chevron-right")
   .uk-flex.uk-flex-middle.uk-flex-center.uk-text-center.uk-margin-small-bottom(
     v-if="round"
@@ -37,25 +36,24 @@ export default {
       type: Object,
       required: false,
     },
-    match: {
+    matchGroups: {
       type: Object,
-      required: false,
-    },
-    matches: {
-      type: Array,
       required: true,
     },
   },
   computed: {
     ...mapState(["strings"]),
-    matchIndex() {
-      return findIndex(this.matches, (m) => m.id === this.match.id);
+    roundIds() {
+      return Object.values(this.matchGroups).map((group) => group[0].round);
     },
-    isFirstMatch() {
-      return this.matchIndex === 0;
+    roundIndex() {
+      return findIndex(this.roundIds, (id) => id === this.round.id);
     },
-    isLastMatch() {
-      return this.matchIndex === this.matches.length - 1;
+    isFirstRound() {
+      return this.roundIndex === 0;
+    },
+    isLastRound() {
+      return this.roundIndex === this.roundIds.length;
     },
     roundStartDate() {
       return this.formDateTime(this.round.timestart);
@@ -63,27 +61,25 @@ export default {
     roundEndDate() {
       return this.formDateTime(this.round.timeend);
     },
-    isMatchOpen() {
-      return !this.match.completed;
-    },
-    isMatchWon() {
-      return this.match.winner_mdl_user === this.ownUserId;
+    isRoundOpen() {
+      return this.round.started && !this.round.ended;
     },
   },
   methods: {
-    goToPrevMatch() {
-      if (!this.isFirstMatch) {
-        const match = this.matches[this.matchIndex - 1];
-        this.goToMatch(match.id);
+    goToPrevRound() {
+      if (!this.isFirstRound) {
+        const prevRoundId = this.roundIds[this.roundIndex - 1];
+        this.goToRound(prevRoundId);
       }
     },
-    goToNextMatch() {
-      if (!this.isLastMatch) {
-        const match = this.matches[this.matchIndex + 1];
-        this.goToMatch(match.id);
+    goToNextRound() {
+      if (!this.isLastRound) {
+        const nextRoundId = this.roundIds[this.roundIndex + 1];
+        this.goToRound(nextRoundId);
       }
     },
-    goToMatch(matchId) {
+    goToRound(roundId) {
+      const matchId = this.matchGroups[roundId][0].id;
       this.$router.push({
         name: "player-match-show",
         params: { forcedMatchId: matchId },

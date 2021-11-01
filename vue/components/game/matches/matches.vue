@@ -8,25 +8,30 @@
     match-nav(
       :own-user-id="ownUserId",
       :round="round",
-      :match="match",
-      :matches="matches"
+      :match-groups="matchGroups"
     )
     failure-alert(
       v-if="match === null",
       :message="strings.game_match_show_error"
     )
-    match-show(
-      v-else,
-      :round="round",
-      :match="match",
-      :questions="questions",
-      :attempts="attempts",
-      :own-user-id="ownUserId"
-    )
+    template(v-else)
+      .uk-margin-large-bottom(
+        v-for="match in matchGroups[round.id]",
+        :key="`match-show-${round.id}-${match.id}`"
+      )
+        h4(v-if="matchGroups[round.id].length > 1") {{ strings.game_match_title | stringParams(getMatchTitleStringParams(match)) }}
+        match-show(
+          :round="round",
+          :match="match",
+          :questions="questions",
+          :attempts="attempts",
+          :own-user-id="ownUserId"
+        )
 </template>
 
 <script>
 import langMixins from "../../../mixins/lang-mixins";
+import timeMixins from "../../../mixins/time-mixins";
 import { mapActions, mapGetters, mapState } from "vuex";
 import isNil from "lodash/isNil";
 import last from "lodash/last";
@@ -37,7 +42,7 @@ import MatchShow from "./match-show";
 import MatchNav from "./match-nav";
 
 export default {
-  mixins: [langMixins],
+  mixins: [langMixins, timeMixins],
   props: {
     rounds: {
       type: Array,
@@ -88,6 +93,21 @@ export default {
       }
       return last(this.rounds);
     },
+    matchGroups() {
+      const groups = this.matches.reduce((groups, match) => {
+        if (!groups[match.round]) {
+          groups[match.round] = [];
+        }
+        groups[match.round].push(match);
+        return groups;
+      }, {});
+      for (let roundId of Object.keys(groups)) {
+        groups[roundId] = groups[roundId].sort((m1, m2) => {
+          return m1.number < m2.number ? 1 : -1;
+        });
+      }
+      return groups;
+    },
     ownUserId() {
       return this.game.mdl_user;
     },
@@ -114,6 +134,13 @@ export default {
         this.questions = [];
         this.attempts = [];
       }
+    },
+    getMatchTitleStringParams(match) {
+      return {
+        number: match.number,
+        date: this.formDate(match.timecreated),
+        time: this.formTime(match.timecreated),
+      };
     },
   },
   async mounted() {
