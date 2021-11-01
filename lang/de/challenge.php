@@ -105,7 +105,7 @@ $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';
 $string['format_date_time'] = 'DD.MM.YYYY, HH:mm';
 $string['format_date'] = 'DD.MM.YYYY';
 $string['format_time'] = 'HH:mm';
-$string['format_time_suffix'] = 'Uhr';
+$string['format_time_suffix'] = ' Uhr';
 
 /* admin screen in vue app */
 $string['admin_screen_title'] = 'Spiel-Inhalte bearbeiten';
@@ -167,7 +167,7 @@ $string['admin_results_title'] = 'Ergebnisse Runde {$a}';
 $string['admin_results_btn_rounds'] = 'Zurück';
 $string['admin_results_pending'] = 'Paarungen und Ergebnisse für diese Runde können erst eingesehen werden, wenn die Runde gestartet wurde.';
 $string['admin_results_no_matches'] = 'Es gibt für diese Runde bisher keine Paarungen, weil es keine aktiven Teilnehmer gibt (siehe Teilnehmer-Verwaltung).';
-$string['admin_results_match_group'] = 'Paarungen {$a}';
+$string['admin_results_match_group'] = 'Paarungen {$a->number} (vom {$a->date} um {$a->time})';
 $string['admin_results_match_score_table_question'] = 'Frage {$a}';
 $string['admin_results_match_score_state_finished'] = 'Beendet';
 $string['admin_results_match_score_state_ongoing'] = 'Offen';

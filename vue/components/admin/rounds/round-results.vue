@@ -18,7 +18,7 @@
       template(v-else)
         template(v-for="matchNumber in matchNumbers")
           .uk-margin-bottom(:key="`match-group-${matchNumber}`")
-            h4(v-if="round.matches > 1") {{ strings.admin_results_match_group | stringParams(matchNumber) }}
+            h4(v-if="round.matches > 1") {{ strings.admin_results_match_group | stringParams(getMatchTitleStringParams(matchNumber)) }}
             div(
               v-for="match in matchesByNumbers[matchNumber]",
               :key="`match-${matchNumber}-${match.id}`"
@@ -37,6 +37,7 @@
 
 <script>
 import LangMixins from "../../../mixins/lang-mixins";
+import TimeMixins from "../../../mixins/time-mixins";
 import { mapState, mapActions } from "vuex";
 import LoadingAlert from "../../helper/loading-alert";
 import constants from "../../../constants";
@@ -45,7 +46,7 @@ import MatchPair from "./results/match-pair";
 
 export default {
   components: { MatchPair, InfoAlert, LoadingAlert },
-  mixins: [LangMixins],
+  mixins: [LangMixins, TimeMixins],
   props: {
     round: {
       type: Object,
@@ -109,6 +110,13 @@ export default {
     },
     goToRoundList() {
       this.$router.push({ name: constants.ROUTE_ADMIN_ROUNDS });
+    },
+    getMatchTitleStringParams(matchNumber) {
+      return {
+        number: matchNumber,
+        date: this.formDate(this.matchesByNumbers[matchNumber][0].timecreated),
+        time: this.formTime(this.matchesByNumbers[matchNumber][0].timecreated),
+      };
     },
   },
   mounted() {
