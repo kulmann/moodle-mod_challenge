@@ -37,7 +37,7 @@ $tasks = [
         'dayofweek' => '*',
     ],
     [
-        'classname' => 'mod_challenge\task\send_match_invitations',
+        'classname' => 'mod_challenge\task\send_messages',
         'blocking' => 0,
         'minute' => '15',
         'hour' => '*',

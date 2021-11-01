@@ -94,7 +94,7 @@ Klicken Sie auf den folgenden Link um zu Ihren Fragen für diese Runde zu gelang
 
 Viel Erfolg!';
 $string['task_validate_rounds'] = 'Verarbeitung geplanter Quiz-Challenge Spielrunden';
-$string['task_send_match_invitations'] = 'Versand von Quiz-Challenge Spielrunden-Einladungen';
+$string['task_send_messages'] = 'Versand von Quiz-Challenge Benachrichtigungen';
 
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Quiz Challenge wird geladen...';

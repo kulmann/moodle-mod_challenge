@@ -94,7 +94,7 @@ Follow the link to see your questions for this round:
 
 Good luck!';
 $string['task_validate_rounds'] = 'Process scheduled Quiz Challenge game rounds';
-$string['task_send_match_invitations'] = 'Send out Quiz Challenge game round invitations';
+$string['task_send_messages'] = 'Send out Quiz Challenge notifications';
 
 /* loading screen in vue app */
 $string['loading_screen_title'] = 'Loading Quiz Challenge...';

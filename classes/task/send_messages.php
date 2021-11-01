@@ -17,12 +17,12 @@
 namespace mod_challenge\task;
 
 use coding_exception;
-use core\message\message;
 use core\task\scheduled_task;
 use core_user;
 use dml_exception;
 use mod_challenge\model\game;
 use mod_challenge\model\match;
+use mod_challenge\model\message;
 use mod_challenge\model\round;
 use mod_challenge\util;
 use moodle_exception;
@@ -32,13 +32,22 @@ use stdClass;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class send_match_invitations
+ * Class send_messages
  *
  * @package    mod_challenge\model
- * @copyright  2020 Benedikt Kulmann <b@kulmann.biz>
+ * @copyright  2021 Benedikt Kulmann <b@kulmann.biz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class send_match_invitations extends scheduled_task {
+class send_messages extends scheduled_task {
+
+    /**
+     * @var game[] Cached games
+     */
+    private $cache_game = [];
+    /**
+     * @var round[] Cached rounds
+     */
+    private $cache_round = [];
 
     /**
      * Return the task's name as shown in admin screens.
@@ -47,7 +56,7 @@ class send_match_invitations extends scheduled_task {
      * @throws coding_exception
      */
     public function get_name() {
-        return get_string('task_send_match_invitations', 'mod_challenge');
+        return get_string('task_send_messages', 'mod_challenge');
     }
 
     /**
@@ -56,6 +65,19 @@ class send_match_invitations extends scheduled_task {
      * @throws dml_exception
      */
     public function execute() {
+        // generating messages
+        mtrace("... generating quiz challenge messages");
+        $generate_count = $this->generate_messages();
+        mtrace("... generated {$generate_count} quiz challenge messages");
+
+        // sending messages
+        mtrace("... sending out quiz challenge messages");
+        $sent_count = $this->send_messages();
+        mtrace("... sent out {$sent_count} quiz challenge messages");
+
+
+
+
         global $DB;
         $records = $DB->get_records_sql("SELECT * FROM {challenge_matches} WHERE mdl_user_1_notified = 0 OR mdl_user_2_notified = 0", null, 0, 200);
         mtrace("... sending out match invitations for " . count($records) . " matches.");
@@ -100,33 +122,65 @@ class send_match_invitations extends scheduled_task {
         }
     }
 
-    /**
-     * Sends out an invitation for the match to the specified user.
-     *
-     * @param int $mdl_user_to
-     * @param game $game
-     * @param round $round
-     * @param match $match
-     *
-     * @throws coding_exception|moodle_exception
-     */
-    private function send_invitation(int $mdl_user_to, game $game, round $round, match $match) {
+    private function generate_messages(): int {
+        $count = 0;
+        foreach (message::VALID_TYPES as $type) {
+            $function_name = "generate_messages_{$type}";
+            $count += $this->$function_name();
+        }
+        return $count;
+    }
+
+    private function generate_messages_match_started(): int {
+
+    }
+
+    private function generate_messages_match_stale(): int {
+
+    }
+
+    private function generate_messages_match_finished(): int {
+
+    }
+
+    private function generate_messages_opponent_player(): int {
+
+    }
+
+    private function send_messages(): int {
+        global $DB;
+        $records = $DB->get_records_sql("SELECT * FROM {challenge_messages}", null, 0, 200);
+        foreach ($records as $record) {
+            // load message
+            $message = new message();
+            $message->apply($record);
+
+            // send message
+            $this->send_message($message);
+        }
+        return \count($records);
+    }
+
+    private function send_message(message $message) {
         // set up context
         global $DB;
-        $user_to = $DB->get_record('user', array('id' => $mdl_user_to));
+        $game = $this->get_cached_game($message->get_game());
+        $round = $this->get_cached_round($message->get_round());
+        $match = util::get_match($message->get_matchid());
+        $mdl_user_to = $DB->get_record('user', array('id' => $message->get_mdl_user()));
         list($course, $cm) = get_course_and_cm_from_instance($game->get_id(), 'challenge');
-        cron_setup_user($user_to);
+        cron_setup_user($mdl_user_to);
 
         // build message content
         $data = new stdClass();
-        $data->fullname = $user_to->firstname . " " . $user_to->lastname;
+        $data->fullname = $mdl_user_to->firstname . " " . $mdl_user_to->lastname;
         $data->coursename = $course->fullname;
         $data->roundnumber = $round->get_number();
         $data->gamename = $game->get_name();
         $data->matchurl = $this->get_match_url($cm->id, $match->get_id());
 
         // send message
-        $eventdata = new message();
+        $eventdata = new core\message\message();
         $eventdata->courseid = $course->id;
         $eventdata->component = 'mod_challenge';
         $eventdata->name = 'match';
@@ -151,10 +205,38 @@ class send_match_invitations extends scheduled_task {
      *
      * @return string
      */
-    public function get_match_url(int $cmid, int $matchid) {
+    private function get_match_url(int $cmid, int $matchid) {
         $link = new moodle_url(
             "/mod/challenge/view.php/$cmid/game/matches/$matchid"
         );
         return $link->out(false);
+    }
+
+    /**
+     * Gets the game with the given id from an in memory cache. Loads it if necessary.
+     *
+     * @param int $gameid
+     * @return game Game with the given id
+     * @throws dml_exception
+     */
+    private function get_cached_game(int $gameid): game {
+        if (!isset($this->cache_game[$gameid])) {
+            $this->cache_game[$gameid] = util::get_game_by_id($gameid);
+        }
+        return $this->cache_game[$gameid];
+    }
+
+    /**
+     * Gets the round with the given id from an in memory cache. Loads it if necessary.
+     *
+     * @param int $roundid
+     * @return round Round with the given id
+     * @throws dml_exception
+     */
+    private function get_cached_round(int $roundid): round {
+        if (!isset($this->cache_round[$roundid])) {
+            $this->cache_round[$roundid] = util::get_round($roundid);
+        }
+        return $this->cache_round[$roundid];
     }
 }
