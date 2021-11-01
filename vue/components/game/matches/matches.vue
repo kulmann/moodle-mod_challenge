@@ -23,8 +23,8 @@
         match-show(
           :round="round",
           :match="match",
-          :questions="questions",
-          :attempts="attempts",
+          :questions="questions[match.id]",
+          :attempts="attempts[match.id]",
           :own-user-id="ownUserId"
         )
 </template>
@@ -123,17 +123,20 @@ export default {
       await this.loadQuestions();
     },
     async loadQuestions() {
-      if (this.matchId) {
-        this.questions = await this.fetchMatchQuestions({
-          matchid: this.matchId,
-        });
-        this.attempts = await this.fetchMatchAttempts({
-          matchid: this.matchId,
-        });
-      } else {
-        this.questions = [];
-        this.attempts = [];
+      const questions = {};
+      const attempts = {};
+      if (this.round) {
+        for (const match of this.matchGroups[this.round.id]) {
+          questions[match.id] = await this.fetchMatchQuestions({
+            matchid: match.id,
+          });
+          attempts[match.id] = await this.fetchMatchAttempts({
+            matchid: match.id,
+          });
+        }
       }
+      this.questions = questions;
+      this.attempts = attempts;
     },
     getMatchTitleStringParams(match) {
       return {
