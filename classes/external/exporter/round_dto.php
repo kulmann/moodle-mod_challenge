@@ -88,6 +88,14 @@ class round_dto extends exporter {
                 'type' => PARAM_NOTAGS,
                 'description' => 'the round name',
             ],
+            'matches' => [
+                'type' => PARAM_INT,
+                'description' => 'the max. number of matches within this round',
+            ],
+            'matches_created' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of matches already created within this round',
+            ],
             'questions' => [
                 'type' => PARAM_INT,
                 'description' => 'the number of questions for this round. when round is started, this gets applied from the current value from the game.'

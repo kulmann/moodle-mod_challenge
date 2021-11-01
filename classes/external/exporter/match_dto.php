@@ -75,6 +75,10 @@ class match_dto extends exporter {
                 'type' => PARAM_INT,
                 'description' => 'id of the game round this match takes place in',
             ],
+            'number' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of this match within its round',
+            ],
             'completed' => [
                 'type' => PARAM_BOOL,
                 'description' => 'whether the match is completed (finished by both participants or ended)',
