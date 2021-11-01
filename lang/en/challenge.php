@@ -204,4 +204,4 @@ $string['shared_highscore_empty'] = 'No one is on the leader board, yet.';
 $string['shared_highscore_rank'] = 'Rank';
 $string['shared_highscore_user'] = 'User';
 $string['shared_highscore_score_total'] = 'Score';
-$string['shared_highscore_score_best'] = 'Best Round';
+$string['shared_highscore_score_best'] = 'Best Match';

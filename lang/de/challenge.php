@@ -203,4 +203,4 @@ $string['shared_highscore_empty'] = 'Es gibt noch keine Einträge in der Bestenl
 $string['shared_highscore_rank'] = 'Platz';
 $string['shared_highscore_user'] = 'Nutzer';
 $string['shared_highscore_score_total'] = 'Punkte';
-$string['shared_highscore_score_best'] = 'Beste Runde';
+$string['shared_highscore_score_best'] = 'Bestes Duell';

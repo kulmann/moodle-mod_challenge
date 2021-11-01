@@ -358,7 +358,7 @@ class game extends abstract_model {
         $mdl_users = $this->get_mdl_participants(true);
         \shuffle($mdl_users);
 
-        // todo: filter outer participants who have an unfinished match!
+        // todo: filter out participants who have an unfinished match!
 
         // create a set of matches
         $match_number = $round->get_matches_created() + 1;
