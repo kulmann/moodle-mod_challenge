@@ -63,6 +63,10 @@ class round extends abstract_model {
      */
     protected $name;
     /**
+     * @var int The number of matches this round will have.
+     */
+    protected $matches;
+    /**
      * @var int The number of questions this round requires.
      */
     protected $questions;
@@ -78,6 +82,7 @@ class round extends abstract_model {
         $this->timeend = 0;
         $this->state = self::STATE_PENDING;
         $this->name = '';
+        $this->matches = 1;
         $this->questions = 0;
     }
 
@@ -99,6 +104,7 @@ class round extends abstract_model {
         $this->timeend = isset($data['timeend']) ? $data['timeend'] : 0;
         $this->state = isset($data['state']) ? $data['state'] : self::STATE_PENDING;
         $this->name = isset($data['name']) ? $data['name'] : '';
+        $this->matches = isset($data['matches']) ? $data['matches'] : 1;
         $this->questions = isset($data['questions'])  ? $data['questions'] : 0;
     }
 
@@ -200,7 +206,7 @@ class round extends abstract_model {
      * @return match[]
      * @throws \dml_exception
      */
-    public function get_matches(): array {
+    public function get_match_entities(): array {
         global $DB;
         $records = $DB->get_records('challenge_matches', ['round' => $this->get_id()]);
         return \array_map(function($record) {
@@ -347,6 +353,20 @@ class round extends abstract_model {
      */
     public function set_name(string $name) {
         $this->name = $name;
+    }
+
+    /**
+     * @return int
+     */
+    public function get_matches(): int {
+        return $this->matches;
+    }
+
+    /**
+     * @param int $matches
+     */
+    public function set_matches(int $matches) {
+        $this->matches = $matches;
     }
 
     /**

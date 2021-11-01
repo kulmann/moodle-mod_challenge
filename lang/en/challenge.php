@@ -42,7 +42,7 @@ $string['route_not_found'] = 'The page you tried to open doesn\'t exist.';
 
 /* main admin form: game options */
 $string['game_options_fieldset'] = 'Game options';
-$string['question_count'] = 'Questions per Round';
+$string['question_count'] = 'Questions per Match';
 $string['question_count_help'] = 'Number of questions, each opponent has to answer per round.';
 $string['question_duration'] = 'Question duration (seconds)';
 $string['question_duration_help'] = 'Available time (in seconds) for each question.';
@@ -60,6 +60,8 @@ $string['round_duration_unit_days'] = 'Days';
 $string['round_duration_unit_weeks'] = 'Weeks';
 $string['round_duration_value'] = 'Duration value';
 $string['round_duration_value_help'] = 'Amount for the selected unit to determine the duration of one round.';
+$string['round_matches'] = 'Matches per participant';
+$string['round_matches_help'] = 'Number of matches per participant which are generated evenly throughout the runtime of one round (see duration config above).';
 $string['rounds'] = 'Number of rounds';
 $string['rounds_help'] = 'Total number of rounds until final score. When setting this to 0 the game will run forever / until end of course.';
 

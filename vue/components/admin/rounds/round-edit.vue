@@ -29,7 +29,7 @@
                 option(
                   v-for="mdl_category in mdlCategories",
                   :key="mdl_category.category_id",
-                  v-bind:value="mdl_category.category_id",
+                  :value="mdl_category.category_id",
                   :disabled="!mdl_category.category_id",
                   v-html="mdl_category.category_name"
                 )

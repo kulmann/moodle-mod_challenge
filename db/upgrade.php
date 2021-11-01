@@ -101,5 +101,23 @@ function xmldb_challenge_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2021072400, 'challenge');
     }
 
+    if ($oldversion < 2021110100) {
+        $table = new xmldb_table('challenge_rounds');
+        $field = new xmldb_field('matches', XMLDB_TYPE_INTEGER, '5', true, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021110100, 'challenge');
+    }
+
+    if ($oldversion < 2021110101) {
+        $table = new xmldb_table('challenge');
+        $field = new xmldb_field('round_matches', XMLDB_TYPE_INTEGER, '5', true, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2021110101, 'challenge');
+    }
+
     return true;
 }

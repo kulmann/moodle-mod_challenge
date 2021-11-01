@@ -42,7 +42,7 @@ $string['route_not_found'] = 'Die aufgerufene Seite gibt es nicht.';
 
 /* main admin form: game options */
 $string['game_options_fieldset'] = 'Spieloptionen';
-$string['question_count'] = 'Fragen pro Runde';
+$string['question_count'] = 'Fragen pro Paarung';
 $string['question_count_help'] = 'Anzahl der Fragen, die jedem Opponenten einer Runde gestellt werden.';
 $string['question_duration'] = 'Antwortzeit (Sekunden)';
 $string['question_duration_help'] = 'Antwortzeit pro Frage (in Sekunden).';
@@ -60,6 +60,8 @@ $string['round_duration_unit_days'] = 'Tage';
 $string['round_duration_unit_weeks'] = 'Wochen';
 $string['round_duration_value'] = 'Dauer';
 $string['round_duration_value_help'] = 'Wert für die Dauer einer Spielrunde bzw. für die Zeit nach welcher die nächste Spielrunde automatisch gestartet wird.';
+$string['round_matches'] = 'Paarungen pro Teilnehmer';
+$string['round_matches_help'] = 'Anzahl der Paarungen pro Teilnehmer, die über die Dauer einer Spielrunde (s.o.) gleichverteilt generiert werden.';
 $string['rounds'] = 'Anzahl Runden';
 $string['rounds_help'] = 'Gesamtzahl Spielrunden bis zur Schlusswertung. Falls hier eine 0 eingetragen wird, werden unbegrenzt / bis zum Kursende weitere Spielrunden generiert.';
 
@@ -134,7 +136,7 @@ $string['admin_rounds_list_timing_open'] = 'offen';
 $string['admin_rounds_list_timing_from'] = 'Von {$a}';
 $string['admin_rounds_list_timing_to'] = 'Bis {$a}';
 $string['admin_round_delete_confirm'] = 'Möchten Sie die Runde {$a} wirklich löschen?';
-$string['admin_round_stop_confirm'] = 'Möchten Sie die Runde {$a} wirklich vorzeitig beenden? Achtung: Matches mit unbeantworteten Fragen können nicht gewonnen werden.';
+$string['admin_round_stop_confirm'] = 'Möchten Sie die Runde {$a} wirklich vorzeitig beenden? Achtung: Paarungen mit unbeantworteten Fragen können nicht gewonnen werden.';
 $string['admin_round_datepicker_start'] = "Runden-Start auswählen";
 $string['admin_round_edit_title_edit'] = 'Runde {$a} bearbeiten';
 $string['admin_round_edit_title_add'] = 'Runde {$a} hinzufügen';
@@ -180,8 +182,8 @@ $string['game_btn_continue'] = 'Weiter';
 $string['game_btn_show'] = 'Zeigen';
 $string['game_btn_answer'] = 'Beantworten';
 $string['game_match_step'] = 'Runde {$a->step} / {$a->total}';
-$string['game_match_loading'] = 'Match-Daten werden geladen';
-$string['game_match_show_error'] = 'Bei der Anzeige des ausgewählten Matches ist etwas schiefgelaufen.';
+$string['game_match_loading'] = 'Paarungen werden geladen';
+$string['game_match_show_error'] = 'Bei der Anzeige des ausgewählten Paarungen ist etwas schiefgelaufen.';
 $string['game_match_versus'] = 'vs.';
 $string['game_match_step'] = 'Runde {$a->step} / {$a->total}';
 $string['game_match_lbl_open'] = 'offen';

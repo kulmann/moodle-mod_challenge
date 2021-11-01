@@ -55,7 +55,7 @@ class admin_schedule_round extends external_api {
     }
 
     /**
-     * Start a new round.
+     * Start a new round and generate the first matches.
      *
      * @param int $coursemoduleid
      * @param int $roundid

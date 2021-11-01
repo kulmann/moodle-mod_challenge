@@ -101,6 +101,10 @@ class game extends abstract_model {
      */
     protected $round_duration_value;
     /**
+     * @var int The number of matches being generated during a round.
+     */
+    protected $round_matches;
+    /**
      * @var int The number of rounds until the game ends.
      */
     protected $rounds;
@@ -132,6 +136,7 @@ class game extends abstract_model {
         $this->question_shuffle_answers = true;
         $this->round_duration_unit = self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
         $this->round_duration_value = 7;
+        $this->round_matches = 1;
         $this->rounds = 10;
         $this->winner_mdl_user = 0;
         $this->winner_score = 0;
@@ -160,6 +165,7 @@ class game extends abstract_model {
         $this->question_shuffle_answers = !isset($data['question_shuffle_answers']) || $data['question_shuffle_answers'] == 1;
         $this->round_duration_unit = $data['round_duration_unit'] ?? self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
         $this->round_duration_value = $data['round_duration_value'] ?? 7;
+        $this->round_matches = $data['round_matches'] ?? 1;
         $this->rounds = $data['rounds'] ?? 10;
         $this->winner_mdl_user = $data['winner_mdl_user'] ?? 0;
         $this->winner_score = $data['winner_score'] ?? 0;
@@ -327,13 +333,14 @@ class game extends abstract_model {
         $round->set_timeend(time() + $this->calculate_round_duration_seconds());
         $round->set_state(round::STATE_ACTIVE);
         $round->set_questions($this->get_question_count());
+        $round->set_matches($this->get_round_matches());
         $round->save();
 
         // get participants
         $mdl_users = $this->get_mdl_participants(true);
         \shuffle($mdl_users);
 
-        // create matches
+        // create first set of matches
         $matches = [];
         while (count($mdl_users) > 1) {
             $mdl_user_1 = array_shift($mdl_users);
@@ -448,7 +455,7 @@ class game extends abstract_model {
         $round->save();
 
         // close matches if necessary
-        foreach ($round->get_matches() as $match) {
+        foreach ($round->get_match_entities() as $match) {
             try {
                 $match->check_winner($this, $round);
             } catch (moodle_exception $ignored) {
@@ -634,6 +641,13 @@ class game extends abstract_model {
             default:
                 return 60 * 60 * 24 * 7;
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function get_round_matches(): int {
+        return $this->round_matches;
     }
 
     /**
