@@ -220,12 +220,19 @@ class round extends abstract_model {
             return false;
         }
 
-        // for now matches are evenly distributed across the round runtime. Check if next timeslot is reached.
+        return $this->get_matches_created() < $this->get_next_match_number();
+    }
+
+    /**
+     * Gets the max reached match start number.
+     *
+     * @return int
+     */
+    public function get_next_match_number() {
         $round_duration = $this->timeend - $this->timestart;
         $match_duration = $round_duration / $this->get_matches();
         $time_passed = min(\time(), $this->timeend) - $this->timestart;
-        $reached_match_starts = \ceil($time_passed / $match_duration);
-        return $this->get_matches_created() < $reached_match_starts;
+        return \intval(\ceil($time_passed / $match_duration));
     }
 
     /**

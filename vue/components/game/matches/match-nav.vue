@@ -53,7 +53,7 @@ export default {
       return this.roundIndex === 0;
     },
     isLastRound() {
-      return this.roundIndex === this.roundIds.length;
+      return this.roundIndex === this.roundIds.length - 1;
     },
     roundStartDate() {
       return this.formDateTime(this.round.timestart);

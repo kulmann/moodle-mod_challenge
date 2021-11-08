@@ -10,21 +10,18 @@
       :round="round",
       :match-groups="matchGroups"
     )
-    failure-alert(
-      v-if="match === null",
-      :message="strings.game_match_show_error"
-    )
+    failure-alert(v-if="!match", :message="strings.game_match_show_error")
     template(v-else)
       .uk-margin-large-bottom(
-        v-for="match in matchGroups[round.id]",
+        v-for="(match, index) in matchGroups[round.id]",
         :key="`match-show-${round.id}-${match.id}`"
       )
-        h4(v-if="matchGroups[round.id].length > 1") {{ strings.game_match_title | stringParams(getMatchTitleStringParams(match)) }}
+        h4(v-if="matchGroups[round.id].length > 1") {{ strings.game_match_title | stringParams(getMatchTitleStringParams(match, index)) }}
         match-show(
           :round="round",
           :match="match",
-          :questions="questions[match.id]",
-          :attempts="attempts[match.id]",
+          :questions="questions[match.id] || []",
+          :attempts="attempts[match.id] || []",
           :own-user-id="ownUserId"
         )
 </template>
@@ -138,9 +135,10 @@ export default {
       this.questions = questions;
       this.attempts = attempts;
     },
-    getMatchTitleStringParams(match) {
+    getMatchTitleStringParams(match, index) {
+      console.log(this.matchGroups[this.round.id].length);
       return {
-        number: match.number,
+        number: this.matchGroups[this.round.id].length - index,
         date: this.formDate(match.timecreated),
         time: this.formTime(match.timecreated),
       };

@@ -176,19 +176,18 @@ class game extends abstract_model {
      * Select all participants within the given course.
      * Important: this excludes teachers!
      *
-     * @return stdClass[]
+     * @return participant[]
      * @throws coding_exception
      * @throws moodle_exception
      * @throws dml_exception
      */
     public function get_mdl_participants(bool $only_enabled) {
-        $mdl_users = $this->get_mdl_users_and_teachers(true, false);
+        $participants = $this->get_mdl_users_and_teachers(true, false);
         if (!$only_enabled) {
-            return $mdl_users;
+            return $participants;
         }
 
-        return \array_filter($mdl_users, function (\stdClass $mdl_user) {
-            $participant = util::get_user($mdl_user, $this->get_id());
+        return \array_filter($participants, function (participant $participant) {
             return $participant->is_enabled();
         });
     }
@@ -197,7 +196,7 @@ class game extends abstract_model {
      * Select all teachers within the given course.
      * Important: this excludes regular users!
      *
-     * @return stdClass[]
+     * @return participant[]
      * @throws coding_exception
      * @throws moodle_exception
      * @throws dml_exception
@@ -209,7 +208,7 @@ class game extends abstract_model {
     /**
      * Select users within the given course.
      *
-     * @return stdClass[]
+     * @return participant[]
      * @throws coding_exception
      * @throws moodle_exception
      * @throws dml_exception
@@ -235,7 +234,7 @@ class game extends abstract_model {
             if ($include_teachers && !$teacher) {
                 continue;
             }
-            $result[] = $user;
+            $result[] = util::get_user($user, $this->get_id());
         }
         return $result;
     }
@@ -355,19 +354,20 @@ class game extends abstract_model {
      */
     private function create_next_matches(round $round) {
         // get participants
-        $mdl_users = $this->get_mdl_participants(true);
-        \shuffle($mdl_users);
-
-        // todo: filter out participants who have an unfinished match!
+        $participants = $this->get_mdl_participants(true);
+        $participants = \array_filter($participants, function (participant $participant) use ($round) {
+            return !$participant->has_unfinished_match($round->get_id());
+        });
+        \shuffle($participants);
 
         // create a set of matches
-        $match_number = $round->get_matches_created() + 1;
-        while (count($mdl_users) > 1) {
-            $mdl_user_1 = array_shift($mdl_users);
-            $mdl_user_2 = array_shift($mdl_users);
+        $match_number = $round->get_next_match_number();
+        while (count($participants) > 1) {
+            $mdl_user_1 = array_shift($participants);
+            $mdl_user_2 = array_shift($participants);
             $match = new match();
-            $match->set_mdl_user_1($mdl_user_1->id);
-            $match->set_mdl_user_2($mdl_user_2->id);
+            $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
+            $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
             $match->set_round($round->get_id());
             $match->set_number($match_number);
             $match->save();

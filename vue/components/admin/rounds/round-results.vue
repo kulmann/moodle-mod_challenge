@@ -16,9 +16,9 @@
         :message="strings.admin_results_no_matches"
       )
       template(v-else)
-        template(v-for="matchNumber in matchNumbers")
+        template(v-for="(matchNumber, matchIndex) in matchNumbers")
           .uk-margin-bottom(:key="`match-group-${matchNumber}`")
-            h4(v-if="round.matches > 1") {{ strings.admin_results_match_group | stringParams(getMatchTitleStringParams(matchNumber)) }}
+            h4(v-if="round.matches > 1") {{ strings.admin_results_match_group | stringParams(getMatchTitleStringParams(matchNumber, matchIndex)) }}
             div(
               v-for="match in matchesByNumbers[matchNumber]",
               :key="`match-${matchNumber}-${match.id}`"
@@ -79,7 +79,9 @@ export default {
       }, {});
     },
     matchNumbers() {
-      return Object.keys(this.matchesByNumbers).sort().reverse();
+      return Object.keys(this.matchesByNumbers).sort(
+        (m1, m2) => parseInt(m2) - parseInt(m1)
+      );
     },
   },
   methods: {
@@ -111,9 +113,9 @@ export default {
     goToRoundList() {
       this.$router.push({ name: constants.ROUTE_ADMIN_ROUNDS });
     },
-    getMatchTitleStringParams(matchNumber) {
+    getMatchTitleStringParams(matchNumber, matchIndex) {
       return {
-        number: matchNumber,
+        number: Object.keys(this.matchesByNumbers).length - matchIndex,
         date: this.formDate(this.matchesByNumbers[matchNumber][0].timecreated),
         time: this.formTime(this.matchesByNumbers[matchNumber][0].timecreated),
       };
