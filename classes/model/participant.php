@@ -124,7 +124,6 @@ class participant extends abstract_model {
     /**
      * Gets the ids of rounds that this user attended.
      *
-     *
      * @return array
      * @throws \dml_exception
      */
@@ -136,6 +135,24 @@ class participant extends abstract_model {
                 WHERE r.game = :game AND ((m.mdl_user_1 = :user1 AND m.mdl_user_1_completed > 0) OR (m.mdl_user_2 = :user2 AND m.mdl_user_2_completed > 0))";
         $params = ['game' => $this->get_game(), 'user1' => $this->get_mdl_user(), 'user2' => $this->get_mdl_user()];
         return $DB->get_fieldset_sql($sql, $params);
+    }
+
+    /**
+     * Checks whether this user has an unfinished match within the given round.
+     *
+     * @param int $round_id
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public function has_unfinished_match($round_id) {
+        global $DB;
+        $sql = "SELECT id
+                FROM {challenge_matches} m
+                WHERE m.round = :round AND ((m.mdl_user_1 = :user1 AND m.mdl_user_1_completed = 0) OR (m.mdl_user_2 = :user2 AND m.mdl_user_2_completed = 0))";
+        $params = ['round' => $round_id, 'user1' => $this->get_mdl_user(), 'user2' => $this->get_mdl_user()];
+        $match_ids = $DB->get_fieldset_sql($sql, $params);
+        return \count($match_ids) > 0;
     }
 
     /**

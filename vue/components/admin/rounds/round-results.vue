@@ -11,23 +11,24 @@
         v-if="isRoundPending",
         :message="strings.admin_results_pending"
       )
+      info-alert(
+        v-else-if="matches.length === 0",
+        :message="strings.admin_results_no_matches"
+      )
       template(v-else)
-        div(v-for="match in matches", :key="`match-${match.id}`")
-          vk-grid.uk-flex-middle.uk-margin-bottom(matched)
-            match-user.uk-width-1-5.uk-text-center(
-              :user="getMatchUser1(match)"
+        template(v-for="(matchNumber, matchIndex) in matchNumbers")
+          .uk-margin-bottom(:key="`match-group-${matchNumber}`")
+            h4(v-if="round.matches > 1") {{ strings.admin_results_match_group | stringParams(getMatchTitleStringParams(matchNumber, matchIndex)) }}
+            div(
+              v-for="match in matchesByNumbers[matchNumber]",
+              :key="`match-${matchNumber}-${match.id}`"
             )
-            match-score.uk-width-3-5.uk-text-center(
-              :round="round",
-              :match="match",
-              :user-left="getMatchUser1(match)",
-              :user-right="getMatchUser2(match)",
-              :questions="questions",
-              :attempts="attempts"
-            )
-            match-user.uk-width-1-5.uk-text-center(
-              :user="getMatchUser2(match)"
-            )
+              match-pair(
+                :round="round",
+                :match="match",
+                :questions="questions",
+                :attempts="attempts"
+              )
     .uk-card-footer.uk-text-right
       button.btn.btn-default.uk-margin-small-left(@click="goToRoundList()")
         v-icon.uk-margin-small-right(name="list-ol")
@@ -36,17 +37,16 @@
 
 <script>
 import LangMixins from "../../../mixins/lang-mixins";
-import { mapState, mapActions, mapGetters } from "vuex";
+import TimeMixins from "../../../mixins/time-mixins";
+import { mapState, mapActions } from "vuex";
 import LoadingAlert from "../../helper/loading-alert";
 import constants from "../../../constants";
-import UserAvatar from "../../helper/user-avatar";
-import MatchUser from "./results/match-user";
-import MatchScore from "./results/match-score";
 import InfoAlert from "../../helper/info-alert";
+import MatchPair from "./results/match-pair";
 
 export default {
-  components: { InfoAlert, MatchScore, MatchUser, UserAvatar, LoadingAlert },
-  mixins: [LangMixins],
+  components: { MatchPair, InfoAlert, LoadingAlert },
+  mixins: [LangMixins, TimeMixins],
   props: {
     round: {
       type: Object,
@@ -63,9 +63,25 @@ export default {
   },
   computed: {
     ...mapState(["strings"]),
-    ...mapGetters(["getMdlUser"]),
     isRoundPending() {
       return this.round.state === "pending";
+    },
+    /**
+     * Returns all matches, but grouped by their match numbers
+     */
+    matchesByNumbers() {
+      return this.matches.reduce((groups, match) => {
+        if (!groups[match.number]) {
+          groups[match.number] = [];
+        }
+        groups[match.number].push(match);
+        return groups;
+      }, {});
+    },
+    matchNumbers() {
+      return Object.keys(this.matchesByNumbers).sort(
+        (m1, m2) => parseInt(m2) - parseInt(m1)
+      );
     },
   },
   methods: {
@@ -97,11 +113,12 @@ export default {
     goToRoundList() {
       this.$router.push({ name: constants.ROUTE_ADMIN_ROUNDS });
     },
-    getMatchUser1(match) {
-      return this.getMdlUser(match.mdl_user_1);
-    },
-    getMatchUser2(match) {
-      return this.getMdlUser(match.mdl_user_2);
+    getMatchTitleStringParams(matchNumber, matchIndex) {
+      return {
+        number: Object.keys(this.matchesByNumbers).length - matchIndex,
+        date: this.formDate(this.matchesByNumbers[matchNumber][0].timecreated),
+        time: this.formTime(this.matchesByNumbers[matchNumber][0].timecreated),
+      };
     },
   },
   mounted() {

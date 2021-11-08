@@ -24,7 +24,6 @@ use external_multiple_structure;
 use external_value;
 use invalid_parameter_exception;
 use mod_challenge\external\exporter\user_dto;
-use mod_challenge\model\participant;
 use mod_challenge\util;
 use moodle_exception;
 use restricted_context_exception;
@@ -80,11 +79,11 @@ class admin_get_users extends external_api {
         $ctx = $coursemodule->context;
         $result = [];
         foreach($teachers as $teacher) {
-            $user_dto = new user_dto(user_dto::TYPE_TEACHER, util::get_user($teacher, $game->get_id()), $ctx);
+            $user_dto = new user_dto(user_dto::TYPE_TEACHER, $teacher, $ctx);
             $result[] = $user_dto->export($renderer);
         }
         foreach($participants as $participant) {
-            $user_dto = new user_dto(user_dto::TYPE_PARTICIPANT, util::get_user($participant, $game->get_id()), $ctx);
+            $user_dto = new user_dto(user_dto::TYPE_PARTICIPANT, $participant, $ctx);
             $result[] = $user_dto->export($renderer);
         }
         return $result;

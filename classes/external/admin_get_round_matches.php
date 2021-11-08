@@ -74,7 +74,7 @@ class admin_get_round_matches extends external_api {
         $game = util::get_game($coursemodule);
         $round = util::get_round($roundid);
         util::validate_round($game, $round);
-        $matches = $round->get_matches();
+        $matches = $round->get_match_entities();
 
         // construct result
         global $PAGE;

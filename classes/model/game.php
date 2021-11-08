@@ -101,6 +101,10 @@ class game extends abstract_model {
      */
     protected $round_duration_value;
     /**
+     * @var int The number of matches being generated during a round.
+     */
+    protected $round_matches;
+    /**
      * @var int The number of rounds until the game ends.
      */
     protected $rounds;
@@ -132,6 +136,7 @@ class game extends abstract_model {
         $this->question_shuffle_answers = true;
         $this->round_duration_unit = self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
         $this->round_duration_value = 7;
+        $this->round_matches = 1;
         $this->rounds = 10;
         $this->winner_mdl_user = 0;
         $this->winner_score = 0;
@@ -160,6 +165,7 @@ class game extends abstract_model {
         $this->question_shuffle_answers = !isset($data['question_shuffle_answers']) || $data['question_shuffle_answers'] == 1;
         $this->round_duration_unit = $data['round_duration_unit'] ?? self::MOD_CHALLENGE_ROUND_DURATION_UNIT_DAYS;
         $this->round_duration_value = $data['round_duration_value'] ?? 7;
+        $this->round_matches = $data['round_matches'] ?? 1;
         $this->rounds = $data['rounds'] ?? 10;
         $this->winner_mdl_user = $data['winner_mdl_user'] ?? 0;
         $this->winner_score = $data['winner_score'] ?? 0;
@@ -170,19 +176,18 @@ class game extends abstract_model {
      * Select all participants within the given course.
      * Important: this excludes teachers!
      *
-     * @return stdClass[]
+     * @return participant[]
      * @throws coding_exception
      * @throws moodle_exception
      * @throws dml_exception
      */
     public function get_mdl_participants(bool $only_enabled) {
-        $mdl_users = $this->get_mdl_users_and_teachers(true, false);
+        $participants = $this->get_mdl_users_and_teachers(true, false);
         if (!$only_enabled) {
-            return $mdl_users;
+            return $participants;
         }
 
-        return \array_filter($mdl_users, function (\stdClass $mdl_user) {
-            $participant = util::get_user($mdl_user, $this->get_id());
+        return \array_filter($participants, function (participant $participant) {
             return $participant->is_enabled();
         });
     }
@@ -191,7 +196,7 @@ class game extends abstract_model {
      * Select all teachers within the given course.
      * Important: this excludes regular users!
      *
-     * @return stdClass[]
+     * @return participant[]
      * @throws coding_exception
      * @throws moodle_exception
      * @throws dml_exception
@@ -203,7 +208,7 @@ class game extends abstract_model {
     /**
      * Select users within the given course.
      *
-     * @return stdClass[]
+     * @return participant[]
      * @throws coding_exception
      * @throws moodle_exception
      * @throws dml_exception
@@ -229,7 +234,7 @@ class game extends abstract_model {
             if ($include_teachers && !$teacher) {
                 continue;
             }
-            $result[] = $user;
+            $result[] = util::get_user($user, $this->get_id());
         }
         return $result;
     }
@@ -298,6 +303,14 @@ class game extends abstract_model {
             }
         }
 
+        // check if matches need to be generated
+        if ($round->are_next_matches_needed()) {
+            try {
+                $this->create_next_matches($round);
+            } catch (moodle_exception $ignored) {
+            }
+        }
+
         // check if round needs to be ended
         if ($round->get_state() === round::STATE_ACTIVE && $round->is_ended()) {
             try {
@@ -313,7 +326,6 @@ class game extends abstract_model {
      * - set start and end date
      * - set state to active
      * - select participants
-     * - create matches
      *
      * @param round $round
      *
@@ -327,25 +339,43 @@ class game extends abstract_model {
         $round->set_timeend(time() + $this->calculate_round_duration_seconds());
         $round->set_state(round::STATE_ACTIVE);
         $round->set_questions($this->get_question_count());
+        $round->set_matches($this->get_round_matches());
         $round->save();
-
-        // get participants
-        $mdl_users = $this->get_mdl_participants(true);
-        \shuffle($mdl_users);
-
-        // create matches
-        $matches = [];
-        while (count($mdl_users) > 1) {
-            $mdl_user_1 = array_shift($mdl_users);
-            $mdl_user_2 = array_shift($mdl_users);
-            $match = new match();
-            $match->set_mdl_user_1($mdl_user_1->id);
-            $match->set_mdl_user_2($mdl_user_2->id);
-            $match->set_round($round->get_id());
-            $match->save();
-            $matches[] = $match;
-        }
         return $round;
+    }
+
+    /**
+     * Creates a set of matches for the given round.
+     *
+     * @param round $round
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
+     */
+    private function create_next_matches(round $round) {
+        // get participants
+        $participants = $this->get_mdl_participants(true);
+        $participants = \array_filter($participants, function (participant $participant) use ($round) {
+            return !$participant->has_unfinished_match($round->get_id());
+        });
+        \shuffle($participants);
+
+        // create a set of matches
+        $match_number = $round->get_next_match_number();
+        while (count($participants) > 1) {
+            $mdl_user_1 = array_shift($participants);
+            $mdl_user_2 = array_shift($participants);
+            $match = new match();
+            $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
+            $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
+            $match->set_round($round->get_id());
+            $match->set_number($match_number);
+            $match->save();
+        }
+
+        // track number of created matches in round
+        $round->set_matches_created($match_number);
+        $round->save();
     }
 
     /**
@@ -448,7 +478,7 @@ class game extends abstract_model {
         $round->save();
 
         // close matches if necessary
-        foreach ($round->get_matches() as $match) {
+        foreach ($round->get_match_entities() as $match) {
             try {
                 $match->check_winner($this, $round);
             } catch (moodle_exception $ignored) {
@@ -634,6 +664,13 @@ class game extends abstract_model {
             default:
                 return 60 * 60 * 24 * 7;
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function get_round_matches(): int {
+        return $this->round_matches;
     }
 
     /**

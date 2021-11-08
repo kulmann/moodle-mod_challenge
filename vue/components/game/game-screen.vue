@@ -1,23 +1,29 @@
 <template lang="pug">
-  #challenge-game_screen
-    .uk-clearfix
-    loadingAlert(v-if="!isInitialized", message="Loading Game").uk-text-center
-    failureAlert(v-else-if="isAdminUser", :message="strings.game_not_allowed").uk-text-center
-    infoAlert(v-else-if="isNotStarted", :message="strings.game_not_started").uk-text-center
-    template(v-else-if="viewMode === VIEW_MODE_MATCH_SHOW")
-      ul.uk-tab.uk-margin-small-bottom
-        li(:class="{'uk-active': !showHighscores}")
-          a(@click="showHighscores = false")
-            v-icon(name="gamepad").uk-margin-small-right
-            span {{ strings.game_nav_play }}
-        li(:class="{'uk-active': showHighscores}")
-          a(@click="showHighscores = true")
-            v-icon(name="chart-line").uk-margin-small-right
-            span {{ strings.game_nav_highscore }}
-      highscores(v-if="showHighscores")
-      matches(v-else, :rounds="rounds", :matches="matches")
-    template(v-else)
-      question(v-if="viewMode === VIEW_MODE_QUESTION_PLAY")
+#challenge-game_screen
+  .uk-clearfix
+  loadingAlert.uk-text-center(v-if="!isInitialized", message="Loading Game")
+  failureAlert.uk-text-center(
+    v-else-if="isAdminUser",
+    :message="strings.game_not_allowed"
+  )
+  infoAlert.uk-text-center(
+    v-else-if="isNotStarted",
+    :message="strings.game_not_started"
+  )
+  template(v-else-if="viewMode === VIEW_MODE_MATCH_SHOW")
+    ul.uk-tab.uk-margin-small-bottom
+      li(:class="{ 'uk-active': !showHighscores }")
+        a(@click="showHighscores = false")
+          v-icon.uk-margin-small-right(name="gamepad")
+          span {{ strings.game_nav_play }}
+      li(:class="{ 'uk-active': showHighscores }")
+        a(@click="showHighscores = true")
+          v-icon.uk-margin-small-right(name="chart-line")
+          span {{ strings.game_nav_highscore }}
+    highscores(v-if="showHighscores")
+    matches(v-else, :rounds="rounds", :matches="matches")
+  template(v-else)
+    question(v-if="viewMode === VIEW_MODE_QUESTION_PLAY")
 </template>
 
 <script>

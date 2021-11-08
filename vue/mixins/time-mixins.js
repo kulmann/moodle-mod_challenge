@@ -17,7 +17,7 @@ function formDateTimeInternal(date) {
   const format = this.strings.format_date_time;
   const timeString = moment.unix(date).format(format);
   const timeSuffix = this.strings.format_time_suffix;
-  return `${timeString} ${timeSuffix}`;
+  return `${timeString}${timeSuffix}`;
 }
 function formDateInternal(date) {
   const format = this.strings.format_date;
@@ -27,5 +27,5 @@ function formTimeInternal(date) {
   const format = this.strings.format_time;
   const timeString = moment.unix(date).format(format);
   const timeSuffix = this.strings.format_time_suffix;
-  return `${timeString} ${timeSuffix}`;
+  return `${timeString}${timeSuffix}`;
 }

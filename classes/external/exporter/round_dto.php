@@ -88,9 +88,25 @@ class round_dto extends exporter {
                 'type' => PARAM_NOTAGS,
                 'description' => 'the round name',
             ],
+            'matches' => [
+                'type' => PARAM_INT,
+                'description' => 'the max. number of matches within this round',
+            ],
+            'matches_created' => [
+                'type' => PARAM_INT,
+                'description' => 'the number of matches already created within this round',
+            ],
             'questions' => [
                 'type' => PARAM_INT,
                 'description' => 'the number of questions for this round. when round is started, this gets applied from the current value from the game.'
+            ],
+            'started' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether or not the round has started',
+            ],
+            'ended' => [
+                'type' => PARAM_BOOL,
+                'description' => 'whether or not the round has ended',
             ]
         ];
     }
@@ -102,6 +118,12 @@ class round_dto extends exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        return $this->round->to_array();
+        return \array_merge(
+            $this->round->to_array(),
+            [
+                'started' => $this->round->is_started(),
+                'ended' => $this->round->is_ended(),
+            ],
+        );
     }
 }

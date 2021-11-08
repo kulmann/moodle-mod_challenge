@@ -30,13 +30,15 @@
                        COMMENT="time unit for defining the time distance from one round to the next, e.g. days"/>
                 <FIELD NAME="round_duration_value" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="7" SEQUENCE="false"
                        COMMENT="time value for defining the time distance from one round to the next, e.g. 5 days"/>
+                <FIELD NAME="round_matches" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="1" SEQUENCE="false"
+                       COMMENT="max. number of matches per round"/>
                 <FIELD NAME="rounds" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="10" SEQUENCE="false"
                        COMMENT="total number of rounds. 0 for infinite (e.g. when the course ends)"/>
                 <!-- winner tracking -->
                 <FIELD NAME="winner_mdl_user" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="winner_score" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="state" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" DEFAULT="edit"
-                       COMMENT="whether or not this game is already finished (all rounds done)" />
+                       COMMENT="whether or not this game is already finished (all rounds done)"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -54,7 +56,12 @@
                 <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="state" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" DEFAULT="pending"/>
                 <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="questions" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="matches" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="max. number of matches in this round"/>
+                <FIELD NAME="matches_created" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="already generated number of matches in this round"/>
+                <FIELD NAME="questions" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" UNSIGNED="true" SEQUENCE="false"
+                       COMMENT="number of questions per match in this round"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -83,6 +90,7 @@
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="round" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
+                <FIELD NAME="number" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="completed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false"/>
                 <FIELD NAME="mdl_user_1_notified" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
