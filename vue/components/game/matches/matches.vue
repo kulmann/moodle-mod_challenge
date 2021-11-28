@@ -136,7 +136,6 @@ export default {
       this.attempts = attempts;
     },
     getMatchTitleStringParams(match, index) {
-      console.log(this.matchGroups[this.round.id].length);
       return {
         number: this.matchGroups[this.round.id].length - index,
         date: this.formDate(match.timecreated),

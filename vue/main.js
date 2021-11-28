@@ -13,7 +13,7 @@ import adminStore from "./store/admin_store";
 import playerStore from "./store/player_store";
 import constants from "./constants";
 
-function init(coursemoduleid, contextid) {
+async function init(coursemoduleid, contextid) {
   // We need to overwrite the variable for lazy loading.
   // eslint-disable-next-line no-undef
   __webpack_public_path__ = M.cfg.wwwroot + "/mod/challenge/amd/build/";
@@ -27,15 +27,14 @@ function init(coursemoduleid, contextid) {
 
   store.commit("setCourseModuleID", coursemoduleid);
   store.commit("setContextID", contextid);
-  store.dispatch("init").then(() => {
-    if (store.getters.isAdminUser) {
-      store.registerModule("admin", adminStore);
-      return store.dispatch("admin/initAdmin");
-    } else {
-      store.registerModule("player", playerStore);
-      return store.dispatch("player/initPlayer");
-    }
-  });
+  await store.dispatch("init");
+  if (store.getters.isAdminUser) {
+    store.registerModule("admin", adminStore);
+    await store.dispatch("admin/initAdmin");
+  } else {
+    store.registerModule("player", playerStore);
+    await store.dispatch("player/initPlayer");
+  }
 
   const routes = [
     {

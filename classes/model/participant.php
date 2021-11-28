@@ -212,7 +212,7 @@ class participant extends abstract_model {
     /**
      * @param int $mdl_user
      */
-    public function set_mdl_user(int $mdl_user): void {
+    public function set_mdl_user(int $mdl_user) {
         $this->mdl_user = $mdl_user;
     }
 

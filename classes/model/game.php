@@ -77,7 +77,7 @@ class game extends abstract_model {
      */
     protected $name;
     /**
-     * @var int The number of questions per tournament round.
+     * @var int The number of questions per match.
      */
     protected $question_count;
     /**
@@ -542,7 +542,7 @@ class game extends abstract_model {
      *
      * @param int $mdl_user_id
      *
-     * @return tournament[]
+     * @return match[]
      * @throws dml_exception
      */
     public function get_user_matches($mdl_user_id) {

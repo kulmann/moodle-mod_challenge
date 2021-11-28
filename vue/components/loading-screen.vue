@@ -1,7 +1,7 @@
 <template lang="pug">
-  #challenge-loading_screen
-    .uk-clearfix
-    loadingAlert(v-if="!isInitialized", message="Loading Game").uk-text-center
+#challenge-loading_screen
+  .uk-clearfix
+  loadingAlert.uk-text-center(v-if="!isInitialized", message="Loading Game")
 </template>
 
 <script>

@@ -468,7 +468,7 @@ class match extends abstract_model {
     /**
      * @param bool $mdl_user_1_completed
      */
-    public function set_mdl_user_1_completed(bool $mdl_user_1_completed): void {
+    public function set_mdl_user_1_completed(bool $mdl_user_1_completed) {
         $this->mdl_user_1_completed = $mdl_user_1_completed;
     }
 
@@ -510,7 +510,7 @@ class match extends abstract_model {
     /**
      * @param bool $mdl_user_2_completed
      */
-    public function set_mdl_user_2_completed(bool $mdl_user_2_completed): void {
+    public function set_mdl_user_2_completed(bool $mdl_user_2_completed) {
         $this->mdl_user_2_completed = $mdl_user_2_completed;
     }
 

@@ -103,19 +103,19 @@ export default {
      * @param context
      */
     async init(context) {
-      return Promise.all([
+      await Promise.all([
         context.dispatch("startTimeTracking"),
-        context.dispatch("loadLang").then(() => {
-          return Promise.all([
-            context.dispatch("loadComponentStrings"),
-            context.dispatch("fetchGame"),
-            context.dispatch("fetchRounds"),
-            context.dispatch("fetchMdlUsers"),
-          ]).then(() => {
-            context.commit("setInitialized", true);
-          });
-        }),
+        context.dispatch("loadLang"),
       ]);
+
+      await Promise.all([
+        context.dispatch("loadComponentStrings"),
+        context.dispatch("fetchGame"),
+        context.dispatch("fetchRounds"),
+        context.dispatch("fetchMdlUsers"),
+      ]);
+
+      context.commit("setInitialized", true);
     },
     /**
      * We need a reactive current time.
@@ -174,7 +174,9 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchGame(context) {
-      const game = await ajax("mod_challenge_main_get_game");
+      const game = await ajax("mod_challenge_main_get_game").catch((e) => {
+        console.error(e);
+      });
       context.commit("setGame", game);
     },
     /**
@@ -184,7 +186,10 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchRounds(context) {
-      const rounds = await ajax("mod_challenge_main_get_rounds");
+      const rounds = await ajax("mod_challenge_main_get_rounds").catch((e) => {
+        console.error(e);
+        return [];
+      });
       context.commit("setRounds", rounds);
     },
     /**
@@ -195,7 +200,11 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchMdlUsers(context) {
-      const mdlUsers = await ajax("mod_challenge_main_get_mdl_users");
+      const mdlUsers = await ajax("mod_challenge_main_get_mdl_users").catch(
+        (e) => {
+          console.error(e);
+        }
+      );
       context.commit("setMdlUsers", mdlUsers);
     },
     /**
@@ -207,7 +216,11 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchMdlQuestion(context, payload) {
-      return await ajax("mod_challenge_main_get_mdl_question", payload);
+      return await ajax("mod_challenge_main_get_mdl_question", payload).catch(
+        (e) => {
+          console.error(e);
+        }
+      );
     },
     /**
      * Fetches the moodle answers for the currently loaded question.
@@ -218,7 +231,12 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchMdlAnswers(context, payload) {
-      const answers = await ajax("mod_challenge_main_get_mdl_answers", payload);
+      const answers = await ajax(
+        "mod_challenge_main_get_mdl_answers",
+        payload
+      ).catch((e) => {
+        console.error(e);
+      });
       return sortBy(answers, function (answer) {
         return answer.label;
       });
@@ -230,7 +248,9 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchScores(context) {
-      const scores = await ajax("mod_challenge_main_get_scores");
+      const scores = await ajax("mod_challenge_main_get_scores").catch((e) => {
+        console.error(e);
+      });
       context.commit("setScores", scores);
     },
   },
