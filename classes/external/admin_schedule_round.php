@@ -86,9 +86,6 @@ class admin_schedule_round extends external_api {
         if ($timestart > $timeend) {
             throw new invalid_parameter_exception("start is greater than end");
         }
-        if ($timestart <= time()) {
-            $timestart = time();
-        }
 
         // start renderer
         global $PAGE;
