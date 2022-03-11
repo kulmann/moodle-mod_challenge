@@ -364,32 +364,18 @@ class game extends abstract_model {
         $match_number = $round->get_next_match_number();
         // fix Issue Issue #23: Check if noumber of participants is even or odd. If it is even, then fine. In odd case:
             // the first participant (random!) plays a single match and wins the match automatically.
-
-            if(count($participants) % 2 == 0)   {
-                // Case one: number of participants is even
-                while (count($participants) > 1) {
-                    $mdl_user_1 = array_shift($participants);
-                    $mdl_user_2 = array_shift($participants);
-                    $match = new match();
-                    $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
-                    $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
-                    $match->set_round($round->get_id());
-                    $match->set_number($match_number);
-                    $match->save();
-                }
+            if(count($participants) % 2 !== 0)  {
+                // Number of participants is odd: Create the match with one participant playing against themselve.
+                $mdl_user_1 =array_shift($participants);
+                $mdl_user_2 = $mdl_user_1;
+                $match = new match();
+                $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
+                $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
+                $match->set_round($round->get_id());
+                $match->set_number($match_number);
+                $match->save();
             }
-            else{
-                // Case two: number of participants is odd
-                    $mdl_user_1 =array_shift($participants);
-                    $mdl_user_2 = $mdl_user_1;
-                    $match = new match();
-                    $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
-                    $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
-                    $match->set_round($round->get_id());
-                    $match->set_number($match_number);
-                    $match->save();
-
-
+                    
                 while (count($participants) > 1) {
                     $mdl_user_1 = array_shift($participants);
                     $mdl_user_2 = array_shift($participants);
@@ -401,7 +387,7 @@ class game extends abstract_model {
                     $match->save();
                 }
 
-            }
+            
         
 
         // track number of created matches in round
