@@ -362,33 +362,30 @@ class game extends abstract_model {
 
         // create a set of matches
         $match_number = $round->get_next_match_number();
-        // fix Issue Issue #23: Check if noumber of participants is even or odd. If it is even, then fine. In odd case:
-            // the first participant (random!) plays a single match and wins the match automatically.
-            if(count($participants) % 2 !== 0)  {
-                // Number of participants is odd: Create the match with one participant playing against themselve.
-                $mdl_user_1 =array_shift($participants);
-                $mdl_user_2 = $mdl_user_1;
-                $match = new match();
-                $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
-                $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
-                $match->set_round($round->get_id());
-                $match->set_number($match_number);
-                $match->save();
-            }
-                    
-                while (count($participants) > 1) {
-                    $mdl_user_1 = array_shift($participants);
-                    $mdl_user_2 = array_shift($participants);
-                    $match = new match();
-                    $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
-                    $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
-                    $match->set_round($round->get_id());
-                    $match->set_number($match_number);
-                    $match->save();
-                }
+        // fix Issue #23: Check if number of participants is even or odd. If it is even, then fine. In odd case:
+        // the first participant (random!) plays a single match against themselves and wins the match automatically.
+        if (count($participants) % 2 !== 0) {
+            $mdl_user_1 = array_shift($participants);
+            $mdl_user_2 = $mdl_user_1;
+            $match = new match();
+            $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
+            $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
+            $match->set_round($round->get_id());
+            $match->set_number($match_number);
+            $match->save();
+        }
 
-            
-        
+        while (count($participants) > 1) {
+            $mdl_user_1 = array_shift($participants);
+            $mdl_user_2 = array_shift($participants);
+            $match = new match();
+            $match->set_mdl_user_1($mdl_user_1->get_mdl_user());
+            $match->set_mdl_user_2($mdl_user_2->get_mdl_user());
+            $match->set_round($round->get_id());
+            $match->set_number($match_number);
+            $match->save();
+        }
+
 
         // track number of created matches in round
         $round->set_matches_created($match_number);
@@ -410,7 +407,7 @@ class game extends abstract_model {
         // get previous (up to) 2 finished rounds + all started rounds between the last finished and the new max round
         // e.g. max_round = 10, then the result could be [6,7] as finished rounds and [8,9] as started but unfinished rounds
         // never pick more than 2 finished rounds.
-        $rounds = \array_filter($this->get_rounds(), function(round $round) use ($max_round) {
+        $rounds = \array_filter($this->get_rounds(), function (round $round) use ($max_round) {
             if (!$round->is_started()) {
                 return false;
             }
@@ -419,7 +416,7 @@ class game extends abstract_model {
         $rounds = \array_reverse($rounds);
         $started_rounds = [];
         $finished_rounds = [];
-        foreach($rounds as $round) {
+        foreach ($rounds as $round) {
             \assert($round instanceof round);
             if ($round->is_ended()) {
                 $finished_rounds[] = $round;
@@ -438,7 +435,7 @@ class game extends abstract_model {
 
         // load participant ids who had at least one attempt within the rounds from above
         $participant_ids = [];
-        foreach(\array_merge($finished_rounds, $started_rounds) as $round) {
+        foreach (\array_merge($finished_rounds, $started_rounds) as $round) {
             \assert($round instanceof round);
             $attempts = $round->get_match_attempts();
             foreach ($attempts as $attempt) {
